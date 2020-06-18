@@ -23,18 +23,6 @@ jobs:
     vmImage: 'ubuntu-latest'
     toolchain: 'stable'
 
-- template: 'azure-template-unix.yml'
-  parameters:
-    name: 'macOS_stable_no_cache'
-    vmImage: 'macOS-latest'
-    toolchain: 'stable'
-
-- template: 'azure-template-unix.yml'
-  parameters:
-    name: 'macOS_no_gateway'
-    vmImage: 'macOS-latest'
-    toolchain: 'stable'
-
 - template: 'azure-template-win.yml'
   parameters:
     name: 'Windows_stable'
