@@ -99,10 +99,4 @@ mod test {
         assert_eq!(18446744073709551615, to_uint64(&buffer, 43));
         assert_eq!(9223372036854775807, to_uint64(&buffer, 44));
     }
-
-    #[test]
-    fn rand_test() {
-        let buffer: Vec<u8> = vec![15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
-        assert_eq!(65280, to_uint16(&buffer, 2));
-    }
 }
