@@ -5,3 +5,4 @@ authors = ["Devin <devdevin541@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+structure = "0.1.2"
