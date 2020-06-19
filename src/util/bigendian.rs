@@ -1,10 +1,11 @@
 use std::convert::TryInto;
 
-/// Returns a 16-bit signed integer converted from two bytes at a specified position in a byte array.
+/// Returns a 16-bit signed integer converted from two bytes at a specified
+/// position in a byte array.
 ///
-/// The `to_int16` function converts the bytes from index start_index to start_index + 1
-/// to a `i16` value. The order of bytes in the array must reflect the endianness of the
-/// computer system's architecture.
+/// The `to_int16` function converts the bytes from index start_index to
+/// start_index + 1 to a `i16` value. The order of bytes in the array must
+/// reflect the endianness of the computer system's architecture.
 /// # Example
 ///
 /// ```
@@ -22,11 +23,12 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
     result
 }
 
-/// Returns a 32-bit signed integer converted from four bytes at a specified position in a byte array.
+/// Returns a 32-bit signed integer converted from four bytes at a specified
+/// position in a byte array.
 ///
-/// The `to_int32` function converts the bytes from index start_index to start_index + 3
-/// to a `i32` value. The order of bytes in the array must reflect the endianness of the
-/// computer system's architecture.
+/// The `to_int32` function converts the bytes from index start_index to
+/// start_index + 3 to a `i32` value. The order of bytes in the array must
+/// reflect the endianness of the computer system's architecture.
 /// # Example
 ///
 /// ```
@@ -44,11 +46,12 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
     result
 }
 
-/// Returns a 64-bit signed integer converted from eight bytes at a specified position in a byte array.
+/// Returns a 64-bit signed integer converted from eight bytes at a specified
+/// position in a byte array.
 ///
-/// The `to_int64` function converts the bytes from index start_index to start_index + 7
-/// to a `i64` value. The order of bytes in the array must reflect the endianness of the
-/// computer system's architecture.
+/// The `to_int64` function converts the bytes from index start_index to
+/// start_index + 7 to a `i64` value. The order of bytes in the array must
+/// reflect the endianness of the computer system's architecture.
 /// # Example
 ///
 /// ```
@@ -66,10 +69,11 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
     result
 }
 
-/// Returns a 16-bit unsigned integer converted from two bytes at a specified position in a byte array.
+/// Returns a 16-bit unsigned integer converted from two bytes at a specified
+/// position in a byte array.
 ///
-/// The `to_uint16` function converts the bytes from index start_index to start_index + 1
-/// to a `u16` value.
+/// The `to_uint16` function converts the bytes from index start_index to
+/// start_index + 1 to a `u16` value.
 /// # Example
 ///
 /// ```
@@ -87,10 +91,11 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
     result
 }
 
-/// Returns a 32-bit unsigned integer converted from four bytes at a specified position in a byte array.
+/// Returns a 32-bit unsigned integer converted from four bytes at a specified
+/// position in a byte array.
 ///
-/// The `to_uint32` function converts the bytes from index start_index to start_index + 3
-/// to a `u32` value.
+/// The `to_uint32` function converts the bytes from index start_index to
+/// start_index + 3 to a `u32` value.
 /// # Example
 ///
 /// ```
@@ -108,10 +113,11 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
     result
 }
 
-/// Returns a 64-bit unsigned integer converted from eight bytes at a specified position in a byte array.
+/// Returns a 64-bit unsigned integer converted from eight bytes at a specified
+/// position in a byte array.
 ///
-/// The `to_uint64` function converts the bytes from index start_index to start_index + 7
-/// to a `u64` value.
+/// The `to_uint64` function converts the bytes from index start_index to
+/// start_index + 7 to a `u64` value.
 /// # Example
 ///
 /// ```
@@ -129,7 +135,8 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     result
 }
 
-/// Returns a 32-bit signed integer converted from bytes in a Binary Coded Decimal format byte array.
+/// Returns a 32-bit signed integer converted from bytes in a Binary Coded
+/// Decimal format byte array.
 ///
 /// # Example
 ///
@@ -150,7 +157,8 @@ pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
     }
     result
 }
-/// Returns the specified 32-bit signed integer value as an array of Binary Coded Decimal format bytes.
+/// Returns the specified 32-bit signed integer value as an array of Binary
+/// Coded Decimal format bytes.
 ///
 /// # Example
 ///
