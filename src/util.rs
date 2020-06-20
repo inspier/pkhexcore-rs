@@ -10,4 +10,4 @@ pub mod bitconverter;
 pub mod flagutil;
 
 /// Utility to work with game dates
-pub mod date;
+pub mod dateutil;
