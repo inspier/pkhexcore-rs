@@ -9,7 +9,7 @@ use std::convert::TryInto;
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bigendian::to_int16;
+/// use pkhexcore::util::bigendian::to_int16;
 /// let buffer: Vec<u8> = vec![15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
 /// assert_eq!(255, to_int16(&buffer, 2));
 /// ```
@@ -32,7 +32,7 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bigendian::to_int32;
+/// use pkhexcore::util::bigendian::to_int32;
 /// let buffer: Vec<u8> = vec![15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(-2146424848, to_int32(&buffer, 3));
 /// ```
@@ -55,7 +55,7 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bigendian::to_int64;
+/// use pkhexcore::util::bigendian::to_int64;
 /// let buffer: Vec<u8> = vec![15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(140806877927665, to_int64(&buffer, 1));
 /// ```
@@ -77,7 +77,7 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bigendian::to_uint16;
+/// use pkhexcore::util::bigendian::to_uint16;
 /// let buffer: Vec<u8> = vec![15, 0, 0, 255, 3, 16, 39, 255, 255, 127 ];
 /// assert_eq!(255, to_uint16(&buffer, 2));
 /// ```
@@ -99,7 +99,7 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bigendian::to_uint32;
+/// use pkhexcore::util::bigendian::to_uint32;
 /// let buffer: Vec<u8> = vec![15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 19,];
 /// assert_eq!(16712448, to_uint32(&buffer, 6));
 /// ```
@@ -121,7 +121,7 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bigendian::to_uint64;
+/// use pkhexcore::util::bigendian::to_uint64;
 /// let buffer: Vec<u8> = vec![255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 170, 170, 170, 170, 170,];
 /// assert_eq!(18374686479671623680, to_uint64(&buffer, 2));
 /// ```
@@ -141,7 +141,7 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bigendian::bcd_to_int32;
+/// use pkhexcore::util::bigendian::bcd_to_int32;
 /// let buffer: Vec<u8> = vec![32, 16];
 /// assert_eq!(2010, bcd_to_int32(&buffer, 0, 2));
 /// ```
@@ -163,7 +163,7 @@ pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bigendian::int32_to_bcd;
+/// use pkhexcore::util::bigendian::int32_to_bcd;
 /// assert_eq!(vec![32, 16], int32_to_bcd(2010, 2));
 /// ```
 ///
