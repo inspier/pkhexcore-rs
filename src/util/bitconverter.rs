@@ -9,7 +9,7 @@ use std::convert::TryInto;
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bitconverter::to_int16;
+/// use pkhexcore::util::bitconverter::to_int16;
 /// let buffer: Vec<u8> = vec! [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
 /// assert_eq!(-256, to_int16(&buffer, 2));
 /// ```
@@ -32,7 +32,7 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bitconverter::to_int32;
+/// use pkhexcore::util::bitconverter::to_int32;
 /// let buffer: Vec<u8> = vec! [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(-265875328, to_int32(&buffer, 3));
 /// ```
@@ -55,7 +55,7 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bitconverter::to_int64;
+/// use pkhexcore::util::bitconverter::to_int64;
 /// let buffer: Vec<u8> = vec! [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(-1019801265028202496, to_int64(&buffer, 1));
 /// ```
@@ -78,7 +78,7 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bitconverter::to_uint16;
+/// use pkhexcore::util::bitconverter::to_uint16;
 /// let buffer: Vec<u8> = vec! [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
 /// assert_eq!(65280, to_uint16(&buffer, 2));
 /// ```
@@ -101,7 +101,7 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bitconverter::to_uint32;
+/// use pkhexcore::util::bitconverter::to_uint32;
 /// let buffer: Vec<u8> = vec! [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 19];
 /// assert_eq!(261888, to_uint32(&buffer, 6));
 /// ```
@@ -124,7 +124,7 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 /// # Example
 ///
 /// ```
-///# use pkhexcore::util::bitconverter::to_uint64;
+/// use pkhexcore::util::bitconverter::to_uint64;
 /// let buffer: Vec<u8> = vec! [255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 170, 170, 170, 170, 170];
 /// assert_eq!(255, to_uint64(&buffer, 2));
 /// ```
