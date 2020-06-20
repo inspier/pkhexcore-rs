@@ -10,7 +10,7 @@ use std::convert::TryInto;
 ///
 /// ```
 ///# use pkhexcore::util::bigendian::to_int16;
-/// let buffer: Vec<u8> = vec! [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
+/// let buffer: Vec<u8> = vec![15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
 /// assert_eq!(255, to_int16(&buffer, 2));
 /// ```
 ///
@@ -33,7 +33,7 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 ///
 /// ```
 ///# use pkhexcore::util::bigendian::to_int32;
-/// let buffer: Vec<u8> = vec! [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
+/// let buffer: Vec<u8> = vec![15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(-2146424848, to_int32(&buffer, 3));
 /// ```
 ///
@@ -56,7 +56,7 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 ///
 /// ```
 ///# use pkhexcore::util::bigendian::to_int64;
-/// let buffer: Vec<u8> = vec! [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
+/// let buffer: Vec<u8> = vec![15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(140806877927665, to_int64(&buffer, 1));
 /// ```
 ///
