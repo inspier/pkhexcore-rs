@@ -1,4 +1,4 @@
-use crate::pkm::util::exptable::{EXP_TABLE, EXP_TABLE_WIDTH};
+use crate::pkm::util::exptable::{EXP_TABLE, EXP_TABLE_WIDTH, EXP_TABLE_DEPTH};
 
 /// Gets the current level of a species.
 ///
@@ -53,8 +53,8 @@ pub fn get_level(exp: usize, growth: usize) -> usize {
 pub fn get_exp(level: usize, growth: usize) -> usize {
     if level <= 1 || growth > EXP_TABLE_WIDTH {
         return 0;
-    } else if level > 100 {
-        return 100;
+    } else if level >= 100 {
+        return EXP_TABLE[EXP_TABLE_DEPTH - 1][growth];
     }
     return EXP_TABLE[level - 1][growth];
 }
@@ -95,7 +95,8 @@ mod test {
 
     #[test]
     fn test_get_exp_out_of_bounds() {
-        assert_eq!(100, get_exp(101, 1));
+        assert_eq!(get_exp(100, 1), get_exp(101, 1));
+        assert_eq!(get_exp(100, 3), get_exp(110, 3));
         assert_eq!(0, get_exp(100, 10));
     }
 }
