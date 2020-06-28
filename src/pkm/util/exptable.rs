@@ -1,11 +1,11 @@
 /// The depth of the EXP_TABLE, useful to stay within bounds
-pub const EXP_TABLE_DEPTH: usize = 100;
+pub const EXP_TABLE_DEPTH: u32 = 100;
 
 /// The width of the EXP_TABLE, useful to stay within bounds
-pub const EXP_TABLE_WIDTH: usize = 6;
+pub const EXP_TABLE_WIDTH: u32 = 6;
 
 /// Experience required for next level [0,99]
-pub const EXP_TABLE: [[usize; EXP_TABLE_WIDTH]; EXP_TABLE_DEPTH] = [
+pub const EXP_TABLE: [[u32; EXP_TABLE_WIDTH as usize]; EXP_TABLE_DEPTH as usize] = [
     [0000000, 0000000, 0000000, 0000000, 0000000, 0000000],
     [0000008, 0000015, 0000004, 0000009, 0000006, 0000010],
     [0000027, 0000052, 0000013, 0000057, 0000021, 0000033],

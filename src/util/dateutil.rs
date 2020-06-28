@@ -5,6 +5,8 @@ lazy_static! {
     static ref EPOCH_2000: DateTime<Utc> = Utc.ymd(2000, 1, 1).and_hms(0, 0, 0);
 }
 
+pub const SECONDS_PER_DAY: u32 = 60 * 60 * 24; // 86400
+
 /// Returns whether a given date combination is valid or not
 ///
 /// A date is considered valid if it's an actual calendar, with a range of
@@ -36,11 +38,12 @@ pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
 ///# Example
 /// ```
 /// use pkhexcore::util::dateutil::get_seconds_since2000;
+/// use pkhexcore::util::dateutil::SECONDS_PER_DAY;
 /// use chrono::{TimeZone, Utc};
 ///
 /// // (2000/1/2)  (2000,1,1)
 /// // 946771200 - 946684800 = 86,400 a full day in secs
-/// assert_eq!(86400, get_seconds_since2000(Utc.ymd(2000, 1, 2)));
+/// assert_eq!(SECONDS_PER_DAY as u64, get_seconds_since2000(Utc.ymd(2000, 1, 2)));
 /// ```
 ///
 pub fn get_seconds_since2000(date: Date<Utc>) -> u64 {
@@ -118,7 +121,10 @@ mod test {
     fn dates_since_epoch2000_test() {
         // (2000/1/2)  (2000,1,1)
         // 946771200 - 946684800 = 86,400 a full day in secs
-        assert_eq!(86400, get_seconds_since2000(Utc.ymd(2000, 1, 2)));
+        assert_eq!(
+            SECONDS_PER_DAY as u64,
+            get_seconds_since2000(Utc.ymd(2000, 1, 2))
+        );
 
         // (2000/2/1)  (2000/1/1)
         // 949363200 - 946684800 = 31,622,400 a full month 31 days in Jan
