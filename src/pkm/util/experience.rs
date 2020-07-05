@@ -160,11 +160,58 @@ pub fn get_level(experience: u32, growth_rate: u32) -> Option<u32> {
 ///
 /// assert_eq!(800000, get_exp(100, 4).unwrap());
 /// ```
-pub fn get_exp(mut current_level: u32, growth_rate: u32) -> Option<u32> {
+pub fn get_exp(current_level: u32, growth_rate: u32) -> Option<u32> {
     if current_level <= 1 || growth_rate > EXP_TABLE_WIDTH || current_level > EXP_TABLE_DEPTH {
         return None;
     }
-    Some(EXP_TABLE[(current_level - 1) as usize][growth_rate as usize])
+    return Some(EXP_TABLE[(current_level - 1) as usize][growth_rate as usize]);
+}
+
+/// Gets the nature value for "PK1" / "PK2" entries based on the experience
+///
+/// # Arguments
+///
+/// * `experience` - The Pokemon's current experience
+///
+/// # Example
+///
+/// ```
+/// use pkhexcore::pkm::util::experience::get_nature_vc;
+///
+/// assert_eq!(0, get_nature_vc(25));
+/// assert_eq!(10, get_nature_vc(10));
+/// ```
+pub fn get_nature_vc(exp: u32) -> u32 {
+    return exp % 25;
+}
+
+/// Gets the amount of EXP to be earned until the next level-up occurs.
+///
+/// # Arguments
+///
+/// * `current_level` - The Pokemon's current level
+/// * `growth` - Experience growth rate
+///
+/// # Example
+///
+/// ```
+/// use pkhexcore::pkm::util::experience::get_nature_vc;
+///
+/// assert_eq!(0, get_nature_vc(25));
+/// assert_eq!(10, get_nature_vc(10));
+/// ```
+pub fn get_exp_to_level_up(current_level: u32, growth_rate: u32) -> Option<u32> {
+    if current_level == 0 || current_level > EXP_TABLE_DEPTH || growth_rate > EXP_TABLE_WIDTH {
+        return None;
+    }
+
+    if current_level == 100 {
+        return Some(0);
+    }
+
+    let current_exp = EXP_TABLE[(current_level - 1) as usize][growth_rate as usize];
+    let next_exp = EXP_TABLE[current_level as usize][growth_rate as usize];
+    return Some(next_exp - current_exp);
 }
 
 #[cfg(test)]
@@ -207,5 +254,34 @@ mod test {
         assert_eq!(true, get_exp(100, 10).is_none());
         assert_eq!(true, get_exp(0, 11).is_none());
         assert_eq!(true, get_exp(110, 11).is_none());
+    }
+
+    #[test]
+    fn test_get_nature_vc() {
+        assert_eq!(0, get_nature_vc(25));
+        assert_eq!(0, get_nature_vc(0));
+        assert_eq!(1, get_nature_vc(1));
+        assert_eq!(10, get_nature_vc(10));
+        assert_eq!(5, get_nature_vc(5));
+        assert_eq!(2, get_nature_vc(2));
+    }
+
+    #[test]
+    fn test_get_exp_to_level_up() {
+        assert_eq!(0, get_exp_to_level_up(100, 4).unwrap());
+        assert_eq!(2425, get_exp_to_level_up(24, 1).unwrap());
+        assert_eq!(12097, get_exp_to_level_up(63, 0).unwrap());
+        assert_eq!(6, get_exp_to_level_up(1, 4).unwrap());
+        assert_eq!(37839, get_exp_to_level_up(90, 2).unwrap());
+        assert_eq!(3264, get_exp_to_level_up(29, 5).unwrap());
+        assert_eq!(0, get_exp_to_level_up(100, 1).unwrap());
+        assert_eq!(141, get_exp_to_level_up(9, 3).unwrap());
+    }
+
+    #[test]
+    fn test_get_exp_to_level_up_out_of_bounds() {
+        assert_eq!(true, get_exp_to_level_up(100, 10).is_none());
+        assert_eq!(true, get_exp_to_level_up(0, 11).is_none());
+        assert_eq!(true, get_exp_to_level_up(110, 11).is_none());
     }
 }
