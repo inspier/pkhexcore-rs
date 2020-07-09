@@ -1,41 +1,41 @@
 use crate::util::bitconverter;
 
-static SIZE_1ULIST: u32 = 69;
-static SIZE_1JLIST: u32 = 59;
-static SIZE_1PARTY: u32 = 44;
-static SIZE_1STORED: u32 = 33;
+pub const SIZE_1ULIST: usize = 69;
+pub const SIZE_1JLIST: usize = 59;
+pub const SIZE_1PARTY: usize = 44;
+pub const SIZE_1STORED: usize = 33;
 
-static SIZE_2ULIST: u32 = 73;
-static SIZE_2JLIST: u32 = 63;
-static SIZE_2PARTY: u32 = 48;
-static SIZE_2STORED: u32 = 32;
+pub const SIZE_2ULIST: usize = 73;
+pub const SIZE_2JLIST: usize = 63;
+pub const SIZE_2PARTY: usize = 48;
+pub const SIZE_2STORED: usize = 32;
 
-static SIZE_3CSTORED: u32 = 312;
-static SIZE_3XSTORED: u32 = 196;
-static SIZE_3PARTY: u32 = 100;
-static SIZE_3STORED: u32 = 80;
-static SIZE_3BLOCK: u32 = 12;
+pub const SIZE_3CSTORED: usize = 312;
+pub const SIZE_3XSTORED: usize = 196;
+pub const SIZE_3PARTY: usize = 100;
+pub const SIZE_3STORED: usize = 80;
+pub const SIZE_3BLOCK: usize = 12;
 
-static SIZE_4PARTY: u32 = 236;
-static SIZE_4STORED: u32 = 136;
-static SIZE_4BLOCK: u32 = 32;
+pub const SIZE_4PARTY: usize = 236;
+pub const SIZE_4STORED: usize = 136;
+pub const SIZE_4BLOCK: usize = 32;
 
-static SIZE_5PARTY: u32 = 220;
-static SIZE_5STORED: u32 = 136;
-static SIZE_5BLOCK: u32 = 32;
+pub const SIZE_5PARTY: usize = 220;
+pub const SIZE_5STORED: usize = 136;
+pub const SIZE_5BLOCK: usize = 32;
 
-static SIZE_6PARTY: u32 = 0x104;
-static SIZE_6STORED: u32 = 0xE8;
-static SIZE_6BLOCK: u32 = 56;
+pub const SIZE_6PARTY: usize = 0x104;
+pub const SIZE_6STORED: usize = 0xE8;
+pub const SIZE_6BLOCK: usize = 56;
 
 // Gen7 Format is the same size as Gen6.
 
-static SIZE_8STORED: u32 = 8 + (4 * SIZE_8BLOCK); // 0x148
-static SIZE_8PARTY: u32 = SIZE_8STORED + 0x10; // 0x158
-static SIZE_8BLOCK: u32 = 80; // 0x50
+pub const SIZE_8STORED: usize = 8 + (4 * SIZE_8BLOCK); // 0x148
+pub const SIZE_8PARTY: usize = SIZE_8STORED + 0x10; // 0x158
+pub const SIZE_8BLOCK: usize = 80; // 0x50
 
 /// Positions for shuffling.
-static BLOCK_POSITION: [u8; 128] = [
+const BLOCK_POSITION: [u8; 128] = [
     0, 1, 2, 3, //
     0, 1, 3, 2, //
     0, 2, 1, 3, //
@@ -72,7 +72,7 @@ static BLOCK_POSITION: [u8; 128] = [
 ];
 
 /// Positions for unshuffling.
-static BLOCK_POSITION_INVERT: [u8; 32] = [
+const BLOCK_POSITION_INVERT: [u8; 32] = [
     0, 1, 2, 4, 3, 5, 6, 7, 12, 18, 13, 19, 8, 10, 14, 20, 16, 22, 9, 11, 15, 21, 17, 23, //
     0, 1, 2, 4, 3, 5, 6, 7, // duplicates of 0-7 to eliminate modulus
 ];
@@ -86,15 +86,15 @@ static BLOCK_POSITION_INVERT: [u8; 32] = [
 /// * `block_size` - Size of shuffling chunks
 ///
 #[inline]
-pub fn shuffle_array(data: &[u8], sv: u32, block_size: u32) -> Vec<u8> {
-    let mut sdata = data.to_vec();
+pub fn shuffle_array8(data: &[u8; 344], sv: u32, block_size: usize) -> [u8; 344] {
+    let mut sdata = data.clone();
     let index: u32 = sv * 4;
-    let start: u32 = 8;
+    let start: usize = 8;
     for block in 0..4 {
         let ofs: u32 = BLOCK_POSITION[(index + block) as usize] as u32;
-        let sdata_start = (start + (block_size * block)) as usize;
-        let data_start = (start + (block_size * ofs)) as usize;
-        let data_end = (data_start as u32 + block_size) as usize;
+        let sdata_start = start + block_size * block as usize;
+        let data_start = start + block_size * ofs as usize;
+        let data_end = data_start + block_size;
         let slice_size = data_end - data_start;
         sdata[sdata_start..sdata_start + slice_size].copy_from_slice(&data[data_start..data_end]);
     }
@@ -107,11 +107,11 @@ pub fn shuffle_array(data: &[u8], sv: u32, block_size: u32) -> Vec<u8> {
 ///
 /// * `ekm` - Encrypted Pokémon data
 ///
-pub fn decrypt_array8(ekm: &mut [u8]) -> Vec<u8> {
+pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
     let pv: u32 = bitconverter::to_uint32(ekm, 0);
     let sv = pv >> 13 & 31;
     crypt_pkm(ekm, pv, SIZE_8BLOCK);
-    shuffle_array(ekm, sv, SIZE_8BLOCK)
+    shuffle_array8(ekm, sv, SIZE_8BLOCK)
 }
 
 /// Decrypts a Gen8 pkm byte array.
@@ -120,26 +120,26 @@ pub fn decrypt_array8(ekm: &mut [u8]) -> Vec<u8> {
 ///
 /// * `pkm` - Decrypted Pokémon data
 ///
-pub fn encrypt_array8(pkm: &mut [u8]) -> Vec<u8> {
+pub fn encrypt_array8(pkm: &mut [u8; 344]) -> [u8; 344] {
     let pv: u32 = bitconverter::to_uint32(pkm, 0);
     let sv = pv >> 13 & 31;
-    let mut ekm = shuffle_array(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
+    let mut ekm = shuffle_array8(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
     crypt_pkm(&mut ekm, pv, SIZE_8BLOCK);
     ekm
 }
 
 #[inline]
-fn crypt_pkm(data: &mut [u8], pv: u32, block_size: u32) {
+fn crypt_pkm(data: &mut [u8], pv: u32, block_size: usize) {
     let start = 8;
     let end = (4 * block_size) + start;
     crypt_array(data, pv, start, end); // Blocks
     if data.len() > (end as usize) {
-        crypt_array(data, pv, end, data.len() as u32); // Party Stats
+        crypt_array(data, pv, end, data.len()); // Party Stats
     }
 }
 
 #[inline]
-pub fn crypt_array(data: &mut [u8], mut seed: u32, start: u32, end: u32) {
+pub fn crypt_array(data: &mut [u8], mut seed: u32, start: usize, end: usize) {
     let mut i = start;
     while {
         crypt(data, &mut seed, i);
@@ -152,10 +152,10 @@ pub fn crypt_array(data: &mut [u8], mut seed: u32, start: u32, end: u32) {
 }
 
 #[inline]
-fn crypt(data: &mut [u8], seed: &mut u32, i: u32) {
+fn crypt(data: &mut [u8], seed: &mut u32, i: usize) {
     *seed = 0x41C64E6Du32.wrapping_mul(*seed) + 0x00006073;
-    data[i as usize] ^= (*seed >> 16) as u8;
-    data[(i + 1) as usize] ^= (*seed >> 24) as u8;
+    data[i] ^= (*seed >> 16) as u8;
+    data[i + 1] ^= (*seed >> 24) as u8;
 }
 
 /// Gets the checksum of a 232 byte array.
@@ -178,9 +178,9 @@ pub fn get_chk(data: &[u8]) -> u16 {
 ///
 /// * `pkm` - Possibly encrypted Pokémon data.
 ///
-pub fn decrypt_if_encrypted8(pkm: &mut Vec<u8>) {
+pub fn decrypt_if_encrypted8(pkm: &mut [u8; 344]) {
     if bitconverter::to_uint16(pkm, 0x70) != 0 || bitconverter::to_uint16(pkm, 0xC0) != 0 {
-        *pkm = decrypt_array8(pkm)
+        *pkm = decrypt_array8(pkm);
     }
 }
 
@@ -190,22 +190,25 @@ mod test {
 
     #[test]
     fn array8_test() {
-        let mut pk8 = include_bytes!("tests/data/Orbeetle.pk8").to_vec();
-        let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").to_vec();
+        let mut pk8 = include_bytes!("tests/data/Orbeetle.pk8").clone();
+        let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").clone();
 
-        assert_eq!(ek8, encrypt_array8(&mut *pk8));
-        assert_eq!(pk8, decrypt_array8(&mut *ek8));
+        assert!(ek8.iter().eq(encrypt_array8(&mut pk8).iter()));
+        assert!(pk8.iter().eq(decrypt_array8(&mut ek8).iter()));
+        // assert_eq!(pk8, decrypt_array8(&mut *ek8));
     }
 
     #[test]
     fn decrypt_if_encrypted_test() {
-        let pk8 = include_bytes!("tests/data/Orbeetle.pk8").to_vec();
-        let mut pk8_temp = include_bytes!("tests/data/Orbeetle.pk8").to_vec();
-        let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").to_vec();
+        let pk8 = include_bytes!("tests/data/Orbeetle.pk8").clone();
+        let mut pk8_temp = include_bytes!("tests/data/Orbeetle.pk8").clone();
+        let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").clone();
 
         decrypt_if_encrypted8(&mut ek8);
-        assert_eq!(pk8, ek8);
+        assert!(pk8.iter().eq(ek8.iter()));
+        // assert_eq!(pk8, ek8);
         decrypt_if_encrypted8(&mut pk8_temp);
-        assert_eq!(pk8, pk8_temp);
+        // assert_eq!(pk8, pk8_temp);
+        assert!(pk8.iter().eq(pk8_temp.iter()));
     }
 }
