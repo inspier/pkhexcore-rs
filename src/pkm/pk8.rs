@@ -1,5 +1,8 @@
-use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
+use crate::pkm::util::pokecrypto::{
+    decrypt_if_encrypted8, encrypt_array8, SIZE_8PARTY, SIZE_8STORED,
+};
 use crate::util::bitconverter;
+use crate::pkm::util::pokedex;
 
 // Alignment bytes
 static UNUSED: [u16; 12] = [
@@ -7,6 +10,11 @@ static UNUSED: [u16; 12] = [
 ];
 
 static FORMAT: u32 = 8;
+
+pub const MAX_IV: i32 = 31;
+pub const MAX_EV: i32 = 252;
+pub const OT_LENGTH: i32 = 12;
+pub const NICK_LENGTH: i32 = 12;
 
 // TODO: PersonalInfo
 
@@ -61,6 +69,71 @@ impl PK8 {
         }
         chk
     }
+
+    // pub fn encrypt(self: &mut Self) -> [u8; SIZE_8PARTY] {
+    //     refresh_checksum();
+    //     encrypt_array8(&mut self.data.clone());
+    // }
+
+    // Encryption Constant
+    pub fn encryption_constant(mut self: Self, value: u32) -> Self {
+        self.set_encryption_constant(value);
+        self
+    }
+
+    pub fn get_encryption_constant(self: &Self) -> u32 {
+        bitconverter::to_uint32(&self.data, 0x00)
+    }
+
+    pub fn set_encryption_constant(self: &mut Self, value: u32) {
+        self.data[0x0..0x4].copy_from_slice(&value.to_le_bytes());
+    }
+
+    // Sanity
+    pub fn sanity(mut self: Self, value: u16) -> Self {
+        self.set_sanity(value);
+        self
+    }
+
+    pub fn get_sanity(self: &Self) -> u16 {
+        bitconverter::to_uint16(&self.data, 0x04)
+    }
+
+    pub fn set_sanity(self: &mut Self, value: u16) {
+        self.data[0x4..0x6].copy_from_slice(&value.to_le_bytes());
+    }
+
+    // Checksum
+    pub fn checksum(mut self: Self, value: u16) -> Self {
+        self.set_checksum(value);
+        self
+    }
+
+    pub fn get_checksum(self: &Self) -> u16 {
+        bitconverter::to_uint16(&self.data, 0x06)
+    }
+
+    pub fn set_checksum(self: &mut Self, value: u16) {
+        self.data[0x6..0x8].copy_from_slice(&value.to_le_bytes());
+    }
+
+    // Structure
+    // Region A
+
+    // Species
+    pub fn species(mut self: Self, value: u32) -> Self {
+        self.set_checksum(value as u16);
+        self
+    }
+
+    pub fn get_species(self: &Self) -> u16 {
+        bitconverter::to_uint16(&self.data, 0x08)
+    }
+
+    pub fn set_species(self: &mut Self, value: u16) {
+        self.data[0x8..0xA].copy_from_slice(&value.to_le_bytes());
+    }
+
 }
 
 impl PartialEq for PK8 {
@@ -99,5 +172,15 @@ mod test {
         let dracovish = PK8::from(&*include_bytes!("util/tests/data/Dracovish.pk8"));
         assert_eq!(0x4E8E, orbeetle.calculate_checksum());
         assert_eq!(0x3B4C, dracovish.calculate_checksum());
+    }
+
+    #[test]
+    fn pk8_get_test() {
+        let dracovish = PK8::from(&*include_bytes!("util/tests/data/Dracovish.pk8"));
+        assert_eq!(0xAC731A09, dracovish.get_encryption_constant());
+        assert_eq!(0x0, dracovish.get_sanity());
+        assert_eq!(0x3B4C, dracovish.get_checksum());
+        assert_eq!(882, dracovish.get_species());
+        assert_eq!("Dracovish", pokedex::get_species(dracovish.get_species()));
     }
 }
