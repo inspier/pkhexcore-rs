@@ -138,13 +138,13 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     result
 }
 
-pub fn get_bytes<T: ByteDecomposable>(value: T) -> ByteArray {
+pub(crate) fn get_bytes<T: ByteDecomposable>(value: T) -> ByteArray {
     let data = <T>::get_bytes(value);
     let size = data.len();
     ByteArray::new(data, size)
 }
 
-pub struct ByteArray {
+pub(crate) struct ByteArray {
     src: Vec<u8>,
     size: usize,
 }
@@ -157,14 +157,14 @@ impl ByteArray {
         };
     }
 
-    pub fn copy_to(self: &Self, dest: &mut [u8], index: u32) {
+    pub(crate) fn copy_to(self: &Self, dest: &mut [u8], index: u32) {
         let start_index = index as usize;
         let end_index = start_index + self.size;
         dest[start_index..end_index].copy_from_slice(&self.src);
     }
 }
 
-pub trait ByteDecomposable {
+pub(crate) trait ByteDecomposable {
     fn get_bytes(data: Self) -> Vec<u8>;
 }
 
@@ -185,7 +185,7 @@ macro_rules! impl_get_bytes {
     };
 }
 
-impl_get_bytes!(for i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize);
+impl_get_bytes!(for i8, i16, i32, i64, u8, u16, u32, u64);
 
 #[cfg(test)]
 mod test {
@@ -334,5 +334,61 @@ mod test {
             255, 255, 255, 255, 255, 255, 255, 255, 127,
         ];
         to_uint64(&buffer, 45);
+    }
+
+    #[test]
+    fn copy_to_i8_test() {
+        let mut data = [0; 1];
+        get_bytes(0x12i8).copy_to(&mut data, 0x0);
+        assert_eq!([0x12], data);
+    }
+
+    #[test]
+    fn copy_to_i16_test() {
+        let mut data = [0; 2];
+        get_bytes(0x1234i16).copy_to(&mut data, 0x0);
+        assert_eq!([0x34, 0x12], data);
+    }
+
+    #[test]
+    fn copy_to_i32_test() {
+        let mut data = [0; 4];
+        get_bytes(0x12345678i32).copy_to(&mut data, 0x0);
+        assert_eq!([0x78, 0x56, 0x34, 0x12], data);
+    }
+
+    #[test]
+    fn copy_to_i64_test() {
+        let mut data = [0; 8];
+        get_bytes(0x1234567890123456i64).copy_to(&mut data, 0x0);
+        assert_eq!([0x56, 0x34, 0x12, 0x90, 0x78, 0x56, 0x34, 0x12], data);
+    }
+
+    #[test]
+    fn copy_to_u8_test() {
+        let mut data = [0; 1];
+        get_bytes(0x12u8).copy_to(&mut data, 0x0);
+        assert_eq!([0x12], data);
+    }
+
+    #[test]
+    fn copy_to_u16_test() {
+        let mut data = [0; 2];
+        get_bytes(0x1234u16).copy_to(&mut data, 0x0);
+        assert_eq!([0x34, 0x12], data);
+    }
+
+    #[test]
+    fn copy_to_u32_test() {
+        let mut data = [0; 4];
+        get_bytes(0x12345678u32).copy_to(&mut data, 0x0);
+        assert_eq!([0x78, 0x56, 0x34, 0x12], data);
+    }
+
+    #[test]
+    fn copy_to_u64_test() {
+        let mut data = [0; 8];
+        get_bytes(0x1234567890123456u64).copy_to(&mut data, 0x0);
+        assert_eq!([0x56, 0x34, 0x12, 0x90, 0x78, 0x56, 0x34, 0x12], data);
     }
 }
