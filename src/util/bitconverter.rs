@@ -138,6 +138,55 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     result
 }
 
+pub fn get_bytes<T: ByteDecomposable>(value: T) -> ByteArray {
+    let data = <T>::get_bytes(value);
+    let size = data.len();
+    ByteArray::new(data, size)
+}
+
+pub struct ByteArray {
+    src: Vec<u8>,
+    size: usize,
+}
+
+impl ByteArray {
+    fn new(data: Vec<u8>, size: usize) -> ByteArray {
+        return ByteArray {
+            src: data,
+            size: size,
+        };
+    }
+
+    pub fn copy_to(self: &Self, dest: &mut [u8], index: u32) {
+        let start_index = index as usize;
+        let end_index = start_index + self.size;
+        dest[start_index..end_index].copy_from_slice(&self.src);
+    }
+}
+
+pub trait ByteDecomposable {
+    fn get_bytes(data: Self) -> Vec<u8>;
+}
+
+macro_rules! impl_get_bytes {
+    (for $($t:tt),+) => {
+        $(impl_get_bytes!($t, stringify!($t));)*
+    };
+
+    ($t:ident, $sname:expr) => {
+        impl ByteDecomposable for $t {
+            #[doc = "Returns the specified `"]
+            #[doc = $sname]
+            #[doc = "` value as a byte vector."]
+            fn get_bytes(data: $t) -> Vec<u8> {
+                <$t>::to_le_bytes(data).to_vec()
+            }
+        }
+    };
+}
+
+impl_get_bytes!(for i8, i16, i32, i64, i128, isize, u8, u16, u32, u64, u128, usize);
+
 #[cfg(test)]
 mod test {
     use super::*;

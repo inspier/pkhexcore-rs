@@ -1,8 +1,8 @@
 use crate::pkm::util::pokecrypto::{
     decrypt_if_encrypted8, encrypt_array8, SIZE_8PARTY, SIZE_8STORED,
 };
-use crate::util::bitconverter;
 use crate::pkm::util::pokedex;
+use crate::util::bitconverter;
 
 // Alignment bytes
 static UNUSED: [u16; 12] = [
@@ -86,7 +86,7 @@ impl PK8 {
     }
 
     pub fn set_encryption_constant(self: &mut Self, value: u32) {
-        self.data[0x0..0x4].copy_from_slice(&value.to_le_bytes());
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x0);
     }
 
     // Sanity
@@ -100,7 +100,7 @@ impl PK8 {
     }
 
     pub fn set_sanity(self: &mut Self, value: u16) {
-        self.data[0x4..0x6].copy_from_slice(&value.to_le_bytes());
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x4);
     }
 
     // Checksum
@@ -114,7 +114,7 @@ impl PK8 {
     }
 
     pub fn set_checksum(self: &mut Self, value: u16) {
-        self.data[0x6..0x8].copy_from_slice(&value.to_le_bytes());
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x6);
     }
 
     // Structure
@@ -122,7 +122,7 @@ impl PK8 {
 
     // Species
     pub fn species(mut self: Self, value: u32) -> Self {
-        self.set_checksum(value as u16);
+        self.set_species(value as u16);
         self
     }
 
@@ -131,9 +131,8 @@ impl PK8 {
     }
 
     pub fn set_species(self: &mut Self, value: u16) {
-        self.data[0x8..0xA].copy_from_slice(&value.to_le_bytes());
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x8);
     }
-
 }
 
 impl PartialEq for PK8 {
