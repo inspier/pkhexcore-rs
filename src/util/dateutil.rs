@@ -1,6 +1,7 @@
 use time::{date, Date, Duration};
 
-static EPOCH_2000: time::Date = date!(2000 - 01 - 01);
+#[rustfmt::skip]
+static EPOCH_2000: time::Date = date!(2000-01-01);
 
 pub const SECONDS_PER_DAY: i64 = Duration::day().whole_seconds(); // 86400
 
@@ -115,14 +116,17 @@ mod test {
     fn dates_since_epoch2000_test() {
         // (2000/1/2)  (2000,1,1)
         // 946771200 - 946684800 = 86,400 a full day in secs
-        assert_eq!(SECONDS_PER_DAY, get_seconds_since2000(date!(2000 - 1 - 2)));
+        #[rustfmt::skip]
+        assert_eq!(SECONDS_PER_DAY, get_seconds_since2000(date!(2000-1-2)));
 
         // (2000/2/1)  (2000/1/1)
         // 949363200 - 946684800 = 31,622,400 a full month 31 days in Jan
-        assert_eq!(2678400, get_seconds_since2000(date!(2000 - 2 - 1)));
+        #[rustfmt::skip]
+        assert_eq!(2678400, get_seconds_since2000(date!(2000-2-1)));
 
         // (2001/1/1)  (2000/1/1)
         // 978307200 - 946684800 = 31,622,400 a full (leap) year in secs
-        assert_eq!(31622400, get_seconds_since2000(date!(2001 - 1 - 1)));
+        #[rustfmt::skip]
+        assert_eq!(31622400, get_seconds_since2000(date!(2001-1-1)));
     }
 }
