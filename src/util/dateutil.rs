@@ -1,11 +1,8 @@
-use chrono::{Date, DateTime, TimeZone, Utc};
-use lazy_static::lazy_static;
+use time::{date, Date, Duration};
 
-lazy_static! {
-    static ref EPOCH_2000: DateTime<Utc> = Utc.ymd(2000, 1, 1).and_hms(0, 0, 0);
-}
+static EPOCH_2000: time::Date = date!(2000 - 01 - 01);
 
-pub const SECONDS_PER_DAY: u32 = 60 * 60 * 24; // 86400
+pub const SECONDS_PER_DAY: i64 = Duration::day().whole_seconds(); // 86400
 
 /// Returns whether a given date combination is valid or not
 ///
@@ -24,10 +21,7 @@ pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
         return false;
     }
 
-    match Utc.ymd_opt(year as i32, month, day).single() {
-        None => false,
-        Some(_) => true,
-    }
+    Date::try_from_ymd(year as i32, month as u8, day as u8).is_ok()
 }
 
 /// Returns the difference in seconds since Epoch 2000/1/1
@@ -39,15 +33,15 @@ pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
 /// ```
 /// use pkhexcore::util::dateutil::get_seconds_since2000;
 /// use pkhexcore::util::dateutil::SECONDS_PER_DAY;
-/// use chrono::{TimeZone, Utc};
+/// use time::date;
 ///
 /// // (2000/1/2)  (2000,1,1)
 /// // 946771200 - 946684800 = 86,400 a full day in secs
-/// assert_eq!(SECONDS_PER_DAY as u64, get_seconds_since2000(Utc.ymd(2000, 1, 2)));
+/// assert_eq!(SECONDS_PER_DAY, get_seconds_since2000(date!(2000-1-2)));
 /// ```
 ///
-pub fn get_seconds_since2000(date: Date<Utc>) -> u64 {
-    date.signed_duration_since(EPOCH_2000.date()).num_seconds() as u64
+pub fn get_seconds_since2000(date: Date) -> i64 {
+    (date - EPOCH_2000).whole_seconds()
 }
 
 #[cfg(test)]
@@ -121,17 +115,14 @@ mod test {
     fn dates_since_epoch2000_test() {
         // (2000/1/2)  (2000,1,1)
         // 946771200 - 946684800 = 86,400 a full day in secs
-        assert_eq!(
-            SECONDS_PER_DAY as u64,
-            get_seconds_since2000(Utc.ymd(2000, 1, 2))
-        );
+        assert_eq!(SECONDS_PER_DAY, get_seconds_since2000(date!(2000 - 1 - 2)));
 
         // (2000/2/1)  (2000/1/1)
         // 949363200 - 946684800 = 31,622,400 a full month 31 days in Jan
-        assert_eq!(2678400, get_seconds_since2000(Utc.ymd(2000, 2, 1)));
+        assert_eq!(2678400, get_seconds_since2000(date!(2000 - 2 - 1)));
 
         // (2001/1/1)  (2000/1/1)
         // 978307200 - 946684800 = 31,622,400 a full (leap) year in secs
-        assert_eq!(31622400, get_seconds_since2000(Utc.ymd(2001, 1, 1)));
+        assert_eq!(31622400, get_seconds_since2000(date!(2001 - 1 - 1)));
     }
 }

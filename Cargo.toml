@@ -5,5 +5,4 @@ authors = ["Devin <devdevin541@gmail.com>", "Hector Mejia <caquillo722@gmail.com
 edition = "2018"
 
 [dependencies]
-chrono = "0.4.11"
-lazy_static = "1.4.0"
+time = { version = "0.2.16", default-features = false }
