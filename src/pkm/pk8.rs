@@ -86,7 +86,7 @@ impl PK8 {
     }
 
     pub fn set_encryption_constant(self: &mut Self, value: u32) {
-        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x0);
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x00);
     }
 
     // Sanity
@@ -100,7 +100,7 @@ impl PK8 {
     }
 
     pub fn set_sanity(self: &mut Self, value: u16) {
-        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x4);
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x04);
     }
 
     // Checksum
@@ -114,7 +114,7 @@ impl PK8 {
     }
 
     pub fn set_checksum(self: &mut Self, value: u16) {
-        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x6);
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x06);
     }
 
     // Structure
@@ -126,13 +126,131 @@ impl PK8 {
         self
     }
 
-    pub fn get_species(self: &Self) -> u16 {
-        bitconverter::to_uint16(&self.data, 0x08)
+    pub fn get_species(self: &Self) -> i32 {
+        bitconverter::to_uint16(&self.data, 0x08) as i32
     }
 
     pub fn set_species(self: &mut Self, value: u16) {
-        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x8);
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x08);
     }
+
+    // Held Item
+    pub fn held_item(mut self: Self, value: u32) -> Self {
+        self.set_held_item(value as u16);
+        self
+    }
+
+    pub fn get_held_item(self: &Self) -> i32 {
+        bitconverter::to_uint16(&self.data, 0x0A) as i32
+    }
+
+    pub fn set_held_item(self: &mut Self, value: u16) {
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x0A);
+    }
+
+    // TID
+    pub fn tid(mut self: Self, value: u32) -> Self {
+        self.set_tid(value as u16);
+        self
+    }
+
+    pub fn get_tid(self: &Self) -> i32 {
+        bitconverter::to_uint16(&self.data, 0x0C) as i32
+    }
+
+    pub fn set_tid(self: &mut Self, value: u16) {
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x0C);
+    }
+
+    // SID
+    pub fn sid(mut self: Self, value: u32) -> Self {
+        self.set_sid(value as u16);
+        self
+    }
+
+    pub fn get_sid(self: &Self) -> i32 {
+        bitconverter::to_uint16(&self.data, 0x0E) as i32
+    }
+
+    pub fn set_sid(self: &mut Self, value: u16) {
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x0E);
+    }
+
+    // EXP
+    pub fn exp(mut self: Self, value: u32) -> Self {
+        self.set_exp(value);
+        self
+    }
+
+    pub fn get_exp(self: &Self) -> u32 {
+        bitconverter::to_uint32(&self.data, 0x10) as u32
+    }
+
+    pub fn set_exp(self: &mut Self, value: u32) {
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x10);
+    }
+
+    // Ability
+    pub fn ability(mut self: Self, value: u32) -> Self {
+        self.set_ability(value as u16);
+        self
+    }
+
+    pub fn get_ability(self: &Self) -> i32 {
+        bitconverter::to_uint16(&self.data, 0x14) as i32
+    }
+
+    pub fn set_ability(self: &mut Self, value: u16) {
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x14);
+    }
+
+    // Ability Number
+    pub fn ability_number(mut self: Self, value: i32) -> Self {
+        self.set_ability_number(value);
+        self
+    }
+
+    pub fn get_ability_number(self: &Self) -> i32 {
+        (self.data[0x16] & 7) as i32
+    }
+
+    pub fn set_ability_number(self: &mut Self, value: i32) {
+        self.data[0x16] = ((self.data[0x16] & !7) as i32 | (value & 7)) as u8;
+    }
+
+    // Favourite
+    // unused, was in LGPE but not in SWSH
+
+    pub fn favourite(mut self: Self, value: bool) -> Self {
+        self.set_favourite(value);
+        self
+    }
+
+    pub fn get_favourite(self: &Self) -> bool {
+        self.data[0x16] & 8 != 0
+    }
+
+    pub fn set_favourite(self: &mut Self, value: bool) {
+        self.data[0x16] =
+            ((self.data[0x16] & !8) as i32 | ((if value { 1 } else { 0 }) << 3)) as u8;
+    }
+
+    // Can Gigantamax
+
+    pub fn can_gigantamax(mut self: Self, value: bool) -> Self {
+        self.set_can_gigantamax(value);
+        self
+    }
+
+    pub fn get_can_gigantamax(self: &Self) -> bool {
+        self.data[0x16] & 16 != 0
+    }
+
+    pub fn set_can_gigantamax(self: &mut Self, value: bool) {
+        self.data[0x16] = ((self.data[0x16] & !16) | (if value { 16 } else { 0 })) as u8;
+    }
+
+    // 0x17 alignment unused
 }
 
 impl PartialEq for PK8 {
@@ -181,5 +299,13 @@ mod test {
         assert_eq!(0x3B4C, dracovish.get_checksum());
         assert_eq!(882, dracovish.get_species());
         assert_eq!("Dracovish", pokedex::get_species(dracovish.get_species()));
+        assert_eq!(0, dracovish.get_held_item());
+        assert_eq!(30756, dracovish.get_tid());
+        assert_eq!(45312, dracovish.get_sid());
+        assert_eq!(1250, dracovish.get_exp());
+        assert_eq!(11, dracovish.get_ability());
+        assert_eq!(1, dracovish.get_ability_number());
+        assert_eq!(false, dracovish.get_favourite());
+        assert_eq!(false, dracovish.get_can_gigantamax());
     }
 }

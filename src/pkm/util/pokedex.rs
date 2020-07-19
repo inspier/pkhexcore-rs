@@ -892,6 +892,6 @@ static POKEDEX: [&str; 891] = [
     "Eternatus",
 ];
 
-pub fn get_species(species: u16) -> &'static str {
-    return POKEDEX[usize::from(species)];
+pub fn get_species(species: i32) -> &'static str {
+    return POKEDEX[species as usize];
 }
