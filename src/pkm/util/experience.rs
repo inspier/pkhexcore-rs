@@ -1,3 +1,5 @@
+use log_derive::{logfn, logfn_inputs};
+
 /// The depth of the EXP_TABLE, useful to stay within bounds
 const EXP_TABLE_DEPTH: u32 = 100;
 
@@ -127,6 +129,9 @@ const EXP_TABLE: [[u32; EXP_TABLE_WIDTH as usize]; EXP_TABLE_DEPTH as usize] = [
 ///
 /// assert_eq!(75, get_level(582914, 2).unwrap());
 /// ```
+///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn get_level(experience: u32, growth_rate: u32) -> Option<u32> {
     if growth_rate > EXP_TABLE_WIDTH {
         return None;
@@ -160,6 +165,9 @@ pub fn get_level(experience: u32, growth_rate: u32) -> Option<u32> {
 ///
 /// assert_eq!(800000, get_exp(100, 4).unwrap());
 /// ```
+///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn get_exp(current_level: u32, growth_rate: u32) -> Option<u32> {
     if current_level <= 1 || growth_rate > EXP_TABLE_WIDTH || current_level > EXP_TABLE_DEPTH {
         return None;
@@ -181,6 +189,9 @@ pub fn get_exp(current_level: u32, growth_rate: u32) -> Option<u32> {
 /// assert_eq!(0, get_nature_vc(25));
 /// assert_eq!(10, get_nature_vc(10));
 /// ```
+///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn get_nature_vc(exp: u32) -> u32 {
     return exp % 25;
 }
@@ -200,6 +211,9 @@ pub fn get_nature_vc(exp: u32) -> u32 {
 /// assert_eq!(0, get_nature_vc(25));
 /// assert_eq!(10, get_nature_vc(10));
 /// ```
+///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn get_exp_to_level_up(current_level: u32, growth_rate: u32) -> Option<u32> {
     if current_level == 0 || current_level > EXP_TABLE_DEPTH || growth_rate > EXP_TABLE_WIDTH {
         return None;

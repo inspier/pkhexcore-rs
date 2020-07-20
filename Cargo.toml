@@ -5,4 +5,6 @@ authors = ["Devin <devdevin541@gmail.com>", "Hector Mejia <caquillo722@gmail.com
 edition = "2018"
 
 [dependencies]
+log = "0.4"
+log-derive = "0.4.1"
 time = { version = "0.2.16", default-features = false }

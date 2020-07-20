@@ -3,6 +3,8 @@ use crate::pkm::util::pokecrypto::{
 };
 use crate::pkm::util::pokedex;
 use crate::util::bitconverter;
+use log_derive::{logfn, logfn_inputs};
+use std::fmt;
 
 // Alignment bytes
 static UNUSED: [u16; 12] = [
@@ -24,6 +26,7 @@ pub struct PK8 {
 }
 
 impl Default for PK8 {
+    #[logfn(INFO)]
     fn default() -> Self {
         PK8 {
             data: [0; SIZE_8PARTY],
@@ -44,6 +47,8 @@ impl From<&[u8; 344]> for PK8 {
 }
 
 impl From<&[u8]> for PK8 {
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     fn from(data: &[u8]) -> Self {
         let mut array: [u8; SIZE_8PARTY] = [0; SIZE_8PARTY];
         array.copy_from_slice(&data[0..SIZE_8PARTY]);
@@ -56,12 +61,15 @@ impl From<&[u8]> for PK8 {
 }
 
 impl PK8 {
+    #[logfn(INFO)]
     pub fn new() -> PK8 {
         return PK8 {
             ..Default::default()
         };
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn calculate_checksum(self: &Self) -> u16 {
         let mut chk: u16 = 0;
         for i in (8..SIZE_8STORED).step_by(2) {
@@ -76,43 +84,61 @@ impl PK8 {
     // }
 
     // Encryption Constant
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn encryption_constant(mut self: Self, value: u32) -> Self {
         self.set_encryption_constant(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_encryption_constant(self: &Self) -> u32 {
         bitconverter::to_uint32(&self.data, 0x00)
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_encryption_constant(self: &mut Self, value: u32) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x00);
     }
 
     // Sanity
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn sanity(mut self: Self, value: u16) -> Self {
         self.set_sanity(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_sanity(self: &Self) -> u16 {
         bitconverter::to_uint16(&self.data, 0x04)
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_sanity(self: &mut Self, value: u16) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x04);
     }
 
     // Checksum
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn checksum(mut self: Self, value: u16) -> Self {
         self.set_checksum(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_checksum(self: &Self) -> u16 {
         bitconverter::to_uint16(&self.data, 0x06)
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_checksum(self: &mut Self, value: u16) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x06);
     }
@@ -121,130 +147,183 @@ impl PK8 {
     // Region A
 
     // Species
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn species(mut self: Self, value: u32) -> Self {
         self.set_species(value as u16);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_species(self: &Self) -> i32 {
         bitconverter::to_uint16(&self.data, 0x08) as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_species(self: &mut Self, value: u16) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x08);
     }
 
     // Held Item
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn held_item(mut self: Self, value: u32) -> Self {
         self.set_held_item(value as u16);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_held_item(self: &Self) -> i32 {
         bitconverter::to_uint16(&self.data, 0x0A) as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_held_item(self: &mut Self, value: u16) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x0A);
     }
 
     // TID
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn tid(mut self: Self, value: u32) -> Self {
         self.set_tid(value as u16);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_tid(self: &Self) -> i32 {
         bitconverter::to_uint16(&self.data, 0x0C) as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_tid(self: &mut Self, value: u16) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x0C);
     }
 
     // SID
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn sid(mut self: Self, value: u32) -> Self {
         self.set_sid(value as u16);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_sid(self: &Self) -> i32 {
         bitconverter::to_uint16(&self.data, 0x0E) as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_sid(self: &mut Self, value: u16) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x0E);
     }
 
     // EXP
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn exp(mut self: Self, value: u32) -> Self {
         self.set_exp(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_exp(self: &Self) -> u32 {
         bitconverter::to_uint32(&self.data, 0x10) as u32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_exp(self: &mut Self, value: u32) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x10);
     }
 
     // Ability
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn ability(mut self: Self, value: u32) -> Self {
         self.set_ability(value as u16);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_ability(self: &Self) -> i32 {
         bitconverter::to_uint16(&self.data, 0x14) as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_ability(self: &mut Self, value: u16) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x14);
     }
 
     // Ability Number
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn ability_number(mut self: Self, value: i32) -> Self {
         self.set_ability_number(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_ability_number(self: &Self) -> i32 {
         (self.data[0x16] & 7) as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_ability_number(self: &mut Self, value: i32) {
         self.data[0x16] = ((self.data[0x16] & !7) as i32 | (value & 7)) as u8;
     }
 
     // Favourite
     // unused, was in LGPE but not in SWSH
-
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn favourite(mut self: Self, value: bool) -> Self {
         self.set_favourite(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_favourite(self: &Self) -> bool {
         self.data[0x16] & 8 != 0
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_favourite(self: &mut Self, value: bool) {
         self.data[0x16] =
             ((self.data[0x16] & !8) as i32 | ((if value { 1 } else { 0 }) << 3)) as u8;
     }
 
     // Can Gigantamax
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn can_gigantamax(mut self: Self, value: bool) -> Self {
         self.set_can_gigantamax(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_can_gigantamax(self: &Self) -> bool {
         self.data[0x16] & 16 != 0
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_can_gigantamax(self: &mut Self, value: bool) {
         self.data[0x16] = ((self.data[0x16] & !16) | (if value { 16 } else { 0 })) as u8;
     }
@@ -252,15 +331,21 @@ impl PK8 {
     // 0x17 alignment unused
 
     // Mark Value
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn mark_value(mut self: Self, value: u16) -> Self {
         self.set_mark_value(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_mark_value(self: &Self) -> i32 {
         bitconverter::to_uint16(&self.data, 0x18) as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_mark_value(self: &mut Self, value: u16) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x18);
     }
@@ -269,58 +354,81 @@ impl PK8 {
     // 0x1B alignment unused
 
     // PID
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn pid(mut self: Self, value: u32) -> Self {
         self.set_pid(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_pid(self: &Self) -> u32 {
         bitconverter::to_uint32(&self.data, 0x1C)
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_pid(self: &mut Self, value: u32) {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x1C);
     }
 
     // Nature
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn nature(mut self: Self, value: i32) -> Self {
         self.set_nature(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_nature(self: &Self) -> i32 {
         self.data[0x20] as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_nature(self: &mut Self, value: i32) {
         self.data[0x20] = value as u8;
     }
 
     // Stat Nature
-
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn stat_nature(mut self: Self, value: i32) -> Self {
         self.set_stat_nature(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_stat_nature(self: &Self) -> i32 {
         self.data[0x21] as i32
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_stat_nature(self: &mut Self, value: i32) {
         self.data[0x21] = value as u8;
     }
 
     // Fateful Encounter
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn fateful_encounter(mut self: Self, value: bool) -> Self {
         self.set_fateful_encounter(value);
         self
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn get_fateful_encounter(self: &Self) -> bool {
         (self.data[0x22] & 1) == 1
     }
 
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
     pub fn set_fateful_encounter(self: &mut Self, value: bool) {
         self.data[0x22] = ((self.data[0x22] & !0x01) | (if value { 1 } else { 0 })) as u8;
     }
@@ -333,6 +441,12 @@ impl PartialEq for PK8 {
 }
 
 impl Eq for PK8 {}
+
+impl fmt::Debug for PK8 {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        self.data[..].fmt(formatter)
+    }
+}
 
 #[cfg(test)]
 mod test {

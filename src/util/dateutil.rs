@@ -1,3 +1,4 @@
+use log_derive::{logfn, logfn_inputs};
 use time::{date, Date, Duration};
 
 #[rustfmt::skip]
@@ -17,6 +18,8 @@ pub const SECONDS_PER_DAY: i64 = Duration::day().whole_seconds(); // 86400
 /// assert_eq!(false, is_date_valid(0, 1, 1));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
     if year < 1 || year > 9999 {
         return false;
@@ -41,6 +44,8 @@ pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
 /// assert_eq!(SECONDS_PER_DAY, get_seconds_since2000(date!(2000-1-2)));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn get_seconds_since2000(date: Date) -> i64 {
     (date - EPOCH_2000).whole_seconds()
 }

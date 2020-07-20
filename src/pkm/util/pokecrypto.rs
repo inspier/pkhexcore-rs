@@ -1,4 +1,5 @@
 use crate::util::bitconverter;
+use log_derive::{logfn, logfn_inputs};
 
 pub const SIZE_1ULIST: usize = 69;
 pub const SIZE_1JLIST: usize = 59;
@@ -164,6 +165,8 @@ fn crypt(data: &mut [u8], seed: &mut u32, i: usize) {
 ///
 /// * `data` - Decrypted Pokémon data.
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn get_chk(data: &[u8]) -> u16 {
     let mut chk = 0;
     for i in (8..SIZE_6STORED).step_by(2) {
@@ -195,7 +198,6 @@ mod test {
 
         assert!(ek8.iter().eq(encrypt_array8(&mut pk8).iter()));
         assert!(pk8.iter().eq(decrypt_array8(&mut ek8).iter()));
-        // assert_eq!(pk8, decrypt_array8(&mut *ek8));
     }
 
     #[test]
@@ -206,9 +208,7 @@ mod test {
 
         decrypt_if_encrypted8(&mut ek8);
         assert!(pk8.iter().eq(ek8.iter()));
-        // assert_eq!(pk8, ek8);
         decrypt_if_encrypted8(&mut pk8_temp);
-        // assert_eq!(pk8, pk8_temp);
         assert!(pk8.iter().eq(pk8_temp.iter()));
     }
 }

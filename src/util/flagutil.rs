@@ -1,3 +1,5 @@
+use log_derive::{logfn, logfn_inputs};
+
 #[derive(PartialEq, Debug)]
 pub enum Flag {
     /// Flag set
@@ -23,6 +25,8 @@ pub enum Flag {
 /// assert_eq!(Flag::Set, get_flag(&buffer, 0, 0));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn get_flag(array: &[u8], offset: usize, mut bit_index: u32) -> Flag {
     bit_index &= 7; // ensure bit access is 0-7
     match (array[offset] >> bit_index & 1) != 0 {
@@ -50,6 +54,8 @@ pub fn get_flag(array: &[u8], offset: usize, mut bit_index: u32) -> Flag {
 /// assert_eq!(Flag::Unset, get_flag(&buffer, 0, 0));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn set_flag(array: &mut [u8], offset: usize, mut bit_index: u32, value: Flag) {
     bit_index &= 7; // ensure bit access is 0-7
     array[offset] &= !(1 << bit_index) as u8;

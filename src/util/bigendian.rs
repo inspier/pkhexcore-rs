@@ -1,3 +1,4 @@
+use log_derive::{logfn, logfn_inputs};
 use std::convert::TryInto;
 
 /// Returns a 16-bit signed integer converted from two bytes at a specified
@@ -14,6 +15,8 @@ use std::convert::TryInto;
 /// assert_eq!(255, to_int16(&buffer, 2));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
     let result = i16::from_be_bytes(
         data[start_index..start_index + 2]
@@ -37,6 +40,8 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 /// assert_eq!(-2146424848, to_int32(&buffer, 3));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
     let result = i32::from_be_bytes(
         data[start_index..start_index + 4]
@@ -60,6 +65,8 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 /// assert_eq!(140806877927665, to_int64(&buffer, 1));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
     let result = i64::from_be_bytes(
         data[start_index..start_index + 8]
@@ -82,6 +89,8 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 /// assert_eq!(255, to_uint16(&buffer, 2));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
     let result = u16::from_be_bytes(
         data[start_index..start_index + 2]
@@ -104,6 +113,8 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 /// assert_eq!(16712448, to_uint32(&buffer, 6));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
     let result = u32::from_be_bytes(
         data[start_index..start_index + 4]
@@ -126,6 +137,8 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 /// assert_eq!(18374686479671623680, to_uint64(&buffer, 2));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     let result = u64::from_be_bytes(
         data[start_index..start_index + 8]
@@ -146,6 +159,8 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
 /// assert_eq!(2010, bcd_to_int32(&buffer, 0, 2));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
     let mut result: i32 = 0;
     let upper_bound = offset + length as usize;
@@ -167,6 +182,8 @@ pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
 /// assert_eq!(vec![32, 16], int32_to_bcd(2010, 2));
 /// ```
 ///
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
 pub fn int32_to_bcd(mut input: i32, size: usize) -> Vec<u8> {
     let mut result: Vec<u8> = vec![0; size];
     for i in 0..size {
