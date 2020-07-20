@@ -236,7 +236,6 @@ impl PK8 {
     }
 
     // Can Gigantamax
-
     pub fn can_gigantamax(mut self: Self, value: bool) -> Self {
         self.set_can_gigantamax(value);
         self
@@ -251,6 +250,80 @@ impl PK8 {
     }
 
     // 0x17 alignment unused
+
+    // Mark Value
+    pub fn mark_value(mut self: Self, value: u16) -> Self {
+        self.set_mark_value(value);
+        self
+    }
+
+    pub fn get_mark_value(self: &Self) -> i32 {
+        bitconverter::to_uint16(&self.data, 0x18) as i32
+    }
+
+    pub fn set_mark_value(self: &mut Self, value: u16) {
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x18);
+    }
+
+    // 0x1A alignment unused
+    // 0x1B alignment unused
+
+    // PID
+    pub fn pid(mut self: Self, value: u32) -> Self {
+        self.set_pid(value);
+        self
+    }
+
+    pub fn get_pid(self: &Self) -> u32 {
+        bitconverter::to_uint32(&self.data, 0x1C)
+    }
+
+    pub fn set_pid(self: &mut Self, value: u32) {
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x1C);
+    }
+
+    // Nature
+    pub fn nature(mut self: Self, value: i32) -> Self {
+        self.set_nature(value);
+        self
+    }
+
+    pub fn get_nature(self: &Self) -> i32 {
+        self.data[0x20] as i32
+    }
+
+    pub fn set_nature(self: &mut Self, value: i32) {
+        self.data[0x20] = value as u8;
+    }
+
+    // Stat Nature
+
+    pub fn stat_nature(mut self: Self, value: i32) -> Self {
+        self.set_stat_nature(value);
+        self
+    }
+
+    pub fn get_stat_nature(self: &Self) -> i32 {
+        self.data[0x21] as i32
+    }
+
+    pub fn set_stat_nature(self: &mut Self, value: i32) {
+        self.data[0x21] = value as u8;
+    }
+
+    // Fateful Encounter
+    pub fn fateful_encounter(mut self: Self, value: bool) -> Self {
+        self.set_fateful_encounter(value);
+        self
+    }
+
+    pub fn get_fateful_encounter(self: &Self) -> bool {
+        (self.data[0x22] & 1) == 1
+    }
+
+    pub fn set_fateful_encounter(self: &mut Self, value: bool) {
+        self.data[0x22] = ((self.data[0x22] & !0x01) | (if value { 1 } else { 0 })) as u8;
+    }
 }
 
 impl PartialEq for PK8 {
@@ -307,5 +380,10 @@ mod test {
         assert_eq!(1, dracovish.get_ability_number());
         assert_eq!(false, dracovish.get_favourite());
         assert_eq!(false, dracovish.get_can_gigantamax());
+        assert_eq!(0, dracovish.get_mark_value());
+        assert_eq!(0xC730F59, dracovish.get_pid());
+        assert_eq!(16, dracovish.get_nature());
+        assert_eq!(16, dracovish.get_stat_nature());
+        assert_eq!(false, dracovish.get_fateful_encounter());
     }
 }
