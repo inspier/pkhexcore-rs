@@ -5,7 +5,7 @@ use crate::pkm::util::pokedex;
 use crate::util::bitconverter;
 use async_std::io;
 use async_std::prelude::*;
-use async_std::{fs::File, path::Path};
+use async_std::{fs, fs::File};
 use log_derive::{logfn, logfn_inputs};
 use std::fmt;
 
@@ -82,6 +82,13 @@ impl PK8 {
             data: array,
             ..Default::default()
         })
+    }
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub async fn write_to(self: &Self, path: &str) -> io::Result<()> {
+        fs::write(path, self.data.to_vec()).await?;
+        Ok(())
     }
 
     #[logfn(INFO)]
@@ -468,56 +475,64 @@ impl fmt::Debug for PK8 {
 mod test {
     use super::*;
 
-    #[async_std::test]
-    async fn pk8_from_array_test() -> std::io::Result<()> {
-        let orbeetle_d = PK8::read_from("src/pkm/util/tests/data/Orbeetle.pk8").await?;
-        let orbeetle_e = PK8::read_from("src/pkm/util/tests/data/Orbeetle.ek8").await?;
-        let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
+    #[test]
+    fn pk8_from_array_test() -> std::io::Result<()> {
+        async_std::task::block_on(async {
+            let orbeetle_d = PK8::read_from("src/pkm/util/tests/data/Orbeetle.pk8").await?;
+            let orbeetle_e = PK8::read_from("src/pkm/util/tests/data/Orbeetle.ek8").await?;
+            let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
 
-        assert_eq!(true, orbeetle_d == orbeetle_e);
-        assert_eq!(false, dracovish == orbeetle_d);
-        Ok(())
+            assert_eq!(true, orbeetle_d == orbeetle_e);
+            assert_eq!(false, dracovish == orbeetle_d);
+            Ok(())
+        })
     }
 
-    #[async_std::test]
-    async fn pk8_from_vec_test() -> std::io::Result<()> {
-        let orbeetle_e = PK8::read_from("src/pkm/util/tests/data/Orbeetle.ek8").await?;
-        let orbeetle_d = PK8::from(&*include_bytes!("util/tests/data/Orbeetle.pk8").to_vec());
+    #[test]
+    fn pk8_from_vec_test() -> io::Result<()> {
+        async_std::task::block_on(async {
+            let orbeetle_e = PK8::read_from("src/pkm/util/tests/data/Orbeetle.ek8").await?;
+            let orbeetle_d = PK8::from(&*include_bytes!("util/tests/data/Orbeetle.pk8").to_vec());
 
-        assert_eq!(true, orbeetle_e == orbeetle_d);
-        Ok(())
+            assert_eq!(true, orbeetle_e == orbeetle_d);
+            Ok(())
+        })
     }
 
-    #[async_std::test]
-    async fn pk8_calc_checksum_test() -> std::io::Result<()> {
-        let orbeetle = PK8::read_from("src/pkm/util/tests/data/Orbeetle.pk8").await?;
-        let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
-        assert_eq!(0x4E8E, orbeetle.calculate_checksum());
-        assert_eq!(0x3B4C, dracovish.calculate_checksum());
-        Ok(())
+    #[test]
+    fn pk8_calc_checksum_test() -> io::Result<()> {
+        async_std::task::block_on(async {
+            let orbeetle = PK8::read_from("src/pkm/util/tests/data/Orbeetle.pk8").await?;
+            let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
+            assert_eq!(0x4E8E, orbeetle.calculate_checksum());
+            assert_eq!(0x3B4C, dracovish.calculate_checksum());
+            Ok(())
+        })
     }
 
-    #[async_std::test]
-    async fn pk8_get_test() -> std::io::Result<()> {
-        let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
-        assert_eq!(0xAC731A09, dracovish.get_encryption_constant());
-        assert_eq!(0x0, dracovish.get_sanity());
-        assert_eq!(0x3B4C, dracovish.get_checksum());
-        assert_eq!(882, dracovish.get_species());
-        assert_eq!("Dracovish", pokedex::get_species(dracovish.get_species()));
-        assert_eq!(0, dracovish.get_held_item());
-        assert_eq!(30756, dracovish.get_tid());
-        assert_eq!(45312, dracovish.get_sid());
-        assert_eq!(1250, dracovish.get_exp());
-        assert_eq!(11, dracovish.get_ability());
-        assert_eq!(1, dracovish.get_ability_number());
-        assert_eq!(false, dracovish.get_favourite());
-        assert_eq!(false, dracovish.get_can_gigantamax());
-        assert_eq!(0, dracovish.get_mark_value());
-        assert_eq!(0xC730F59, dracovish.get_pid());
-        assert_eq!(16, dracovish.get_nature());
-        assert_eq!(16, dracovish.get_stat_nature());
-        assert_eq!(false, dracovish.get_fateful_encounter());
-        Ok(())
+    #[test]
+    fn pk8_get_test() -> io::Result<()> {
+        async_std::task::block_on(async {
+            let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
+            assert_eq!(0xAC731A09, dracovish.get_encryption_constant());
+            assert_eq!(0x0, dracovish.get_sanity());
+            assert_eq!(0x3B4C, dracovish.get_checksum());
+            assert_eq!(882, dracovish.get_species());
+            assert_eq!("Dracovish", pokedex::get_species(dracovish.get_species()));
+            assert_eq!(0, dracovish.get_held_item());
+            assert_eq!(30756, dracovish.get_tid());
+            assert_eq!(45312, dracovish.get_sid());
+            assert_eq!(1250, dracovish.get_exp());
+            assert_eq!(11, dracovish.get_ability());
+            assert_eq!(1, dracovish.get_ability_number());
+            assert_eq!(false, dracovish.get_favourite());
+            assert_eq!(false, dracovish.get_can_gigantamax());
+            assert_eq!(0, dracovish.get_mark_value());
+            assert_eq!(0xC730F59, dracovish.get_pid());
+            assert_eq!(16, dracovish.get_nature());
+            assert_eq!(16, dracovish.get_stat_nature());
+            assert_eq!(false, dracovish.get_fateful_encounter());
+            Ok(())
+        })
     }
 }
