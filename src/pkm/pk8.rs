@@ -479,7 +479,7 @@ impl fmt::Debug for PK8 {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::game::enums::species::Species;
+    use crate::game::enums::{ability::Ability, nature::Nature, species::Species};
 
     #[test]
     fn pk8_from_array_test() -> std::io::Result<()> {
@@ -530,13 +530,16 @@ mod test {
             assert_eq!(45312, dracovish.get_sid());
             assert_eq!(1250, dracovish.get_exp());
             assert_eq!(11, dracovish.get_ability());
+            assert_eq!(Ability::WaterAbsorb as i32, dracovish.get_ability());
             assert_eq!(1, dracovish.get_ability_number());
             assert_eq!(false, dracovish.get_favourite());
             assert_eq!(false, dracovish.get_can_gigantamax());
             assert_eq!(0, dracovish.get_mark_value());
             assert_eq!(0xC730F59, dracovish.get_pid());
             assert_eq!(16, dracovish.get_nature());
+            assert_eq!(Nature::Mild as i32, dracovish.get_nature());
             assert_eq!(16, dracovish.get_stat_nature());
+            assert_eq!(Nature::Mild as i32, dracovish.get_stat_nature());
             assert_eq!(false, dracovish.get_fateful_encounter());
             Ok(())
         })
