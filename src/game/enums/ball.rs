@@ -1,4 +1,5 @@
 #[repr(u8)]
+#[derive(PartialEq, PartialOrd)]
 pub enum Ball {
     None = 0,
 
@@ -41,5 +42,5 @@ pub enum Ball {
 /// * `ball` - Ball ID
 ///
 pub fn is_apricorn_ball(ball: Ball) -> bool {
-    Ball.Fast <= ball && ball <= Ball.Moon
+    Ball::Fast <= ball && ball <= Ball::Moon
 }
