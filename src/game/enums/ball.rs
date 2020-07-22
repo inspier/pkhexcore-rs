@@ -1,5 +1,6 @@
 #[repr(u8)]
 #[derive(PartialEq, PartialOrd)]
+/// Ball IDs for the corresponding English ball name.
 pub enum Ball {
     None = 0,
 

@@ -1,4 +1,5 @@
 #[allow(non_camel_case_types)]
+/// Ability IDs for the corresponding English ability name.
 pub enum Ability {
     None,
     Stench,

@@ -1,7 +1,7 @@
 #[allow(non_camel_case_types)]
 #[repr(u16)]
-pub enum Species
-{
+/// Species IDs for the corresponding English species name.
+pub enum Species {
     None,
     Bulbasaur,
     Ivysaur,
@@ -671,7 +671,7 @@ pub enum Species
     Vivillon,
     Litleo,
     Pyroar,
-    Flabebe, // Correct to `Flabébé` when non-ASCII idents are stabilized 
+    Flabebe, // Correct to `Flabébé` when non-ASCII idents are stabilized
     Floette,
     Florges,
     Skiddo,

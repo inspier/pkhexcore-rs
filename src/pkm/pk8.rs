@@ -1,6 +1,4 @@
-use crate::pkm::util::pokecrypto::{
-    decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED,
-};
+use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::bitconverter;
 use async_std::io;
 use async_std::prelude::*;

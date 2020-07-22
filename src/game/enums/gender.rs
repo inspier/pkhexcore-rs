@@ -1,4 +1,5 @@
 #[repr(u8)]
+/// Gender a PKM can have
 pub enum Gender {
     Male = 0,
     Female = 1,

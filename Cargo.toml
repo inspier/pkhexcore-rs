@@ -7,5 +7,6 @@ edition = "2018"
 [dependencies]
 log = "0.4"
 log-derive = "0.4.1"
-async-std = { version = "1.6.2" }
+num_enum = "0.5.0"
+async-std = "1.6.2"
 time = { version = "0.2.16", default-features = false }
