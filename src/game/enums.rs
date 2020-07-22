@@ -6,3 +6,6 @@ pub mod ball;
 
 /// Gender a PKM can have
 pub mod gender;
+
+/// Species IDs for the corresponding English species name.
+pub mod species;

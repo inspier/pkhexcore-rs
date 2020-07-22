@@ -1,7 +1,6 @@
 use crate::pkm::util::pokecrypto::{
-    decrypt_if_encrypted8, encrypt_array8, SIZE_8PARTY, SIZE_8STORED,
+    decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED,
 };
-use crate::pkm::util::pokedex;
 use crate::util::bitconverter;
 use async_std::io;
 use async_std::prelude::*;
@@ -9,10 +8,12 @@ use async_std::{fs, fs::File};
 use log_derive::{logfn, logfn_inputs};
 use std::fmt;
 
-// Alignment bytes
-static UNUSED: [u16; 12] = [
-    0x17, 0x1A, 0x1B, 0x23, 0x33, 0x3E, 0x3F, 0xE0, 0xE1, 0xC5, 0x115, 0x11F,
-];
+/// ## Alignment bytes
+/// ```
+/// static UNUSED: [u16; 12] = [
+///     0x17, 0x1A, 0x1B, 0x23, 0x33, 0x3E, 0x3F, 0xE0, 0xE1, 0xC5, 0x115, 0x11F,
+/// ];
+/// ```
 
 static FORMAT: u32 = 8;
 
@@ -39,7 +40,7 @@ impl Default for PK8 {
 }
 
 impl From<&[u8; 344]> for PK8 {
-    fn from(data: &[u8; 344]) -> Self {
+    fn from(data: &[u8; SIZE_8PARTY]) -> Self {
         let mut array = data.clone();
         decrypt_if_encrypted8(&mut array);
         PK8 {
@@ -65,10 +66,15 @@ impl From<&[u8]> for PK8 {
 
 impl PK8 {
     #[logfn(INFO)]
-    pub fn new() -> PK8 {
-        return PK8 {
+    pub fn new<T: Into<PK8>>(data: T) -> PK8 {
+        data.into()
+    }
+
+    #[logfn(INFO)]
+    pub fn empty() -> PK8 {
+        PK8 {
             ..Default::default()
-        };
+        }
     }
 
     #[logfn(INFO)]
@@ -84,10 +90,11 @@ impl PK8 {
         })
     }
 
+    // TODO: Fix when const-generics are stabilized
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
     pub async fn write_to(self: &Self, path: &str) -> io::Result<()> {
-        fs::write(path, self.data.to_vec()).await?;
+        fs::write(path, &self.data[..]).await?;
         Ok(())
     }
 
@@ -474,6 +481,7 @@ impl fmt::Debug for PK8 {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::game::enums::species::Species;
 
     #[test]
     fn pk8_from_array_test() -> std::io::Result<()> {
@@ -518,7 +526,7 @@ mod test {
             assert_eq!(0x0, dracovish.get_sanity());
             assert_eq!(0x3B4C, dracovish.get_checksum());
             assert_eq!(882, dracovish.get_species());
-            assert_eq!("Dracovish", pokedex::get_species(dracovish.get_species()));
+            assert_eq!(Species::Dracovish as i32, dracovish.get_species());
             assert_eq!(0, dracovish.get_held_item());
             assert_eq!(30756, dracovish.get_tid());
             assert_eq!(45312, dracovish.get_sid());

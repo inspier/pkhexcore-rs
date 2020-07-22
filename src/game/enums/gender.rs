@@ -5,6 +5,7 @@ pub enum Gender {
     Genderless = 2,
 }
 
+#[allow(non_upper_case_globals)]
 impl Gender {
     pub const Random: Gender = Gender::Genderless;
 }
