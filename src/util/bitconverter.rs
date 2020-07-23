@@ -169,10 +169,7 @@ impl ByteArray {
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
     fn new(data: Vec<u8>, size: usize) -> ByteArray {
-        ByteArray {
-            src: data,
-            size: size,
-        }
+        ByteArray { src: data, size }
     }
 
     #[logfn(INFO)]

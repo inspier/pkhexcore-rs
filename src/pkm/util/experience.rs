@@ -172,7 +172,7 @@ pub fn get_exp(current_level: u32, growth_rate: u32) -> Option<u32> {
     if current_level <= 1 || growth_rate > EXP_TABLE_WIDTH || current_level > EXP_TABLE_DEPTH {
         return None;
     }
-    return Some(EXP_TABLE[(current_level - 1) as usize][growth_rate as usize]);
+    Some(EXP_TABLE[(current_level - 1) as usize][growth_rate as usize])
 }
 
 /// Gets the nature value for "PK1" / "PK2" entries based on the experience
@@ -193,7 +193,7 @@ pub fn get_exp(current_level: u32, growth_rate: u32) -> Option<u32> {
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn get_nature_vc(exp: u32) -> u32 {
-    return exp % 25;
+    exp % 25
 }
 
 /// Gets the amount of EXP to be earned until the next level-up occurs.
@@ -225,7 +225,7 @@ pub fn get_exp_to_level_up(current_level: u32, growth_rate: u32) -> Option<u32> 
 
     let current_exp = EXP_TABLE[(current_level - 1) as usize][growth_rate as usize];
     let next_exp = EXP_TABLE[current_level as usize][growth_rate as usize];
-    return Some(next_exp - current_exp);
+    Some(next_exp - current_exp)
 }
 
 #[cfg(test)]

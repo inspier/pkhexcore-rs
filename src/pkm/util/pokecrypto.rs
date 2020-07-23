@@ -99,7 +99,7 @@ pub fn shuffle_array8(data: &[u8; 344], sv: u32, block_size: usize) -> [u8; 344]
         let slice_size = data_end - data_start;
         sdata[sdata_start..sdata_start + slice_size].copy_from_slice(&data[data_start..data_end]);
     }
-    return sdata;
+    sdata
 }
 
 /// Decrypts a Gen8 pkm byte array.

@@ -188,7 +188,7 @@ pub fn int32_to_bcd(mut input: i32, size: usize) -> Vec<u8> {
     for i in 0..size {
         let p = input % 100;
         input /= 100;
-        result[size - i - 1] = (p / 10 << 4 | p % 10) as u8;
+        result[size - i - 1] = ((p / 10) << 4 | (p % 10)) as u8;
     }
     result
 }

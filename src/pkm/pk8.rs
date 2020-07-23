@@ -1,4 +1,3 @@
-use crate::game::enums::{ability::Ability, nature::Nature, species::Species};
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::bitconverter;
 use async_std::io;
@@ -14,6 +13,7 @@ use std::{fmt, fmt::Debug};
 /// ];
 /// ```
 
+#[allow(dead_code)]
 static FORMAT: u32 = 8;
 
 pub const MAX_IV: i32 = 31;
@@ -480,6 +480,7 @@ impl fmt::Debug for PK8 {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::game::enums::{ability::Ability, nature::Nature, species::Species};
 
     #[test]
     fn pk8_from_array_test() -> std::io::Result<()> {
