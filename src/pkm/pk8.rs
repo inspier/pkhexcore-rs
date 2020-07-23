@@ -1,3 +1,4 @@
+use crate::game::enums::{ability::Ability, nature::Nature, species::Species};
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::bitconverter;
 use async_std::io;
@@ -190,8 +191,8 @@ impl PK8 {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn set_species(self: &mut Self, value: u16) {
-        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x08);
+    pub fn set_species<T: Into<u16> + std::fmt::Debug>(self: &mut Self, value: T) {
+        bitconverter::get_bytes(value.into()).copy_to(&mut self.data, 0x08);
     }
 
     // Held Item
@@ -479,7 +480,6 @@ impl fmt::Debug for PK8 {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::game::enums::{ability::Ability, nature::Nature, species::Species};
 
     #[test]
     fn pk8_from_array_test() -> std::io::Result<()> {
@@ -524,22 +524,22 @@ mod test {
             assert_eq!(0x0, dracovish.get_sanity());
             assert_eq!(0x3B4C, dracovish.get_checksum());
             assert_eq!(882, dracovish.get_species());
-            assert_eq!(Species::Dracovish as i32, dracovish.get_species());
+            assert_eq!(i32::from(Species::Dracovish), dracovish.get_species());
             assert_eq!(0, dracovish.get_held_item());
             assert_eq!(30756, dracovish.get_tid());
             assert_eq!(45312, dracovish.get_sid());
             assert_eq!(1250, dracovish.get_exp());
             assert_eq!(11, dracovish.get_ability());
-            assert_eq!(Ability::WaterAbsorb as i32, dracovish.get_ability());
+            assert_eq!(i32::from(Ability::WaterAbsorb), dracovish.get_ability());
             assert_eq!(1, dracovish.get_ability_number());
             assert_eq!(false, dracovish.get_favourite());
             assert_eq!(false, dracovish.get_can_gigantamax());
             assert_eq!(0, dracovish.get_mark_value());
             assert_eq!(0xC730F59, dracovish.get_pid());
             assert_eq!(16, dracovish.get_nature());
-            assert_eq!(Nature::Mild as i32, dracovish.get_nature());
+            assert_eq!(i32::from(Nature::Mild), dracovish.get_nature());
             assert_eq!(16, dracovish.get_stat_nature());
-            assert_eq!(Nature::Mild as i32, dracovish.get_stat_nature());
+            assert_eq!(i32::from(Nature::Mild), dracovish.get_stat_nature());
             assert_eq!(false, dracovish.get_fateful_encounter());
             Ok(())
         })

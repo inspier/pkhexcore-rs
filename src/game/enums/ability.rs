@@ -264,3 +264,19 @@ pub enum Ability {
     UnseenFist,
     MAX_COUNT,
 }
+
+macro_rules! impl_from {
+    (for $($t:tt),+) => {
+        $(impl_from!($t);)*
+    };
+
+    ($t:ident) => {
+        impl From<Ability> for $t {
+            fn from(ability: Ability) -> $t {
+                ability as $t
+            }
+        }
+    };
+}
+
+impl_from! (for i32);

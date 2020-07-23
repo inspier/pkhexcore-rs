@@ -1,6 +1,7 @@
 #[allow(non_camel_case_types)]
 #[repr(u16)]
 /// Species IDs for the corresponding English species name.
+#[derive(Debug, PartialEq, PartialOrd)]
 pub enum Species {
     None,
     Bulbasaur,
@@ -898,3 +899,19 @@ pub enum Species {
     Zarude,
     MAX_COUNT,
 }
+
+macro_rules! impl_from {
+    (for $($t:tt),+) => {
+        $(impl_from!($t);)*
+    };
+
+    ($t:ident) => {
+        impl From<Species> for $t {
+            fn from(species: Species) -> $t {
+                species as $t
+            }
+        }
+    };
+}
+
+impl_from! (for u16, i32);
