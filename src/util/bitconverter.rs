@@ -11,7 +11,7 @@ use std::{convert::TryInto, fmt::Debug};
 ///
 /// ```
 /// use pkhexcore::util::bitconverter::to_int16;
-/// let buffer: Vec<u8> = vec! [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
+/// let buffer =  [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
 /// assert_eq!(-256, to_int16(&buffer, 2));
 /// ```
 ///
@@ -36,7 +36,7 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 ///
 /// ```
 /// use pkhexcore::util::bitconverter::to_int32;
-/// let buffer: Vec<u8> = vec! [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
+/// let buffer =  [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(-265875328, to_int32(&buffer, 3));
 /// ```
 ///
@@ -61,7 +61,7 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 ///
 /// ```
 /// use pkhexcore::util::bitconverter::to_int64;
-/// let buffer: Vec<u8> = vec! [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
+/// let buffer =  [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(-1019801265028202496, to_int64(&buffer, 1));
 /// ```
 ///
@@ -86,7 +86,7 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 ///
 /// ```
 /// use pkhexcore::util::bitconverter::to_uint16;
-/// let buffer: Vec<u8> = vec! [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
+/// let buffer =  [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
 /// assert_eq!(65280, to_uint16(&buffer, 2));
 /// ```
 ///
@@ -111,7 +111,7 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 ///
 /// ```
 /// use pkhexcore::util::bitconverter::to_uint32;
-/// let buffer: Vec<u8> = vec! [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 19];
+/// let buffer =  [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 19];
 /// assert_eq!(261888, to_uint32(&buffer, 6));
 /// ```
 ///
@@ -136,7 +136,7 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 ///
 /// ```
 /// use pkhexcore::util::bitconverter::to_uint64;
-/// let buffer: Vec<u8> = vec! [255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 170, 170, 170, 170, 170];
+/// let buffer =  [255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 170, 170, 170, 170, 170];
 /// assert_eq!(255, to_uint64(&buffer, 2));
 /// ```
 ///
@@ -210,7 +210,7 @@ mod test {
 
     #[test]
     fn to_int16_test_le() {
-        let buffer = vec![15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
+        let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
         assert_eq!(15, to_int16(&buffer, 0));
         assert_eq!(0, to_int16(&buffer, 1));
         assert_eq!(-32768, to_int16(&buffer, 2));
@@ -223,13 +223,13 @@ mod test {
     #[test]
     #[should_panic]
     fn to_int16_panic_test() {
-        let buffer = vec![15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
+        let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
         to_uint16(&buffer, 11);
     }
 
     #[test]
     fn to_int32_test_le() {
-        let buffer = vec![
+        let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
         assert_eq!(15, to_int32(&buffer, 0));
@@ -244,7 +244,7 @@ mod test {
     #[test]
     #[should_panic]
     fn to_int32_panic_test() {
-        let buffer = vec![
+        let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
         to_int32(&buffer, 16);
@@ -252,7 +252,7 @@ mod test {
 
     #[test]
     fn to_int64_test_le() {
-        let buffer = vec![
+        let buffer = [
             0, 54, 101, 196, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 202, 154, 59, 0,
             0, 0, 0, 1, 0, 0, 0, 0, 255, 255, 255, 255, 1, 0, 0, 255, 255, 255, 255, 255, 255, 255,
             127, 86, 85, 85, 85, 85, 85, 255, 255, 170, 170, 170, 170, 170, 170, 0, 0, 100, 167,
@@ -274,7 +274,7 @@ mod test {
     #[test]
     #[should_panic]
     fn to_int64_panic_test() {
-        let buffer = vec![
+        let buffer = [
             0, 54, 101, 196, 255, 255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 128, 0, 202, 154, 59, 0,
             0, 0, 0, 1, 0, 0, 0, 0, 255, 255, 255, 255, 1, 0, 0, 255, 255, 255, 255, 255, 255, 255,
             127, 86, 85, 85, 85, 85, 85, 255, 255, 170, 170, 170, 170, 170, 170, 0, 0, 100, 167,
@@ -285,7 +285,7 @@ mod test {
 
     #[test]
     fn to_uint16_test_le() {
-        let buffer = vec![15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
+        let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
         assert_eq!(15, to_uint16(&buffer, 0));
         assert_eq!(0, to_uint16(&buffer, 1));
         assert_eq!(1023, to_uint16(&buffer, 3));
@@ -297,13 +297,13 @@ mod test {
     #[test]
     #[should_panic]
     fn to_uint16_panic_test() {
-        let buffer = vec![15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
+        let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
         to_uint16(&buffer, 9);
     }
 
     #[test]
     fn to_uint32_test_le() {
-        let buffer = vec![
+        let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
         assert_eq!(15, to_uint32(&buffer, 0));
@@ -318,7 +318,7 @@ mod test {
     #[test]
     #[should_panic]
     fn to_uint32_panic_test() {
-        let buffer = vec![
+        let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
         to_uint32(&buffer, 16);
@@ -326,7 +326,7 @@ mod test {
 
     #[test]
     fn to_uint64_test_le() {
-        let buffer = vec![
+        let buffer = [
             255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 100, 167, 179, 182, 224, 13, 0, 202,
             154, 59, 0, 0, 0, 0, 170, 170, 170, 170, 170, 170, 0, 0, 232, 137, 4, 35, 199, 138,
             255, 255, 255, 255, 255, 255, 255, 255, 127,
@@ -345,7 +345,7 @@ mod test {
     #[test]
     #[should_panic]
     fn to_uint64_panic_test() {
-        let buffer = vec![
+        let buffer = [
             255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 100, 167, 179, 182, 224, 13, 0, 202,
             154, 59, 0, 0, 0, 0, 170, 170, 170, 170, 170, 170, 0, 0, 232, 137, 4, 35, 199, 138,
             255, 255, 255, 255, 255, 255, 255, 255, 127,

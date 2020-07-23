@@ -21,7 +21,7 @@ pub enum Flag {
 /// ```
 /// use pkhexcore::util::flagutil::*;
 ///
-/// let buffer = vec![15, 0, 16, 255];
+/// let buffer = [15, 0, 16, 255];
 /// assert_eq!(Flag::Set, get_flag(&buffer, 0, 0));
 /// ```
 ///
@@ -49,7 +49,7 @@ pub fn get_flag(array: &[u8], offset: usize, mut bit_index: u32) -> Flag {
 /// ```
 /// use pkhexcore::util::flagutil::*;
 ///
-/// let mut buffer = vec![15, 0, 16, 255];
+/// let mut buffer = [15, 0, 16, 255];
 /// set_flag(&mut buffer, 0, 0, Flag::Unset);
 /// assert_eq!(Flag::Unset, get_flag(&buffer, 0, 0));
 /// ```
@@ -71,7 +71,7 @@ mod test {
 
     #[test]
     fn get_flag_test() {
-        let buffer = vec![15, 0, 16, 255];
+        let buffer = [15, 0, 16, 255];
         for i in 0..4 {
             assert_eq!(Flag::Set, get_flag(&buffer, 0, i));
             assert_eq!(Flag::Unset, get_flag(&buffer, 1, i));
@@ -85,7 +85,7 @@ mod test {
 
     #[test]
     fn set_flag_test() {
-        let mut buffer = vec![15, 0, 16, 255];
+        let mut buffer = [15, 0, 16, 255];
         set_flag(&mut buffer, 0, 0, Flag::Unset);
         assert_eq!(Flag::Unset, get_flag(&buffer, 0, 0));
         for i in 0..8 {
