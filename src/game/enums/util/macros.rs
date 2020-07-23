@@ -1,12 +1,14 @@
+#[macro_use]
 macro_rules! impl_from {
-    (for $($type:tt, $enum_name:tt),+) => {
-        $(impl_from!($t);)*
+    ($enum_name:tt for $($type:tt),+) => {
+        $(impl_from!($type, $enum_name, $enum_name);)*
     };
 
-    ($t:ident) => {
+    ($type:ident, $enum_name:ident, $var_name:ident) => {
+
         impl From<$enum_name> for $type {
-            fn from($enum_name: Species) -> $type {
-                $enum_name as $type
+            fn from($var_name: $enum_name) -> $type {
+                $var_name as $type
             }
         }
     };

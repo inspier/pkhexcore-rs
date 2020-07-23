@@ -5,7 +5,7 @@ use async_std::io;
 use async_std::prelude::*;
 use async_std::{fs, fs::File};
 use log_derive::{logfn, logfn_inputs};
-use std::fmt;
+use std::{fmt, fmt::Debug};
 
 /// ## Alignment bytes
 /// ```
@@ -40,7 +40,7 @@ impl Default for PK8 {
 
 impl From<&[u8; 344]> for PK8 {
     fn from(data: &[u8; SIZE_8PARTY]) -> Self {
-        let mut array = data.clone();
+        let mut array = *data;
         decrypt_if_encrypted8(&mut array);
         PK8 {
             data: array,
@@ -191,7 +191,7 @@ impl PK8 {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn set_species<T: Into<u16> + std::fmt::Debug>(self: &mut Self, value: T) {
+    pub fn set_species<T: Into<u16> + Debug>(self: &mut Self, value: T) {
         bitconverter::get_bytes(value.into()).copy_to(&mut self.data, 0x08);
     }
 
@@ -291,8 +291,8 @@ impl PK8 {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn set_ability(self: &mut Self, value: u16) {
-        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x14);
+    pub fn set_ability<T: Into<u16> + Debug>(self: &mut Self, value: T) {
+        bitconverter::get_bytes(value.into()).copy_to(&mut self.data, 0x14);
     }
 
     // Ability Number
@@ -311,8 +311,8 @@ impl PK8 {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn set_ability_number(self: &mut Self, value: i32) {
-        self.data[0x16] = ((self.data[0x16] & !7) as i32 | (value & 7)) as u8;
+    pub fn set_ability_number<T: Into<i32> + Debug>(self: &mut Self, value: T) {
+        self.data[0x16] = ((self.data[0x16] & !7) as i32 | (value.into() & 7)) as u8;
     }
 
     // Favourite

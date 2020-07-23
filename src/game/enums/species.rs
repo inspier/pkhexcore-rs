@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 #[allow(non_camel_case_types)]
 #[repr(u16)]
 /// Species IDs for the corresponding English species name.
@@ -900,18 +902,5 @@ pub enum Species {
     MAX_COUNT,
 }
 
-macro_rules! impl_from {
-    (for $($t:tt),+) => {
-        $(impl_from!($t);)*
-    };
-
-    ($t:ident) => {
-        impl From<Species> for $t {
-            fn from(species: Species) -> $t {
-                species as $t
-            }
-        }
-    };
-}
-
-impl_from! (for u16, i32);
+#[allow(non_snake_case)]
+impl_from! (Species for u16, i32);

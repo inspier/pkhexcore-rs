@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 #[repr(u8)]
 /// Nature ID values for the corresponding English nature name.
 pub enum Nature {
@@ -30,18 +32,4 @@ pub enum Nature {
     Random = 25,
 }
 
-macro_rules! impl_from {
-    (for $($t:tt),+) => {
-        $(impl_from!($t);)*
-    };
-
-    ($t:ident) => {
-        impl From<Nature> for $t {
-            fn from(nature: Nature) -> $t {
-                nature as $t
-            }
-        }
-    };
-}
-
-impl_from! (for u8, i32);
+impl_from! (Nature for u8, i32);

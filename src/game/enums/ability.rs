@@ -1,4 +1,6 @@
+#![allow(non_snake_case)]
 #[allow(non_camel_case_types)]
+
 /// Ability IDs for the corresponding English ability name.
 pub enum Ability {
     None,
@@ -265,18 +267,4 @@ pub enum Ability {
     MAX_COUNT,
 }
 
-macro_rules! impl_from {
-    (for $($t:tt),+) => {
-        $(impl_from!($t);)*
-    };
-
-    ($t:ident) => {
-        impl From<Ability> for $t {
-            fn from(ability: Ability) -> $t {
-                ability as $t
-            }
-        }
-    };
-}
-
-impl_from! (for i32);
+impl_from! (Ability for i32);

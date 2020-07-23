@@ -1,3 +1,7 @@
+/// Useful utilities for Enums
+#[macro_use]
+pub mod util;
+
 /// Ability IDs for the corresponding English ability name.
 pub mod ability;
 

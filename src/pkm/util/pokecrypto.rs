@@ -88,7 +88,7 @@ const BLOCK_POSITION_INVERT: [u8; 32] = [
 ///
 #[inline]
 pub fn shuffle_array8(data: &[u8; 344], sv: u32, block_size: usize) -> [u8; 344] {
-    let mut sdata = data.clone();
+    let mut sdata = *data;
     let index: u32 = sv * 4;
     let start: usize = 8;
     for block in 0..4 {
