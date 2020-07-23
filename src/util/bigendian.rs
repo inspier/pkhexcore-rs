@@ -18,12 +18,11 @@ use std::convert::TryInto;
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
-    let result = i16::from_be_bytes(
+    i16::from_be_bytes(
         data[start_index..start_index + 2]
             .try_into()
             .expect("Failed to read i16. Invalid buffer provided."),
-    );
-    result
+    )
 }
 
 /// Returns a 32-bit signed integer converted from four bytes at a specified
@@ -43,12 +42,11 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
-    let result = i32::from_be_bytes(
+    i32::from_be_bytes(
         data[start_index..start_index + 4]
             .try_into()
             .expect("Failed to read i32. Invalid buffer provided."),
-    );
-    result
+    )
 }
 
 /// Returns a 64-bit signed integer converted from eight bytes at a specified
@@ -68,12 +66,11 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
-    let result = i64::from_be_bytes(
+    i64::from_be_bytes(
         data[start_index..start_index + 8]
             .try_into()
             .expect("Failed to read i64. Invalid buffer provided."),
-    );
-    result
+    )
 }
 
 /// Returns a 16-bit unsigned integer converted from two bytes at a specified
@@ -92,12 +89,11 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
-    let result = u16::from_be_bytes(
+    u16::from_be_bytes(
         data[start_index..start_index + 2]
             .try_into()
             .expect("Failed to read u16. Invalid buffer provided."),
-    );
-    result
+    )
 }
 
 /// Returns a 32-bit unsigned integer converted from four bytes at a specified
@@ -116,12 +112,11 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
-    let result = u32::from_be_bytes(
+    u32::from_be_bytes(
         data[start_index..start_index + 4]
             .try_into()
             .expect("Failed to read u32. Invalid buffer provided."),
-    );
-    result
+    )
 }
 
 /// Returns a 64-bit unsigned integer converted from eight bytes at a specified
@@ -140,12 +135,11 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
-    let result = u64::from_be_bytes(
+    u64::from_be_bytes(
         data[start_index..start_index + 8]
             .try_into()
             .expect("Failed to read u64. Invalid buffer provided."),
-    );
-    result
+    )
 }
 
 /// Returns a 32-bit signed integer converted from bytes in a Binary Coded
@@ -171,6 +165,7 @@ pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
     }
     result
 }
+
 /// Returns the specified 32-bit signed integer value as an array of Binary
 /// Coded Decimal format bytes.
 ///
@@ -184,7 +179,7 @@ pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn int32_to_bcd(mut input: i32, size: usize) -> Vec<u8> {
-    let mut result: Vec<u8> = vec![0; size];
+    let mut result: Vec<u8> = vec![0; size]; // TODO: replace once const-generics are stabilized
     for i in 0..size {
         let p = input % 100;
         input /= 100;
