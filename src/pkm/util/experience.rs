@@ -7,6 +7,7 @@ const EXP_TABLE_DEPTH: u32 = 100;
 const EXP_TABLE_WIDTH: u32 = 6;
 
 /// Experience required for next level [0,99]
+#[allow(clippy::zero_prefixed_literal)]
 const EXP_TABLE: [[u32; EXP_TABLE_WIDTH as usize]; EXP_TABLE_DEPTH as usize] = [
     [0000000, 0000000, 0000000, 0000000, 0000000, 0000000],
     [0000008, 0000015, 0000004, 0000009, 0000006, 0000010],

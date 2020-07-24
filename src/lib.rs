@@ -1,4 +1,5 @@
 /// Module containing Pokemon file format related logic
+#[macro_use]
 pub mod pkm;
 
 /// Module containing utilities to manipulate Pokemon data files

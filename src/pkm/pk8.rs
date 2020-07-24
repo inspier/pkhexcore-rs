@@ -1,10 +1,11 @@
-use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
-use crate::util::bitconverter;
 use async_std::io;
 use async_std::prelude::*;
 use async_std::{fs, fs::File};
 use log_derive::{logfn, logfn_inputs};
 use std::{fmt, fmt::Debug};
+
+use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
+use crate::util::bitconverter;
 
 /// ## Alignment bytes
 /// ```
@@ -22,22 +23,6 @@ pub const OT_LENGTH: i32 = 12;
 pub const NICK_LENGTH: i32 = 12;
 
 // TODO: PersonalInfo
-
-macro_rules! get {
-    ($self:ident, $field:ident) => {
-        paste::item! {
-            $self.[<get_ $field:snake>]()
-        }
-    };
-}
-
-macro_rules! set {
-    ($self:ident, $field:ident) => {
-        paste::item! {
-            $self.[<set_ $field:snake>]()
-        }
-    };
-}
 
 pub struct PK8 {
     data: [u8; SIZE_8PARTY],
@@ -195,7 +180,7 @@ impl PK8 {
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
     pub fn species<T: Into<u16> + Debug>(mut self: Self, value: T) -> Self {
-        self.set_species(value.into());
+        self.set_species(value);
         self
     }
 
@@ -558,6 +543,17 @@ mod test {
             assert_eq!(16, get!(dracovish, StatNature));
             assert_eq!(i32::from(Nature::Mild), get!(dracovish, StatNature));
             assert_eq!(false, get!(dracovish, FatefulEncounter));
+            Ok(())
+        })
+    }
+
+    #[test]
+    fn pk8_set_test() -> io::Result<()> {
+        async_std::task::block_on(async {
+            let mut dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
+            assert_eq!(0xAC731A09, get!(dracovish, EncryptionConstant));
+            set!(dracovish, EncryptionConstant, 0xDEADBEEF);
+            assert_eq!(0xDEADBEEF, get!(dracovish, EncryptionConstant));
             Ok(())
         })
     }

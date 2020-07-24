@@ -1,4 +1,5 @@
 /// Module containing utilities to manipulate Pokemon data files
+#[macro_use]
 pub mod util;
 
 /// Generation 8
