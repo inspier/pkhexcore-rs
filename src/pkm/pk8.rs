@@ -23,6 +23,22 @@ pub const NICK_LENGTH: i32 = 12;
 
 // TODO: PersonalInfo
 
+macro_rules! get {
+    ($self:ident, $field:ident) => {
+        paste::item! {
+            $self.[<get_ $field:snake>]()
+        }
+    };
+}
+
+macro_rules! set {
+    ($self:ident, $field:ident) => {
+        paste::item! {
+            $self.[<set_ $field:snake>]()
+        }
+    };
+}
+
 pub struct PK8 {
     data: [u8; SIZE_8PARTY],
     affixed_ribbon: i8, // 00 would make it show Kalos Champion
@@ -178,8 +194,8 @@ impl PK8 {
     // Species
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn species(mut self: Self, value: u32) -> Self {
-        self.set_species(value as u16);
+    pub fn species<T: Into<u16> + Debug>(mut self: Self, value: T) -> Self {
+        self.set_species(value.into());
         self
     }
 
@@ -278,8 +294,8 @@ impl PK8 {
     // Ability
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn ability(mut self: Self, value: u32) -> Self {
-        self.set_ability(value as u16);
+    pub fn ability<T: Into<u16> + Debug>(mut self: Self, value: T) -> Self {
+        self.set_ability(value);
         self
     }
 
@@ -405,7 +421,7 @@ impl PK8 {
     // Nature
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn nature(mut self: Self, value: i32) -> Self {
+    pub fn nature<T: Into<i32> + Debug>(mut self: Self, value: T) -> Self {
         self.set_nature(value);
         self
     }
@@ -418,14 +434,14 @@ impl PK8 {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn set_nature(self: &mut Self, value: i32) {
-        self.data[0x20] = value as u8;
+    pub fn set_nature<T: Into<i32> + Debug>(self: &mut Self, value: T) {
+        self.data[0x20] = value.into() as u8;
     }
 
     // Stat Nature
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn stat_nature(mut self: Self, value: i32) -> Self {
+    pub fn stat_nature<T: Into<i32> + Debug>(mut self: Self, value: T) -> Self {
         self.set_stat_nature(value);
         self
     }
@@ -438,8 +454,8 @@ impl PK8 {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn set_stat_nature(self: &mut Self, value: i32) {
-        self.data[0x21] = value as u8;
+    pub fn set_stat_nature<T: Into<i32> + Debug>(self: &mut Self, value: T) {
+        self.data[0x21] = value.into() as u8;
     }
 
     // Fateful Encounter
@@ -521,27 +537,27 @@ mod test {
     fn pk8_get_test() -> io::Result<()> {
         async_std::task::block_on(async {
             let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
-            assert_eq!(0xAC731A09, dracovish.get_encryption_constant());
-            assert_eq!(0x0, dracovish.get_sanity());
-            assert_eq!(0x3B4C, dracovish.get_checksum());
-            assert_eq!(882, dracovish.get_species());
-            assert_eq!(i32::from(Species::Dracovish), dracovish.get_species());
-            assert_eq!(0, dracovish.get_held_item());
-            assert_eq!(30756, dracovish.get_tid());
-            assert_eq!(45312, dracovish.get_sid());
-            assert_eq!(1250, dracovish.get_exp());
-            assert_eq!(11, dracovish.get_ability());
-            assert_eq!(i32::from(Ability::WaterAbsorb), dracovish.get_ability());
-            assert_eq!(1, dracovish.get_ability_number());
-            assert_eq!(false, dracovish.get_favourite());
-            assert_eq!(false, dracovish.get_can_gigantamax());
-            assert_eq!(0, dracovish.get_mark_value());
-            assert_eq!(0xC730F59, dracovish.get_pid());
-            assert_eq!(16, dracovish.get_nature());
-            assert_eq!(i32::from(Nature::Mild), dracovish.get_nature());
-            assert_eq!(16, dracovish.get_stat_nature());
-            assert_eq!(i32::from(Nature::Mild), dracovish.get_stat_nature());
-            assert_eq!(false, dracovish.get_fateful_encounter());
+            assert_eq!(0xAC731A09, get!(dracovish, EncryptionConstant));
+            assert_eq!(0x0, get!(dracovish, Sanity));
+            assert_eq!(0x3B4C, get!(dracovish, Checksum));
+            assert_eq!(882, get!(dracovish, Species));
+            assert_eq!(i32::from(Species::Dracovish), get!(dracovish, Species));
+            assert_eq!(0, get!(dracovish, HeldItem));
+            assert_eq!(30756, get!(dracovish, tid));
+            assert_eq!(45312, get!(dracovish, sid));
+            assert_eq!(1250, get!(dracovish, Exp));
+            assert_eq!(11, get!(dracovish, Ability));
+            assert_eq!(i32::from(Ability::WaterAbsorb), get!(dracovish, Ability));
+            assert_eq!(1, get!(dracovish, AbilityNumber));
+            assert_eq!(false, get!(dracovish, Favourite));
+            assert_eq!(false, get!(dracovish, CanGigantamax));
+            assert_eq!(0, get!(dracovish, MarkValue));
+            assert_eq!(0xC730F59, get!(dracovish, pid));
+            assert_eq!(16, get!(dracovish, Nature));
+            assert_eq!(i32::from(Nature::Mild), get!(dracovish, Nature));
+            assert_eq!(16, get!(dracovish, StatNature));
+            assert_eq!(i32::from(Nature::Mild), get!(dracovish, StatNature));
+            assert_eq!(false, get!(dracovish, FatefulEncounter));
             Ok(())
         })
     }
