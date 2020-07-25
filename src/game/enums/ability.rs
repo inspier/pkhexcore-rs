@@ -2,6 +2,7 @@
 #[allow(non_camel_case_types)]
 
 /// Ability IDs for the corresponding English ability name.
+#[derive(Debug, PartialEq, PartialOrd)]
 pub enum Ability {
     None,
     Stench,
@@ -268,3 +269,19 @@ pub enum Ability {
 }
 
 impl_from! (Ability for i32);
+
+macro_rules! ability {
+    ($ability:tt) => {
+        string_to_enum!(Ability, $ability)
+    };
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn ability_macro_test() {
+        assert_eq!(Ability::IntrepidSword, ability!(IntrepidSword));
+    }
+}

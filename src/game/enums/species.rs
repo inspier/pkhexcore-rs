@@ -903,4 +903,20 @@ pub enum Species {
 }
 
 #[allow(non_snake_case)]
-impl_from! (Species for u16, i32);
+impl_from!(Species for u16, i32);
+
+macro_rules! species {
+    ($species:tt) => {
+        string_to_enum!(Species, $species)
+    };
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn species_macro_test() {
+        assert_eq!(Species::Blastoise, species!(Blastoise));
+    }
+}
