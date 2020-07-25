@@ -17,8 +17,6 @@ macro_rules! impl_from {
 #[macro_use]
 macro_rules! string_to_enum {
     ($enum_name:tt, $value_name:tt) => {
-        paste::item! {
         $enum_name::$value_name
-        }
     };
 }
