@@ -2,7 +2,7 @@ use async_std::io;
 use async_std::prelude::*;
 use async_std::{fs, fs::File};
 use log_derive::{logfn, logfn_inputs};
-use std::{fmt, fmt::Debug};
+use std::{convert::TryFrom, fmt, fmt::Debug};
 
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::bitconverter;
@@ -50,16 +50,20 @@ impl From<&[u8; 344]> for PK8 {
     }
 }
 
-impl From<&[u8]> for PK8 {
-    #[logfn(INFO)]
-    #[logfn_inputs(Debug)]
-    fn from(data: &[u8]) -> Self {
-        let mut array: [u8; SIZE_8PARTY] = [0; SIZE_8PARTY];
-        array.copy_from_slice(&data[0..SIZE_8PARTY]);
-        decrypt_if_encrypted8(&mut array);
-        PK8 {
-            data: array,
-            ..Default::default()
+impl TryFrom<&[u8]> for PK8 {
+    type Error = &'static str;
+
+    fn try_from(data: &[u8]) -> Result<Self, Self::Error> {
+        if data.len() >= SIZE_8PARTY {
+            let mut array: [u8; SIZE_8PARTY] = [0; SIZE_8PARTY];
+            array.copy_from_slice(&data[0..SIZE_8PARTY]);
+            decrypt_if_encrypted8(&mut array);
+            Ok(PK8 {
+                data: array,
+                ..Default::default()
+            })
+        } else {
+            Err("Invalid size container provided.")
         }
     }
 }
@@ -275,6 +279,26 @@ impl PK8 {
     pub fn set_fateful_encounter(self: &mut Self, value: bool) {
         self.data[0x22] = ((self.data[0x22] & !0x01) | (if value { 1 } else { 0 })) as u8;
     }
+
+    // Flag2
+    field!(self; Flag2; get: bool => (self.data[0x22] & 2) == 2; set: bool);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_flag2(self: &mut Self, value: bool) {
+        self.data[0x22] = ((self.data[0x22] & !0x02) | (if value { 2 } else { 0 })) as u8
+    }
+
+    // Gender
+    field!(self; Gender; get: i32 => ((self.data[0x22] >> 2) & 0x3) as i32; set: u8);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_gender(self: &mut Self, value: u8) {
+        self.data[0x22] = ((self.data[0x22] & 0xF3) | (value << 2)) as u8
+    }
+
+    // 0x23 alignment unused
 }
 
 impl PartialEq for PK8 {
@@ -294,7 +318,7 @@ impl fmt::Debug for PK8 {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::game::enums::{ability::Ability, nature::Nature, species::Species};
+    use crate::game::enums::{ability::Ability, gender::Gender, nature::Nature, species::Species};
 
     #[test]
     fn pk8_from_array_test() -> std::io::Result<()> {
@@ -313,7 +337,8 @@ mod test {
     fn pk8_from_vec_test() -> io::Result<()> {
         async_std::task::block_on(async {
             let orbeetle_e = PK8::read_from("src/pkm/util/tests/data/Orbeetle.ek8").await?;
-            let orbeetle_d = PK8::from(&*include_bytes!("util/tests/data/Orbeetle.pk8").to_vec());
+            let orbeetle_d =
+                PK8::try_from(&*include_bytes!("util/tests/data/Orbeetle.pk8")).unwrap();
 
             assert_eq!(true, orbeetle_e == orbeetle_d);
             Ok(())
@@ -356,6 +381,8 @@ mod test {
             assert_eq!(16, get!(dracovish, StatNature));
             assert_eq!(i32::from(Nature::Mild), get!(dracovish, StatNature));
             assert_eq!(false, get!(dracovish, FatefulEncounter));
+            assert_eq!(false, get!(dracovish, Flag2));
+            assert_eq!(i32::from(Gender::Genderless), get!(dracovish, Gender));
             Ok(())
         })
     }

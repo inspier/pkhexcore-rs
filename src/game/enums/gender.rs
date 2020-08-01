@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+#[allow(non_camel_case_types)]
 #[repr(u8)]
 /// Gender a PKM can have
 pub enum Gender {
@@ -10,3 +12,5 @@ pub enum Gender {
 impl Gender {
     pub const Random: Gender = Gender::Genderless;
 }
+
+impl_from! (Gender for u8, i32);

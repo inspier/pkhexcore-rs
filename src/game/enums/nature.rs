@@ -2,6 +2,7 @@
 
 #[repr(u8)]
 /// Nature ID values for the corresponding English nature name.
+#[derive(Debug, PartialEq, PartialOrd)]
 pub enum Nature {
     Hardy = 0,
     Lonely = 1,
@@ -33,3 +34,19 @@ pub enum Nature {
 }
 
 impl_from! (Nature for u8, i32);
+
+macro_rules! nature {
+    ($nature:tt) => {
+        string_to_enum!(Nature, $nature)
+    };
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn nature_macro_test() {
+        assert_eq!(Nature::Jolly, nature!(Jolly));
+    }
+}
