@@ -31,6 +31,7 @@ macro_rules! field {
             }
 
             #[doc = "Get the `" $field "`."]
+            #[inline]
             pub fn [<get_ $field:snake>]($self: &Self) -> $out_type {
                 $getter
             }
@@ -49,6 +50,7 @@ macro_rules! field {
             }
 
             #[doc = "Get the `" $field "`."]
+            #[inline]
             pub fn [<get_ $field:snake>]($self: &Self) -> $out_type {
                 $getter
             }

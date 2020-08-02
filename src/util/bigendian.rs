@@ -109,7 +109,7 @@ pub const fn to_uint32(data: &[u8; 4]) -> u32 {
 
 #[inline]
 pub const fn to_uint64(data: &[u8; 8]) -> u64 {
-    u64::from_le_bytes(*data)
+    u64::from_be_bytes(*data)
 }
 
 /// Returns a 32-bit signed integer converted from bytes in a Binary Coded
@@ -275,7 +275,7 @@ mod test {
         let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
-        to_uint32(array_four!(buffer, 16))
+        to_uint32(array_four!(buffer, 16));
     }
 
     #[test]
