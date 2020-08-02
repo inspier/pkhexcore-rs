@@ -1,5 +1,6 @@
 use crate::util::bitconverter;
 use log_derive::{logfn, logfn_inputs};
+use std::convert::TryInto;
 
 pub const SIZE_1ULIST: usize = 69;
 pub const SIZE_1JLIST: usize = 59;
@@ -109,7 +110,7 @@ pub fn shuffle_array8(data: &[u8; 344], sv: u32, block_size: usize) -> [u8; 344]
 /// * `ekm` - Encrypted Pokémon data
 ///
 pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
-    let pv: u32 = bitconverter::to_uint32(ekm, 0);
+    let pv: u32 = bitconverter::to_uint32(array_four!(ekm, 0));
     let sv = pv >> 13 & 31;
     crypt_pkm(ekm, pv, SIZE_8BLOCK);
     shuffle_array8(ekm, sv, SIZE_8BLOCK)
@@ -122,7 +123,7 @@ pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
 /// * `pkm` - Decrypted Pokémon data
 ///
 pub fn encrypt_array8(pkm: &mut [u8; 344]) -> [u8; 344] {
-    let pv: u32 = bitconverter::to_uint32(pkm, 0);
+    let pv: u32 = bitconverter::to_uint32(array_four!(pkm, 0));
     let sv = pv >> 13 & 31;
     let mut ekm = shuffle_array8(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
     crypt_pkm(&mut ekm, pv, SIZE_8BLOCK);
@@ -170,7 +171,7 @@ fn crypt(data: &mut [u8], seed: &mut u32, i: usize) {
 pub fn get_chk(data: &[u8]) -> u16 {
     let mut chk = 0;
     for i in (8..SIZE_6STORED).step_by(2) {
-        chk += bitconverter::to_uint16(data, i as usize);
+        chk += bitconverter::to_uint16(array_two!(data, i as usize));
     }
     chk
 }
@@ -182,7 +183,9 @@ pub fn get_chk(data: &[u8]) -> u16 {
 /// * `pkm` - Possibly encrypted Pokémon data.
 ///
 pub fn decrypt_if_encrypted8(pkm: &mut [u8; 344]) {
-    if bitconverter::to_uint16(pkm, 0x70) != 0 || bitconverter::to_uint16(pkm, 0xC0) != 0 {
+    if bitconverter::to_uint16(array_two!(pkm, 0x70)) != 0
+        || bitconverter::to_uint16(array_two!(pkm, 0xC0)) != 0
+    {
         *pkm = decrypt_array8(pkm);
     }
 }

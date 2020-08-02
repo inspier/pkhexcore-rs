@@ -2,7 +2,11 @@ use async_std::io;
 use async_std::prelude::*;
 use async_std::{fs, fs::File};
 use log_derive::{logfn, logfn_inputs};
-use std::{convert::TryFrom, fmt, fmt::Debug};
+use std::{
+    convert::{TryFrom, TryInto},
+    fmt,
+    fmt::Debug,
+};
 
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::bitconverter;
@@ -107,7 +111,7 @@ impl PK8 {
     pub fn calculate_checksum(self: &Self) -> u16 {
         let mut chk: u16 = 0;
         for i in (8..SIZE_8STORED).step_by(2) {
-            chk = chk.wrapping_add(bitconverter::to_uint16(&self.data, i));
+            chk = chk.wrapping_add(bitconverter::to_uint16(array_two!(self.data, i)));
         }
         chk
     }
@@ -118,7 +122,7 @@ impl PK8 {
     // }
 
     // Encryption Constant
-    field!(self; EncryptionConstant; get: u32 => bitconverter::to_uint32(&self.data, 0x00); set: u32);
+    field!(self; EncryptionConstant; get: u32 => bitconverter::to_uint32(array_four!(self.data, 0x00)); set: u32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -127,7 +131,7 @@ impl PK8 {
     }
 
     // Sanity
-    field!(self; Sanity; get: u16 => bitconverter::to_uint16(&self.data, 0x04); set: u16);
+    field!(self; Sanity; get: u16 => bitconverter::to_uint16(array_two!(self.data, 0x04)); set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -136,7 +140,7 @@ impl PK8 {
     }
 
     // Checksum
-    field!(self; Checksum; get: u16 => bitconverter::to_uint16(&self.data, 0x06); set: u16);
+    field!(self; Checksum; get: u16 => bitconverter::to_uint16(array_two!(self.data, 0x06)); set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -148,7 +152,7 @@ impl PK8 {
     // Region A
 
     // Species
-    field!(self; Species; get: i32 => bitconverter::to_uint16(&self.data, 0x08) as i32; set: T: Into<u16>);
+    field!(self; Species; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x08)) as i32; set: T: Into<u16>);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -157,7 +161,7 @@ impl PK8 {
     }
 
     // Held Item
-    field!(self; HeldItem; get: i32 => bitconverter::to_uint16(&self.data, 0x0A) as i32; set: u16);
+    field!(self; HeldItem; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x0A)) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -166,7 +170,7 @@ impl PK8 {
     }
 
     // TID
-    field!(self; tid; get: i32 => bitconverter::to_uint16(&self.data, 0x0C) as i32; set: u16);
+    field!(self; tid; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x0C)) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -175,7 +179,7 @@ impl PK8 {
     }
 
     // SID
-    field!(self; sid; get: i32 => bitconverter::to_uint16(&self.data, 0x0E) as i32; set: u16);
+    field!(self; sid; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x0E)) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -184,7 +188,7 @@ impl PK8 {
     }
 
     // EXP
-    field!(self; exp; get: u32 => bitconverter::to_uint32(&self.data, 0x10); set: u32);
+    field!(self; exp; get: u32 => bitconverter::to_uint32(array_four!(self.data, 0x10)); set: u32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -193,7 +197,7 @@ impl PK8 {
     }
 
     // Ability
-    field!(self; Ability; get: i32 => bitconverter::to_uint16(&self.data, 0x14) as i32; set: T: Into<u16>);
+    field!(self; Ability; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x14)) as i32; set: T: Into<u16>);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -233,7 +237,7 @@ impl PK8 {
     // 0x17 alignment unused
 
     // Mark Value
-    field!(self; MarkValue; get: i32 => bitconverter::to_uint16(&self.data, 0x18) as i32; set: u16);
+    field!(self; MarkValue; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x18)) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -245,7 +249,7 @@ impl PK8 {
     // 0x1B alignment unused
 
     // PID
-    field!(self; pid; get: u32 => bitconverter::to_uint32(&self.data, 0x1C); set: u32);
+    field!(self; pid; get: u32 => bitconverter::to_uint32(array_four!(self.data, 0x1C)); set: u32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]

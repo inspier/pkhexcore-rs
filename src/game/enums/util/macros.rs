@@ -1,3 +1,5 @@
+#![allow(unused_macros)]
+
 #[macro_use]
 macro_rules! impl_from {
     ($enum_name:tt for $($type:tt),+) => {

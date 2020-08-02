@@ -270,6 +270,7 @@ pub enum Ability {
 
 impl_from! (Ability for i32);
 
+#[allow(unused_macros)]
 macro_rules! ability {
     ($ability:tt) => {
         string_to_enum!(Ability, $ability)

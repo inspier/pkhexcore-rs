@@ -1,3 +1,5 @@
+#![allow(unused_macros)]
+
 #[macro_export]
 macro_rules! get {
     ($self:ident, $field:ident) => {

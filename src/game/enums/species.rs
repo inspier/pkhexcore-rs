@@ -905,6 +905,7 @@ pub enum Species {
 #[allow(non_snake_case)]
 impl_from!(Species for u16, i32);
 
+#[allow(unused_macros)]
 macro_rules! species {
     ($species:tt) => {
         string_to_enum!(Species, $species)

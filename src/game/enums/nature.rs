@@ -35,6 +35,7 @@ pub enum Nature {
 
 impl_from! (Nature for u8, i32);
 
+#[allow(unused_macros)]
 macro_rules! nature {
     ($nature:tt) => {
         string_to_enum!(Nature, $nature)
