@@ -35,6 +35,15 @@ pub fn get_flag(array: &[u8], offset: usize, mut bit_index: u32) -> Flag {
     }
 }
 
+impl From<bool> for Flag {
+    fn from(flag: bool) -> Self {
+        match flag {
+            true => Flag::Set,
+            false => Flag::Unset,
+        }
+    }
+}
+
 /// Sets a specified bitflag in a byte array.
 ///
 /// # Arguments
