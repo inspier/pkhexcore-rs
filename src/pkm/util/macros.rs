@@ -23,7 +23,6 @@ macro_rules! field {
         paste::paste! {
             #[logfn(INFO)]
             #[logfn_inputs(Debug)]
-
             #[doc = "Update the `" $field "`."]
             pub fn [<$field:snake>](mut $self: Self, value: $value_type) -> Self {
                 $self.[<set_ $field:snake>](value);

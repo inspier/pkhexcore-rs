@@ -11,12 +11,26 @@ use std::{
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::bitconverter;
 
-/// ## Alignment bytes
-/// ```
-/// static UNUSED: [u16; 12] = [
-///     0x17, 0x1A, 0x1B, 0x23, 0x33, 0x3E, 0x3F, 0xE0, 0xE1, 0xC5, 0x115, 0x11F,
-/// ];
-/// ```
+// Alignment bytes
+// ```
+// static UNUSED: [u16; 12] = [
+// 0x17, 0x1A, 0x1B, 0x23, 0x33, 0x3E, 0x3F,
+// 0x4C, 0x4D, 0x4E, 0x4F,
+// 0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
+
+// 0x90, 0x91, 0x92, 0x93,
+// 0x9C, 0x9D, 0x9E, 0x9F, 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xA5, 0xA6, 0xA7,
+
+// 0xC5,
+// 0xCE, 0xCF, 0xD0, 0xD1, 0xD2, 0xD3, 0xD4, 0xD5, 0xD6, 0xD7, 0xD8, 0xD9, 0xDA, 0xDB, 0xDC, 0xDD,
+// 0xE0, 0xE1, // Old Console Region / Region
+// 0xE9, 0xEA, 0xEB, 0xEC, 0xED, 0xEE, 0xEF, 0xF0, 0xF1, 0xF2, 0xF3, 0xF4, 0xF5, 0xF6, 0xF7,
+// 0x115, 0x11F, // Alignment
+
+// 0x13D, 0x13E, 0x13F,
+// 0x140, 0x141, 0x142, 0x143, 0x144, 0x145, 0x146, 0x147,
+// ];
+// ```
 
 #[allow(dead_code)]
 static FORMAT: u32 = 8;
@@ -120,6 +134,16 @@ impl PK8 {
     //     refresh_checksum();
     //     encrypt_array8(&mut self.data.clone());
     // }
+
+    // PSV
+    pub fn psv(self: &Self) -> i32 {
+        ((get!(self, pid) >> 16 ^ (get!(self, pid) & 0xFFFF)) >> 4) as i32
+    }
+
+    // TSV
+    pub fn tsv(self: &Self) -> i32 {
+        (get!(self, tid) ^ get!(self, sid)) >> 4
+    }
 
     // Encryption Constant
     field!(self; EncryptionConstant; get: u32 => bitconverter::to_uint32(array_four!(self.data, 0x00)); set: u32);
@@ -303,6 +327,69 @@ impl PK8 {
     }
 
     // 0x23 alignment unused
+
+    // AltForm
+    field!(self; AltForm; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x24)) as i32; set: u16);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_alt_form(self: &mut Self, value: u16) {
+        bitconverter::get_bytes(value).copy_to(&mut self.data, 0x24)
+    }
+
+    // EV_HP
+    field!(self; ev_hp; get: i32 => self.data[0x26] as i32; set: u8);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_ev_hp(self: &mut Self, value: u8) {
+        self.data[0x26] = value
+    }
+
+    // EV_ATK
+    field!(self; ev_atk; get: i32 => self.data[0x27] as i32; set: u8);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_ev_atk(self: &mut Self, value: u8) {
+        self.data[0x27] = value
+    }
+
+    // EV_DEF
+    field!(self; ev_def; get: i32 => self.data[0x28] as i32; set: u8);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_ev_def(self: &mut Self, value: u8) {
+        self.data[0x28] = value
+    }
+
+    // EV_SPE
+    field!(self; ev_spe; get: i32 => self.data[0x29] as i32; set: u8);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_ev_spe(self: &mut Self, value: u8) {
+        self.data[0x29] = value
+    }
+
+    // EV_SPA
+    field!(self; ev_spa; get: i32 => self.data[0x2A] as i32; set: u8);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_ev_spa(self: &mut Self, value: u8) {
+        self.data[0x2A] = value
+    }
+
+    // EV_SPD
+    field!(self; ev_spd; get: i32 => self.data[0x2B] as i32; set: u8);
+
+    #[logfn(INFO)]
+    #[logfn_inputs(Debug)]
+    pub fn set_ev_spd(self: &mut Self, value: u8) {
+        self.data[0x2B] = value
+    }
 }
 
 impl PartialEq for PK8 {
@@ -355,7 +442,7 @@ mod test {
             let orbeetle = PK8::read_from("src/pkm/util/tests/data/Orbeetle.pk8").await?;
             let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
             assert_eq!(0x4E8E, orbeetle.calculate_checksum());
-            assert_eq!(0x3B4C, dracovish.calculate_checksum());
+            assert_eq!(0x5D57, dracovish.calculate_checksum());
             Ok(())
         })
     }
@@ -366,13 +453,13 @@ mod test {
             let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
             assert_eq!(0xAC731A09, get!(dracovish, EncryptionConstant));
             assert_eq!(0x0, get!(dracovish, Sanity));
-            assert_eq!(0x3B4C, get!(dracovish, Checksum));
+            assert_eq!(0x5D57, get!(dracovish, Checksum));
             assert_eq!(882, get!(dracovish, Species));
             assert_eq!(i32::from(Species::Dracovish), get!(dracovish, Species));
-            assert_eq!(0, get!(dracovish, HeldItem));
+            assert_eq!(268, get!(dracovish, HeldItem));
             assert_eq!(30756, get!(dracovish, tid));
             assert_eq!(45312, get!(dracovish, sid));
-            assert_eq!(1250, get!(dracovish, Exp));
+            assert_eq!(1250000, get!(dracovish, Exp));
             assert_eq!(11, get!(dracovish, Ability));
             assert_eq!(i32::from(Ability::WaterAbsorb), get!(dracovish, Ability));
             assert_eq!(1, get!(dracovish, AbilityNumber));
@@ -387,6 +474,13 @@ mod test {
             assert_eq!(false, get!(dracovish, FatefulEncounter));
             assert_eq!(false, get!(dracovish, Flag2));
             assert_eq!(i32::from(Gender::Genderless), get!(dracovish, Gender));
+            assert_eq!(0, get!(dracovish, AltForm));
+            assert_eq!(4, get!(dracovish, ev_hp));
+            assert_eq!(252, get!(dracovish, ev_atk));
+            assert_eq!(0, get!(dracovish, ev_def));
+            assert_eq!(252, get!(dracovish, ev_spe));
+            assert_eq!(0, get!(dracovish, ev_spa));
+            assert_eq!(0, get!(dracovish, ev_spd));
             Ok(())
         })
     }
