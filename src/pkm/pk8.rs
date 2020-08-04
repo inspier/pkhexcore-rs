@@ -472,6 +472,9 @@ impl PK8 {
         set!(self, pkrs, ((get!(self, pkrs) & 0xF) | value << 4) as u8);
     }
 
+    // 0x33 unused padding
+
+    // ribbon u32
     // RibbonChampionKalos
     field!(self; ribbonChampionKalos; get: Flag => flagutil::get_flag(&self.data, 0x34, 0); set: Flag);
 
@@ -760,6 +763,7 @@ impl PK8 {
         flagutil::set_flag(&mut self.data, 0x37, 7, value);
     }
 
+    // ribbon u32
     // RibbonWishing
     field!(self; ribbonWishing; get: Flag => flagutil::get_flag(&self.data, 0x38, 0); set: Flag);
 
@@ -1068,6 +1072,10 @@ impl PK8 {
         set!(self, HasBattleMemoryRibbon, Flag::from(value != 0));
     }
 
+    // 0x3E padding
+    // 0x3F padding
+
+    // 0x40 Ribbon 1
     // RibbonMarkMisty
     field!(self; ribbonMarkMisty; get: Flag => flagutil::get_flag(&self.data, 0x40, 0); set: Flag);
 
@@ -1355,6 +1363,8 @@ impl PK8 {
     pub fn set_ribbon_mark_thorny(self: &mut Self, value: Flag) {
         flagutil::set_flag(&mut self.data, 0x43, 7, value);
     }
+
+    // 0x44 Ribbon 2
 
     // RibbonMarkVigor
     field!(self; ribbonMarkVigor; get: Flag => flagutil::get_flag(&self.data, 0x44, 0); set: Flag);
@@ -1653,6 +1663,8 @@ impl PK8 {
         bitconverter::get_bytes(value).copy_to(&mut self.data, 0x48);
     }
 
+    // 0x4C-0x4F unused
+
     // HeightScalar
     field!(self; HeightScalar; get: i32 => self.data[0x50] as i32; set: i32);
 
@@ -1671,12 +1683,16 @@ impl PK8 {
         self.data[0x51] = value as u8;
     }
 
+    // 0x52-0x57 unused
+
     // Nickname
     // field!(self; Nickname; get: string => GetString(0x58, 24); set: NULL);
 
     // #[logfn(INFO)]
     // #[logfn_inputs(Debug)]
     // pub fn set_nickname(self: &mut Self, value: NULL) { SetString(value, 12).copy_to(&mut self.data, 0x58); }
+
+    // 2 bytes for \0, automatically handled above
 
     // Move1
     field!(self; Move1; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x72)) as i32; set: i32);
@@ -1958,6 +1974,8 @@ impl PK8 {
     pub fn set_dynamax_level(self: &mut Self, value: u8) {
         self.data[0x90] = value;
     }
+
+    // 0x90-0x93 unused
 }
 
 impl PartialEq for PK8 {
@@ -2016,7 +2034,7 @@ mod test {
     }
 
     #[test]
-    fn pk8_get_test() -> io::Result<()> {
+    fn pk8_get_test_1() -> io::Result<()> {
         async_std::task::block_on(async {
             let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
             assert_eq!(0xAC731A09, get!(dracovish, EncryptionConstant));
@@ -2049,6 +2067,31 @@ mod test {
             assert_eq!(252, get!(dracovish, ev_spe));
             assert_eq!(0, get!(dracovish, ev_spa));
             assert_eq!(0, get!(dracovish, ev_spd));
+            Ok(())
+        })
+    }
+
+    #[test]
+    fn pk8_get_test_2() -> io::Result<()> {
+        async_std::task::block_on(async {
+            let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8").await?;
+            assert_eq!(88, get!(dracovish, HeightScalar));
+            assert_eq!(33, get!(dracovish, WeightScalar));
+            assert_eq!(35, get!(dracovish, Move1_pp));
+            assert_eq!(25, get!(dracovish, Move2_pp));
+            assert_eq!(10, get!(dracovish, Move3_pp));
+            assert_eq!(16, get!(dracovish, Move4_pp));
+            assert_eq!(0, get!(dracovish, Move1_ppUps));
+            assert_eq!(0, get!(dracovish, Move2_ppUps));
+            assert_eq!(0, get!(dracovish, Move3_ppUps));
+            assert_eq!(3, get!(dracovish, Move4_ppUps));
+            assert_eq!(31, get!(dracovish, iv_hp));
+            assert_eq!(31, get!(dracovish, iv_atk));
+            assert_eq!(31, get!(dracovish, iv_def));
+            assert_eq!(23, get!(dracovish, iv_spa));
+            assert_eq!(2, get!(dracovish, iv_spd));
+            assert_eq!(4, get!(dracovish, iv_spe));
+            assert_eq!(10, get!(dracovish, DynamaxLevel));
             Ok(())
         })
     }
