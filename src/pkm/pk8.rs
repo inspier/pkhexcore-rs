@@ -1,13 +1,5 @@
+use core::{convert::TryFrom, fmt, fmt::Debug};
 use log_derive::{logfn, logfn_inputs};
-use std::{
-    convert::{TryFrom, TryInto},
-    fs,
-    fs::File,
-    fmt,
-    fmt::Debug,
-    io::prelude::*,
-    io
-};
 
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::{bitconverter, flagutil, flagutil::Flag};
@@ -102,31 +94,10 @@ impl PK8 {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub fn read_from(path: &str) -> io::Result<Self> {
-        let mut contents = File::open(path)?;
-        let mut array: [u8; SIZE_8PARTY] = [0; SIZE_8PARTY];
-        let _ = contents.read(&mut array);
-        decrypt_if_encrypted8(&mut array);
-        Ok(PK8 {
-            data: array,
-            ..Default::default()
-        })
-    }
-
-    // TODO: Fix when const-generics are stabilized
-    #[logfn(INFO)]
-    #[logfn_inputs(Debug)]
-    pub fn write_to(self: &Self, path: &str) -> io::Result<()> {
-        fs::write(path, &self.data[..])?;
-        Ok(())
-    }
-
-    #[logfn(INFO)]
-    #[logfn_inputs(Debug)]
     pub fn calculate_checksum(self: &Self) -> u16 {
         let mut chk: u16 = 0;
         for i in (8..SIZE_8STORED).step_by(2) {
-            chk = chk.wrapping_add(bitconverter::to_uint16(array_two!(self.data, i)));
+            chk = chk.wrapping_add(bitconverter::to_uint16(&self.data, i));
         }
         chk
     }
@@ -147,7 +118,7 @@ impl PK8 {
     }
 
     // Encryption Constant
-    field!(self; EncryptionConstant; get: u32 => bitconverter::to_uint32(array_four!(self.data, 0x00)); set: u32);
+    field!(self; EncryptionConstant; get: u32 => bitconverter::to_uint32(&self.data, 0x00); set: u32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -156,7 +127,7 @@ impl PK8 {
     }
 
     // Sanity
-    field!(self; Sanity; get: u16 => bitconverter::to_uint16(array_two!(self.data, 0x04)); set: u16);
+    field!(self; Sanity; get: u16 => bitconverter::to_uint16(&self.data, 0x04); set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -165,7 +136,7 @@ impl PK8 {
     }
 
     // Checksum
-    field!(self; Checksum; get: u16 => bitconverter::to_uint16(array_two!(self.data, 0x06)); set: u16);
+    field!(self; Checksum; get: u16 => bitconverter::to_uint16(&self.data, 0x06); set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -177,7 +148,7 @@ impl PK8 {
     // Region A
 
     // Species
-    field!(self; Species; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x08)) as i32; set: T: Into<u16>);
+    field!(self; Species; get: i32 => bitconverter::to_uint16(&self.data, 0x08) as i32; set: T: Into<u16>);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -186,7 +157,7 @@ impl PK8 {
     }
 
     // Held Item
-    field!(self; HeldItem; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x0A)) as i32; set: u16);
+    field!(self; HeldItem; get: i32 => bitconverter::to_uint16(&self.data, 0x0A) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -195,7 +166,7 @@ impl PK8 {
     }
 
     // TID
-    field!(self; tid; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x0C)) as i32; set: u16);
+    field!(self; tid; get: i32 => bitconverter::to_uint16(&self.data, 0x0C) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -204,7 +175,7 @@ impl PK8 {
     }
 
     // SID
-    field!(self; sid; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x0E)) as i32; set: u16);
+    field!(self; sid; get: i32 => bitconverter::to_uint16(&self.data, 0x0E) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -213,7 +184,7 @@ impl PK8 {
     }
 
     // EXP
-    field!(self; exp; get: u32 => bitconverter::to_uint32(array_four!(self.data, 0x10)); set: u32);
+    field!(self; exp; get: u32 => bitconverter::to_uint32(&self.data, 0x10); set: u32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -222,7 +193,7 @@ impl PK8 {
     }
 
     // Ability
-    field!(self; Ability; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x14)) as i32; set: T: Into<u16>);
+    field!(self; Ability; get: i32 => bitconverter::to_uint16(&self.data, 0x14) as i32; set: T: Into<u16>);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -262,7 +233,7 @@ impl PK8 {
     // 0x17 alignment unused
 
     // Mark Value
-    field!(self; MarkValue; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x18)) as i32; set: u16);
+    field!(self; MarkValue; get: i32 => bitconverter::to_uint16(&self.data, 0x18) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -274,7 +245,7 @@ impl PK8 {
     // 0x1B alignment unused
 
     // PID
-    field!(self; pid; get: u32 => bitconverter::to_uint32(array_four!(self.data, 0x1C)); set: u32);
+    field!(self; pid; get: u32 => bitconverter::to_uint32(&self.data, 0x1C); set: u32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -330,7 +301,7 @@ impl PK8 {
     // 0x23 alignment unused
 
     // AltForm
-    field!(self; AltForm; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x24)) as i32; set: u16);
+    field!(self; AltForm; get: i32 => bitconverter::to_uint16(&self.data, 0x24) as i32; set: u16);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1656,7 +1627,7 @@ impl PK8 {
     }
 
     // U48
-    field!(self; U48; get: u32 => bitconverter::to_uint32(array_four!(self.data, 0x48)); set: u32);
+    field!(self; U48; get: u32 => bitconverter::to_uint32(&self.data, 0x48); set: u32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1696,7 +1667,7 @@ impl PK8 {
     // 2 bytes for \0, automatically handled above
 
     // Move1
-    field!(self; Move1; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x72)) as i32; set: i32);
+    field!(self; Move1; get: i32 => bitconverter::to_uint16(&self.data, 0x72) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1705,7 +1676,7 @@ impl PK8 {
     }
 
     // Move2
-    field!(self; Move2; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x74)) as i32; set: i32);
+    field!(self; Move2; get: i32 => bitconverter::to_uint16(&self.data, 0x74) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1714,7 +1685,7 @@ impl PK8 {
     }
 
     // Move3
-    field!(self; Move3; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x76)) as i32; set: i32);
+    field!(self; Move3; get: i32 => bitconverter::to_uint16(&self.data, 0x76) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1723,7 +1694,7 @@ impl PK8 {
     }
 
     // Move4
-    field!(self; Move4; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x78)) as i32; set: i32);
+    field!(self; Move4; get: i32 => bitconverter::to_uint16(&self.data, 0x78) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1804,7 +1775,7 @@ impl PK8 {
     }
 
     // RelearnMove1
-    field!(self; RelearnMove1; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x82)) as i32; set: i32);
+    field!(self; RelearnMove1; get: i32 => bitconverter::to_uint16(&self.data, 0x82) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1813,7 +1784,7 @@ impl PK8 {
     }
 
     // RelearnMove2
-    field!(self; RelearnMove2; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x84)) as i32; set: i32);
+    field!(self; RelearnMove2; get: i32 => bitconverter::to_uint16(&self.data, 0x84) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1822,7 +1793,7 @@ impl PK8 {
     }
 
     // RelearnMove3
-    field!(self; RelearnMove3; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x86)) as i32; set: i32);
+    field!(self; RelearnMove3; get: i32 => bitconverter::to_uint16(&self.data, 0x86) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1831,7 +1802,7 @@ impl PK8 {
     }
 
     // RelearnMove4
-    field!(self; RelearnMove4; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x88)) as i32; set: i32);
+    field!(self; RelearnMove4; get: i32 => bitconverter::to_uint16(&self.data, 0x88) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1840,7 +1811,7 @@ impl PK8 {
     }
 
     // Stat_HPCurrent
-    field!(self; Stat_hpCurrent; get: i32 => bitconverter::to_uint16(array_two!(self.data, 0x8A)) as i32; set: i32);
+    field!(self; Stat_hpCurrent; get: i32 => bitconverter::to_uint16(&self.data, 0x8A) as i32; set: i32);
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
@@ -1850,7 +1821,7 @@ impl PK8 {
 
     // IV32
     fn get_iv32(self: &Self) -> u32 {
-        bitconverter::to_uint32(array_four!(self.data, 0x8C))
+        bitconverter::to_uint32(&self.data, 0x8C)
     }
 
     fn set_iv32(self: &mut Self, value: u8) {
@@ -1999,100 +1970,93 @@ mod test {
     use crate::game::enums::{ability::Ability, gender::Gender, nature::Nature, species::Species};
 
     #[test]
-    fn pk8_from_array_test() -> std::io::Result<()> {
-            let orbeetle_d = PK8::read_from("src/pkm/util/tests/data/Orbeetle.pk8")?;
-            let orbeetle_e = PK8::read_from("src/pkm/util/tests/data/Orbeetle.ek8")?;
-            let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8")?;
+    fn pk8_from_array_test() {
+        let orbeetle_d = PK8::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
+        let orbeetle_e = PK8::from(include_bytes!("util/tests/data/Orbeetle.ek8"));
+        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
 
-            assert_eq!(true, orbeetle_d == orbeetle_e);
-            assert_eq!(false, dracovish == orbeetle_d);
-            Ok(())
+        assert_eq!(true, orbeetle_d == orbeetle_e);
+        assert_eq!(false, dracovish == orbeetle_d);
     }
 
     #[test]
-    fn pk8_from_vec_test() -> io::Result<()> {
-            let orbeetle_e = PK8::read_from("src/pkm/util/tests/data/Orbeetle.ek8")?;
-            let orbeetle_d =
-                PK8::try_from(&*include_bytes!("util/tests/data/Orbeetle.pk8")).unwrap();
+    fn pk8_from_vec_test() {
+        let orbeetle_e = PK8::from(include_bytes!("util/tests/data/Orbeetle.ek8"));
+        let orbeetle_d = PK8::try_from(&*include_bytes!("util/tests/data/Orbeetle.pk8")).unwrap();
 
-            assert_eq!(true, orbeetle_e == orbeetle_d);
-            Ok(())
+        assert_eq!(true, orbeetle_e == orbeetle_d);
     }
 
     #[test]
-    fn pk8_calc_checksum_test() -> io::Result<()> {
-            let orbeetle = PK8::read_from("src/pkm/util/tests/data/Orbeetle.pk8")?;
-            let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8")?;
-            assert_eq!(0x4E8E, orbeetle.calculate_checksum());
-            assert_eq!(0x5D57, dracovish.calculate_checksum());
-            Ok(())
+    fn pk8_calc_checksum_test() {
+        let orbeetle = PK8::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
+        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        assert_eq!(0x4E8E, orbeetle.calculate_checksum());
+        assert_eq!(0x5D57, dracovish.calculate_checksum());
     }
 
     #[test]
-    fn pk8_get_test_1() -> io::Result<()> {
-            let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8")?;
-            assert_eq!(0xAC731A09, get!(dracovish, EncryptionConstant));
-            assert_eq!(0x0, get!(dracovish, Sanity));
-            assert_eq!(0x5D57, get!(dracovish, Checksum));
-            assert_eq!(882, get!(dracovish, Species));
-            assert_eq!(i32::from(Species::Dracovish), get!(dracovish, Species));
-            assert_eq!(268, get!(dracovish, HeldItem));
-            assert_eq!(30756, get!(dracovish, tid));
-            assert_eq!(45312, get!(dracovish, sid));
-            assert_eq!(1250000, get!(dracovish, Exp));
-            assert_eq!(11, get!(dracovish, Ability));
-            assert_eq!(i32::from(Ability::WaterAbsorb), get!(dracovish, Ability));
-            assert_eq!(1, get!(dracovish, AbilityNumber));
-            assert_eq!(false, get!(dracovish, Favourite));
-            assert_eq!(false, get!(dracovish, CanGigantamax));
-            assert_eq!(0, get!(dracovish, MarkValue));
-            assert_eq!(0xC730F59, get!(dracovish, pid));
-            assert_eq!(16, get!(dracovish, Nature));
-            assert_eq!(i32::from(Nature::Mild), get!(dracovish, Nature));
-            assert_eq!(16, get!(dracovish, StatNature));
-            assert_eq!(i32::from(Nature::Mild), get!(dracovish, StatNature));
-            assert_eq!(false, get!(dracovish, FatefulEncounter));
-            assert_eq!(false, get!(dracovish, Flag2));
-            assert_eq!(i32::from(Gender::Genderless), get!(dracovish, Gender));
-            assert_eq!(0, get!(dracovish, AltForm));
-            assert_eq!(4, get!(dracovish, ev_hp));
-            assert_eq!(252, get!(dracovish, ev_atk));
-            assert_eq!(0, get!(dracovish, ev_def));
-            assert_eq!(252, get!(dracovish, ev_spe));
-            assert_eq!(0, get!(dracovish, ev_spa));
-            assert_eq!(0, get!(dracovish, ev_spd));
-            Ok(())
+    fn pk8_get_test_1() {
+        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        assert_eq!(0xAC731A09, get!(dracovish, EncryptionConstant));
+        assert_eq!(0x0, get!(dracovish, Sanity));
+        assert_eq!(0x5D57, get!(dracovish, Checksum));
+        assert_eq!(882, get!(dracovish, Species));
+        assert_eq!(i32::from(Species::Dracovish), get!(dracovish, Species));
+        assert_eq!(268, get!(dracovish, HeldItem));
+        assert_eq!(30756, get!(dracovish, tid));
+        assert_eq!(45312, get!(dracovish, sid));
+        assert_eq!(1250000, get!(dracovish, Exp));
+        assert_eq!(11, get!(dracovish, Ability));
+        assert_eq!(i32::from(Ability::WaterAbsorb), get!(dracovish, Ability));
+        assert_eq!(1, get!(dracovish, AbilityNumber));
+        assert_eq!(false, get!(dracovish, Favourite));
+        assert_eq!(false, get!(dracovish, CanGigantamax));
+        assert_eq!(0, get!(dracovish, MarkValue));
+        assert_eq!(0xC730F59, get!(dracovish, pid));
+        assert_eq!(16, get!(dracovish, Nature));
+        assert_eq!(i32::from(Nature::Mild), get!(dracovish, Nature));
+        assert_eq!(16, get!(dracovish, StatNature));
+        assert_eq!(i32::from(Nature::Mild), get!(dracovish, StatNature));
+        assert_eq!(false, get!(dracovish, FatefulEncounter));
+        assert_eq!(false, get!(dracovish, Flag2));
+        assert_eq!(i32::from(Gender::Genderless), get!(dracovish, Gender));
+        assert_eq!(0, get!(dracovish, AltForm));
+        assert_eq!(4, get!(dracovish, ev_hp));
+        assert_eq!(252, get!(dracovish, ev_atk));
+        assert_eq!(0, get!(dracovish, ev_def));
+        assert_eq!(252, get!(dracovish, ev_spe));
+        assert_eq!(0, get!(dracovish, ev_spa));
+        assert_eq!(0, get!(dracovish, ev_spd));
     }
 
     #[test]
-    fn pk8_get_test_2() -> io::Result<()> {
-            let dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8")?;
-            assert_eq!(88, get!(dracovish, HeightScalar));
-            assert_eq!(33, get!(dracovish, WeightScalar));
-            assert_eq!(35, get!(dracovish, Move1_pp));
-            assert_eq!(25, get!(dracovish, Move2_pp));
-            assert_eq!(10, get!(dracovish, Move3_pp));
-            assert_eq!(16, get!(dracovish, Move4_pp));
-            assert_eq!(0, get!(dracovish, Move1_ppUps));
-            assert_eq!(0, get!(dracovish, Move2_ppUps));
-            assert_eq!(0, get!(dracovish, Move3_ppUps));
-            assert_eq!(3, get!(dracovish, Move4_ppUps));
-            assert_eq!(31, get!(dracovish, iv_hp));
-            assert_eq!(31, get!(dracovish, iv_atk));
-            assert_eq!(31, get!(dracovish, iv_def));
-            assert_eq!(23, get!(dracovish, iv_spa));
-            assert_eq!(2, get!(dracovish, iv_spd));
-            assert_eq!(4, get!(dracovish, iv_spe));
-            assert_eq!(10, get!(dracovish, DynamaxLevel));
-            Ok(())
+    fn pk8_get_test_2() {
+        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        assert_eq!(88, get!(dracovish, HeightScalar));
+        assert_eq!(33, get!(dracovish, WeightScalar));
+        assert_eq!(35, get!(dracovish, Move1_pp));
+        assert_eq!(25, get!(dracovish, Move2_pp));
+        assert_eq!(10, get!(dracovish, Move3_pp));
+        assert_eq!(16, get!(dracovish, Move4_pp));
+        assert_eq!(0, get!(dracovish, Move1_ppUps));
+        assert_eq!(0, get!(dracovish, Move2_ppUps));
+        assert_eq!(0, get!(dracovish, Move3_ppUps));
+        assert_eq!(3, get!(dracovish, Move4_ppUps));
+        assert_eq!(31, get!(dracovish, iv_hp));
+        assert_eq!(31, get!(dracovish, iv_atk));
+        assert_eq!(31, get!(dracovish, iv_def));
+        assert_eq!(23, get!(dracovish, iv_spa));
+        assert_eq!(2, get!(dracovish, iv_spd));
+        assert_eq!(4, get!(dracovish, iv_spe));
+        assert_eq!(10, get!(dracovish, DynamaxLevel));
     }
 
     #[test]
-    fn pk8_set_test() -> io::Result<()> {
-            let mut dracovish = PK8::read_from("src/pkm/util/tests/data/Dracovish.pk8")?;
-            assert_eq!(0xAC731A09, get!(dracovish, EncryptionConstant));
-            set!(dracovish, EncryptionConstant, 0xDEADBEEF);
-            assert_eq!(0xDEADBEEF, get!(dracovish, EncryptionConstant));
-            Ok(())
+    fn pk8_set_test() {
+        let mut dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        assert_eq!(0xAC731A09, get!(dracovish, EncryptionConstant));
+        set!(dracovish, EncryptionConstant, 0xDEADBEEF);
+        assert_eq!(0xDEADBEEF, get!(dracovish, EncryptionConstant));
     }
 }

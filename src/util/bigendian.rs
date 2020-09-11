@@ -1,6 +1,5 @@
+use core::convert::TryInto;
 use log_derive::{logfn, logfn_inputs};
-#[allow(unused_imports)]
-use std::convert::TryInto;
 
 /// Returns a 16-bit signed integer converted from two bytes at a specified
 /// position in a byte array.
@@ -12,12 +11,18 @@ use std::convert::TryInto;
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_int16;
-/// assert_eq!(255, to_int16(&[0, 255]));
+/// let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
+/// assert_eq!(255, to_int16(&buffer, 2));
 /// ```
 ///
-#[inline]
-pub const fn to_int16(data: &[u8; 2]) -> i16 {
-    i16::from_be_bytes(*data)
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
+pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
+    i16::from_be_bytes(
+        data[start_index..start_index + 2]
+            .try_into()
+            .expect("Failed to read i16. Invalid buffer provided."),
+    )
 }
 
 /// Returns a 32-bit signed integer converted from four bytes at a specified
@@ -30,13 +35,18 @@ pub const fn to_int16(data: &[u8; 2]) -> i16 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_int32;
-/// assert_eq!(-2146424848, to_int32(&[128, 16, 39, 240]));
+/// let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
+/// assert_eq!(-2146424848, to_int32(&buffer, 3));
 /// ```
 ///
-
-#[inline]
-pub const fn to_int32(data: &[u8; 4]) -> i32 {
-    i32::from_be_bytes(*data)
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
+pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
+    i32::from_be_bytes(
+        data[start_index..start_index + 4]
+            .try_into()
+            .expect("Failed to read i32. Invalid buffer provided."),
+    )
 }
 
 /// Returns a 64-bit signed integer converted from eight bytes at a specified
@@ -49,13 +59,18 @@ pub const fn to_int32(data: &[u8; 4]) -> i32 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_int64;
-/// assert_eq!(140806877927665, to_int64(&[0, 0, 128, 16, 39, 240, 216, 241]));
+/// let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
+/// assert_eq!(140806877927665, to_int64(&buffer, 1));
 /// ```
 ///
-
-#[inline]
-pub const fn to_int64(data: &[u8; 8]) -> i64 {
-    i64::from_be_bytes(*data)
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
+pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
+    i64::from_be_bytes(
+        data[start_index..start_index + 8]
+            .try_into()
+            .expect("Failed to read i64. Invalid buffer provided."),
+    )
 }
 
 /// Returns a 16-bit unsigned integer converted from two bytes at a specified
@@ -67,13 +82,18 @@ pub const fn to_int64(data: &[u8; 8]) -> i64 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_uint16;
-/// assert_eq!(255, to_uint16(&[0, 255]));
+/// let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127 ];
+/// assert_eq!(255, to_uint16(&buffer, 2));
 /// ```
 ///
-
-#[inline]
-pub const fn to_uint16(data: &[u8; 2]) -> u16 {
-    u16::from_be_bytes(*data)
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
+pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
+    u16::from_be_bytes(
+        data[start_index..start_index + 2]
+            .try_into()
+            .expect("Failed to read u16. Invalid buffer provided."),
+    )
 }
 
 /// Returns a 32-bit unsigned integer converted from four bytes at a specified
@@ -85,13 +105,18 @@ pub const fn to_uint16(data: &[u8; 2]) -> u16 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_uint32;
-/// assert_eq!(16712448, to_uint32(&[0, 255, 3, 0]));
+/// let buffer = [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 19,];
+/// assert_eq!(16712448, to_uint32(&buffer, 6));
 /// ```
 ///
-
-#[inline]
-pub const fn to_uint32(data: &[u8; 4]) -> u32 {
-    u32::from_be_bytes(*data)
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
+pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
+    u32::from_be_bytes(
+        data[start_index..start_index + 4]
+            .try_into()
+            .expect("Failed to read u32. Invalid buffer provided."),
+    )
 }
 
 /// Returns a 64-bit unsigned integer converted from eight bytes at a specified
@@ -103,13 +128,18 @@ pub const fn to_uint32(data: &[u8; 4]) -> u32 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_uint64;
-/// assert_eq!(18374686479671623680, to_uint64(&[255, 0, 0, 0, 0, 0, 0, 0]));
+/// let buffer = [255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 170, 170, 170, 170, 170,];
+/// assert_eq!(18374686479671623680, to_uint64(&buffer, 2));
 /// ```
 ///
-
-#[inline]
-pub const fn to_uint64(data: &[u8; 8]) -> u64 {
-    u64::from_be_bytes(*data)
+#[logfn(INFO)]
+#[logfn_inputs(Debug)]
+pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
+    u64::from_be_bytes(
+        data[start_index..start_index + 8]
+            .try_into()
+            .expect("Failed to read u64. Invalid buffer provided."),
+    )
 }
 
 /// Returns a 32-bit signed integer converted from bytes in a Binary Coded
@@ -165,20 +195,20 @@ mod test {
     #[test]
     fn to_int16_test_be() {
         let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
-        assert_eq!(3840, to_int16(array_two!(buffer, 0)));
-        assert_eq!(0, to_int16(array_two!(buffer, 1)));
-        assert_eq!(128, to_int16(array_two!(buffer, 2)));
-        assert_eq!(4135, to_int16(array_two!(buffer, 4)));
-        assert_eq!(-3880, to_int16(array_two!(buffer, 6)));
-        assert_eq!(-3585, to_int16(array_two!(buffer, 8)));
-        assert_eq!(-129, to_int16(array_two!(buffer, 9)));
+        assert_eq!(3840, to_int16(&buffer, 0));
+        assert_eq!(0, to_int16(&buffer, 1));
+        assert_eq!(128, to_int16(&buffer, 2));
+        assert_eq!(4135, to_int16(&buffer, 4));
+        assert_eq!(-3880, to_int16(&buffer, 6));
+        assert_eq!(-3585, to_int16(&buffer, 8));
+        assert_eq!(-129, to_int16(&buffer, 9));
     }
 
     #[test]
     #[should_panic]
     fn to_int16_panic_test() {
         let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
-        to_int16(array_two!(buffer, 11));
+        to_uint16(&buffer, 11);
     }
 
     #[test]
@@ -186,13 +216,13 @@ mod test {
         let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
-        assert_eq!(251658240, to_int32(array_four!(buffer, 0)));
-        assert_eq!(16, to_int32(array_four!(buffer, 2)));
-        assert_eq!(1048831, to_int32(array_four!(buffer, 4)));
-        assert_eq!(268500739, to_int32(array_four!(buffer, 5)));
-        assert_eq!(50331850, to_int32(array_four!(buffer, 8)));
-        assert_eq!(-895861761, to_int32(array_four!(buffer, 11)));
-        assert_eq!(-1707343873, to_int32(array_four!(buffer, 12)));
+        assert_eq!(251658240, to_int32(&buffer, 0));
+        assert_eq!(16, to_int32(&buffer, 2));
+        assert_eq!(1048831, to_int32(&buffer, 4));
+        assert_eq!(268500739, to_int32(&buffer, 5));
+        assert_eq!(50331850, to_int32(&buffer, 8));
+        assert_eq!(-895861761, to_int32(&buffer, 11));
+        assert_eq!(-1707343873, to_int32(&buffer, 12));
     }
 
     #[test]
@@ -201,7 +231,7 @@ mod test {
         let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
-        to_int32(array_four!(buffer, 16));
+        to_int32(&buffer, 16);
     }
 
     #[test]
@@ -212,17 +242,17 @@ mod test {
             127, 86, 85, 85, 85, 85, 85, 255, 255, 170, 170, 170, 170, 170, 170, 0, 0, 100, 167,
             179, 182, 224, 13, 0, 0, 156, 88, 76, 73, 31, 242,
         ];
-        assert_eq!(15311545525338111, to_int64(array_eight!(buffer, 0)));
-        assert_eq!(-1099511627776, to_int64(array_eight!(buffer, 5)));
-        assert_eq!(0, to_int64(array_eight!(buffer, 8)));
-        assert_eq!(128, to_int64(array_eight!(buffer, 9)));
-        assert_eq!(57027523489300480, to_int64(array_eight!(buffer, 17)));
-        assert_eq!(16777216, to_int64(array_eight!(buffer, 21)));
-        assert_eq!(4294967295, to_int64(array_eight!(buffer, 26)));
-        assert_eq!(72058693549555711, to_int64(array_eight!(buffer, 34)));
-        assert_eq!(6220972285274488831, to_int64(array_eight!(buffer, 45)));
-        assert_eq!(-6148914691236560896, to_int64(array_eight!(buffer, 53)));
-        assert_eq!(110671437422605, to_int64(array_eight!(buffer, 59)));
+        assert_eq!(15311545525338111, to_int64(&buffer, 0));
+        assert_eq!(-1099511627776, to_int64(&buffer, 5));
+        assert_eq!(0, to_int64(&buffer, 8));
+        assert_eq!(128, to_int64(&buffer, 9));
+        assert_eq!(57027523489300480, to_int64(&buffer, 17));
+        assert_eq!(16777216, to_int64(&buffer, 21));
+        assert_eq!(4294967295, to_int64(&buffer, 26));
+        assert_eq!(72058693549555711, to_int64(&buffer, 34));
+        assert_eq!(6220972285274488831, to_int64(&buffer, 45));
+        assert_eq!(-6148914691236560896, to_int64(&buffer, 53));
+        assert_eq!(110671437422605, to_int64(&buffer, 59));
     }
 
     #[test]
@@ -234,25 +264,25 @@ mod test {
             127, 86, 85, 85, 85, 85, 85, 255, 255, 170, 170, 170, 170, 170, 170, 0, 0, 100, 167,
             179, 182, 224, 13, 0, 0, 156, 88, 76, 73, 31, 242,
         ];
-        to_int64(array_eight!(buffer, 68));
+        to_int64(&buffer, 68);
     }
 
     #[test]
     fn to_uint16_test_be() {
         let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
-        assert_eq!(3840, to_uint16(array_two!(buffer, 0)));
-        assert_eq!(0, to_uint16(array_two!(buffer, 1)));
-        assert_eq!(65283, to_uint16(array_two!(buffer, 3)));
-        assert_eq!(4135, to_uint16(array_two!(buffer, 5)));
-        assert_eq!(65407, to_uint16(array_two!(buffer, 8)));
-        assert_eq!(65535, to_uint16(array_two!(buffer, 7)));
+        assert_eq!(3840, to_uint16(&buffer, 0));
+        assert_eq!(0, to_uint16(&buffer, 1));
+        assert_eq!(65283, to_uint16(&buffer, 3));
+        assert_eq!(4135, to_uint16(&buffer, 5));
+        assert_eq!(65407, to_uint16(&buffer, 8));
+        assert_eq!(65535, to_uint16(&buffer, 7));
     }
 
     #[test]
     #[should_panic]
     fn to_uint16_panic_test() {
         let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
-        to_uint16(array_two!(buffer, 9));
+        to_uint16(&buffer, 9);
     }
 
     #[test]
@@ -260,13 +290,13 @@ mod test {
         let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
-        assert_eq!(251658240, to_uint32(array_four!(buffer, 0)));
-        assert_eq!(0, to_uint32(array_four!(buffer, 1)));
-        assert_eq!(4096, to_uint32(array_four!(buffer, 3)));
-        assert_eq!(4278386688, to_uint32(array_four!(buffer, 7)));
-        assert_eq!(13277755, to_uint32(array_four!(buffer, 10)));
-        assert_eq!(4294967295, to_uint32(array_four!(buffer, 14)));
-        assert_eq!(4294967167, to_uint32(array_four!(buffer, 15)));
+        assert_eq!(251658240, to_uint32(&buffer, 0));
+        assert_eq!(0, to_uint32(&buffer, 1));
+        assert_eq!(4096, to_uint32(&buffer, 3));
+        assert_eq!(4278386688, to_uint32(&buffer, 7));
+        assert_eq!(13277755, to_uint32(&buffer, 10));
+        assert_eq!(4294967295, to_uint32(&buffer, 14));
+        assert_eq!(4294967167, to_uint32(&buffer, 15));
     }
 
     #[test]
@@ -275,7 +305,7 @@ mod test {
         let buffer = [
             15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
         ];
-        to_uint32(array_four!(buffer, 16));
+        to_uint32(&buffer, 16);
     }
 
     #[test]
@@ -285,15 +315,15 @@ mod test {
             154, 59, 0, 0, 0, 0, 170, 170, 170, 170, 170, 170, 0, 0, 232, 137, 4, 35, 199, 138,
             255, 255, 255, 255, 255, 255, 255, 255, 127,
         ];
-        assert_eq!(18446742974197923840, to_uint64(array_eight!(buffer, 0)));
-        assert_eq!(0, to_uint64(array_eight!(buffer, 3)));
-        assert_eq!(16777216, to_uint64(array_eight!(buffer, 7)));
-        assert_eq!(110671437422605, to_uint64(array_eight!(buffer, 13)));
-        assert_eq!(57027523489300480, to_uint64(array_eight!(buffer, 21)));
-        assert_eq!(12297829382472990720, to_uint64(array_eight!(buffer, 29)));
-        assert_eq!(255675177617290, to_uint64(array_eight!(buffer, 35)));
-        assert_eq!(18446744073709551615, to_uint64(array_eight!(buffer, 43)));
-        assert_eq!(18446744073709551487, to_uint64(array_eight!(buffer, 44)));
+        assert_eq!(18446742974197923840, to_uint64(&buffer, 0));
+        assert_eq!(0, to_uint64(&buffer, 3));
+        assert_eq!(16777216, to_uint64(&buffer, 7));
+        assert_eq!(110671437422605, to_uint64(&buffer, 13));
+        assert_eq!(57027523489300480, to_uint64(&buffer, 21));
+        assert_eq!(12297829382472990720, to_uint64(&buffer, 29));
+        assert_eq!(255675177617290, to_uint64(&buffer, 35));
+        assert_eq!(18446744073709551615, to_uint64(&buffer, 43));
+        assert_eq!(18446744073709551487, to_uint64(&buffer, 44));
     }
 
     #[test]
@@ -304,6 +334,6 @@ mod test {
             154, 59, 0, 0, 0, 0, 170, 170, 170, 170, 170, 170, 0, 0, 232, 137, 4, 35, 199, 138,
             255, 255, 255, 255, 255, 255, 255, 255, 127,
         ];
-        to_uint64(array_eight!(buffer, 45));
+        to_uint64(&buffer, 45);
     }
 }
