@@ -674,7 +674,7 @@ pub enum Species {
     Vivillon,
     Litleo,
     Pyroar,
-    Flabebe, // Correct to `Flabébé` when non-ASCII idents are stabilized
+    Flabébé,
     Floette,
     Florges,
     Skiddo,

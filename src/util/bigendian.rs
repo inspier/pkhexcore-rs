@@ -173,17 +173,17 @@ pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::int32_to_bcd;
-/// assert_eq!(vec![32, 16], int32_to_bcd(2010, 2));
+/// assert_eq!([32, 16], int32_to_bcd::<2>(2010));
 /// ```
 ///
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
-pub fn int32_to_bcd(mut input: i32, size: usize) -> Vec<u8> {
-    let mut result: Vec<u8> = vec![0; size]; // TODO: replace once const-generics are stabilized
-    for i in 0..size {
+pub fn int32_to_bcd<const N: usize>(mut input: i32) -> [u8; N] {
+    let mut result: [u8; N] = [0; N];
+    for i in 0..N {
         let p = input % 100;
         input /= 100;
-        result[size - i - 1] = ((p / 10) << 4 | (p % 10)) as u8;
+        result[N - i - 1] = ((p / 10) << 4 | (p % 10)) as u8;
     }
     result
 }

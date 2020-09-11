@@ -1,3 +1,6 @@
+#![feature(min_const_generics)]
+#![feature(non_ascii_idents)]
+
 /// Module containing utilities to manipulate Pokemon data files
 #[macro_use]
 pub mod util;
