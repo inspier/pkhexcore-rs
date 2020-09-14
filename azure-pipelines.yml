@@ -10,9 +10,3 @@ jobs:
     name: 'Linux_nightly'
     vmImage: 'ubuntu-latest'
     toolchain: 'nightly'
-
-- template: 'azure-template-win.yml'
-  parameters:
-    name: 'Windows_nightly'
-    vmImage: 'windows-latest'
-    toolchain: 'nightly'
