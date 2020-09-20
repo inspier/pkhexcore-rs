@@ -2,10 +2,8 @@
 use core::{
     convert::{TryFrom, TryInto},
     fmt,
-    fmt::Debug,
 };
 use deku::prelude::*;
-use log_derive::{logfn, logfn_inputs};
 
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::{bitconverter, flagutil::Flag};
@@ -289,7 +287,7 @@ impl From<&[u8; 344]> for PK8Config {
     fn from(data: &[u8; SIZE_8PARTY]) -> Self {
         let mut array = *data;
         decrypt_if_encrypted8(&mut array);
-        let (_rest, mut test_file) = PK8Config::from_bytes((array.as_ref(), 0)).unwrap();
+        let (_rest, test_file) = PK8Config::from_bytes((array.as_ref(), 0)).unwrap();
         test_file
     }
 }
