@@ -1,10 +1,8 @@
 #![allow(non_snake_case)]
-use core::{
-    convert::{TryFrom, TryInto},
-    fmt,
-};
+use core::fmt;
 use deku::prelude::*;
 
+use crate::game::enums::{ability::Ability, gender::Gender, nature::Nature, species::Species};
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
 use crate::util::{bitconverter, flagutil::Flag};
 
@@ -25,18 +23,18 @@ pub struct PK8 {
 
 #[derive(PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
-struct PK8Config {
+pub struct PK8Config {
     encryption_constant: u32,
     sanity: u16,
     checksum: u16,
 
     // Block A
-    species: u16,
+    species: Species,
     held_item: u16,
     tid: u16,
     sid: u16,
     exp: u32,
-    ability: u16,
+    ability: Ability,
     #[deku(bits = 3)]
     _bit_padding0: u8,
     #[deku(bits = 1)]
@@ -52,16 +50,15 @@ struct PK8Config {
     // 0x1B alignment unused
     _alignment_1A_1B: u16,
     pid: u32,
-    nature: u8,
-    stat_nature: u8,
-    #[deku(bits = 1)]
-    fateful_encounter: u8,
-    #[deku(bits = 1)]
-    flag2: u8,
-    #[deku(bits = 2)]
-    gender: u8,
+    nature: Nature,
+    stat_nature: Nature,
     #[deku(bits = 4)]
     _bit_padding1: u8,
+    gender: Gender,
+    #[deku(bits = 1)]
+    flag2: u8,
+    #[deku(bits = 1)]
+    fateful_encounter: u8,
     // 0x23 alignment unused
     _alignment_23: u8,
     alt_form: u16,
@@ -506,6 +503,7 @@ impl fmt::Debug for PK8Config {
 mod test {
     use super::*;
     use crate::game::enums::{ability::Ability, gender::Gender, nature::Nature, species::Species};
+    use core::convert::TryFrom;
 
     #[test]
     fn pk8_from_array_test() {
@@ -540,26 +538,26 @@ mod test {
         assert_eq!(0xAC731A09, dracovish.encryption_constant);
         assert_eq!(0x0, dracovish.sanity);
         assert_eq!(0x5D57, dracovish.checksum);
-        assert_eq!(882, dracovish.species);
-        // assert_eq!(i32::from(Species::Dracovish), dracovish.Species));
+        assert_eq!(882, dracovish.species as i32);
+        assert_eq!(Species::Dracovish, dracovish.species);
         assert_eq!(268, dracovish.held_item);
         assert_eq!(30756, dracovish.tid);
         assert_eq!(45312, dracovish.sid);
         assert_eq!(1250000, dracovish.exp);
-        assert_eq!(11, dracovish.ability);
-        // assert_eq!(i32::from(Ability::WaterAbsorb), dracovish.Ability));
+        assert_eq!(11, dracovish.ability as u16);
+        assert_eq!(Ability::WaterAbsorb, dracovish.ability);
         assert_eq!(1, dracovish.ability_number);
         assert_eq!(0, dracovish.favourite);
         assert_eq!(0, dracovish.can_gigantamax);
         assert_eq!(0, dracovish.mark_value);
         assert_eq!(0xC730F59, dracovish.pid);
-        assert_eq!(16, dracovish.nature);
-        // assert_eq!(i32::from(Nature::Mild), dracovish.Nature));
-        assert_eq!(16, dracovish.stat_nature);
-        // assert_eq!(i32::from(Nature::Mild), dracovish.StatNature));
+        assert_eq!(16, dracovish.nature as u8);
+        assert_eq!(Nature::Mild, dracovish.nature);
+        assert_eq!(16, dracovish.stat_nature as u8);
+        assert_eq!(Nature::Mild, dracovish.stat_nature);
         assert_eq!(0, dracovish.fateful_encounter);
         assert_eq!(0, dracovish.flag2);
-        // assert_eq!(i32::from(Gender::Genderless), dracovish.Gender));
+        assert_eq!(Gender::Genderless, dracovish.gender);
         assert_eq!(0, dracovish.alt_form);
         assert_eq!(4, dracovish.ev_hp);
         assert_eq!(252, dracovish.ev_atk);
