@@ -1797,6 +1797,16 @@ pub enum Species {
     #[deku(id = "893")]
     Zarude,
     #[deku(id = "894")]
+    Regieleki,
+    #[deku(id = "895")]
+    Regidrago,
+    #[deku(id = "896")]
+    Glastrier,
+    #[deku(id = "897")]
+    Spectrier,
+    #[deku(id = "898")]
+    Calyrex,
+    #[deku(id = "899")]
     MAX_COUNT,
 }
 

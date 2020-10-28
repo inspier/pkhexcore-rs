@@ -530,6 +530,20 @@ pub enum Ability {
     #[deku(id = "260")]
     UnseenFist,
     #[deku(id = "261")]
+    CuriousMedicine,
+    #[deku(id = "262")]
+    Transistor,
+    #[deku(id = "263")]
+    DragonsMaw,
+    #[deku(id = "264")]
+    ChillingNeigh,
+    #[deku(id = "265")]
+    GrimNeigh,
+    #[deku(id = "266")]
+    AsOneI,
+    #[deku(id = "267")]
+    AsOneG,
+    #[deku(id = "268")]
     MAX_COUNT,
 }
 
