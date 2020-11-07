@@ -240,9 +240,14 @@ pub struct PK8Config {
     // 0x52-0x57 unused
     _unused52_57: [u8; 6],
     // Block B
-    // nickname TODO
-    nickname: [u8; 24],
-    nickname_terminator: [u8; 2],
+    #[deku(count = "NICK_LENGTH")]
+    raw_nickname: Vec<u16>,
+    _raw_nickname_terminator: u16,
+    #[deku(
+        skip,
+        default = "String::from_utf16(raw_nickname).unwrap().trim_end_matches(char::from(0)).to_string()"
+    )]
+    nickname: String, // TODO use string_converter when implemented
     move1: u16,
     move2: u16,
     move3: u16,
@@ -467,7 +472,6 @@ impl fmt::Debug for PK8Config {
             .field("height_scalar", &self.height_scalar)
             .field("weight_scalar", &self.weight_scalar)
             .field("nickname", &self.nickname)
-            .field("nickname_terminator", &self.nickname_terminator)
             .field("move1", &self.move1)
             .field("move2", &self.move2)
             .field("move3", &self.move3)
