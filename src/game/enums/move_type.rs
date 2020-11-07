@@ -1,30 +1,55 @@
+#![allow(non_snake_case)]
 use core::convert::TryFrom;
+use deku::prelude::*;
 use num_enum::TryFromPrimitive;
 
+#[allow(non_camel_case_types)]
 /// Elemental type a move has; additionally, types a PKM can have.
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite, TryFromPrimitive)]
+#[deku(type = "i8", ctx = "_endian: deku::ctx::Endian")]
 #[repr(i8)]
-#[derive(PartialEq, PartialOrd, TryFromPrimitive)]
 pub enum MoveType {
-    Any = -1,
+    #[deku(id = "-1")]
+    Any,
+    #[deku(id = "0")]
     Normal,
+    #[deku(id = "1")]
     Fighting,
+    #[deku(id = "2")]
     Flying,
+    #[deku(id = "3")]
     Poison,
+    #[deku(id = "4")]
     Ground,
+    #[deku(id = "5")]
     Rock,
+    #[deku(id = "6")]
     Bug,
+    #[deku(id = "7")]
     Ghost,
+    #[deku(id = "8")]
     Steel,
+    #[deku(id = "9")]
     Fire,
+    #[deku(id = "10")]
     Water,
+    #[deku(id = "11")]
     Grass,
+    #[deku(id = "12")]
     Electric,
+    #[deku(id = "13")]
     Psychic,
+    #[deku(id = "14")]
     Ice,
+    #[deku(id = "15")]
     Dragon,
+    #[deku(id = "16")]
     Dark,
+    #[deku(id = "17")]
     Fairy,
 }
+
+impl_from! (MoveType for i8);
 
 pub fn get_move_type_generation(move_type: MoveType, generation: i32) -> MoveType {
     if generation <= 2 {

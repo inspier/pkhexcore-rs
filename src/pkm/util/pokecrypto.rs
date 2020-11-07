@@ -1,4 +1,5 @@
 use crate::util::bitconverter;
+use core::convert::TryInto;
 use log_derive::{logfn, logfn_inputs};
 
 pub const SIZE_1ULIST: usize = 69;
@@ -167,12 +168,10 @@ fn crypt(data: &mut [u8], seed: &mut u32, i: usize) {
 ///
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
-pub fn get_chk(data: &[u8]) -> u16 {
-    let mut chk = 0;
-    for i in (8..SIZE_6STORED).step_by(2) {
-        chk += bitconverter::to_uint16(data, i as usize);
-    }
-    chk
+pub fn get_chk<const N: usize>(data: &[u8; N], party_start: usize) -> u16 {
+    data[8..party_start].chunks(2).fold(0, |acc, x| {
+        u16::wrapping_add(acc, u16::from_le_bytes(x.try_into().unwrap()))
+    })
 }
 
 /// Decrypts a Gen8 pkm byte array.
@@ -192,12 +191,18 @@ mod test {
     use super::*;
 
     #[test]
+    fn get_chk8_test() {
+        let orbeetle = include_bytes!("tests/data/Orbeetle.pk8");
+        assert_eq!(0x4E8E, get_chk::<SIZE_8PARTY>(&orbeetle, SIZE_8STORED));
+    }
+
+    #[test]
     fn array8_test() {
         let mut pk8 = include_bytes!("tests/data/Orbeetle.pk8").clone();
         let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").clone();
 
-        assert!(ek8.iter().eq(encrypt_array8(&mut pk8).iter()));
-        assert!(pk8.iter().eq(decrypt_array8(&mut ek8).iter()));
+        assert_eq!(ek8, encrypt_array8(&mut pk8));
+        assert_eq!(pk8, decrypt_array8(&mut ek8));
     }
 
     #[test]
@@ -207,8 +212,8 @@ mod test {
         let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").clone();
 
         decrypt_if_encrypted8(&mut ek8);
-        assert!(pk8.iter().eq(ek8.iter()));
+        assert_eq!(pk8, ek8);
         decrypt_if_encrypted8(&mut pk8_temp);
-        assert!(pk8.iter().eq(pk8_temp.iter()));
+        assert_eq!(pk8, pk8_temp);
     }
 }
