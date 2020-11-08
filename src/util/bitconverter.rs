@@ -1,4 +1,4 @@
-use core::{convert::TryInto, fmt::Debug};
+use core::{convert::TryInto, fmt::Debug, mem};
 use log_derive::{logfn, logfn_inputs};
 
 /// Returns a 16-bit signed integer converted from two bytes at a specified
@@ -19,7 +19,7 @@ use log_derive::{logfn, logfn_inputs};
 #[logfn_inputs(Debug)]
 pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
     i16::from_le_bytes(
-        data[start_index..start_index + 2]
+        data[start_index..][..mem::size_of::<i16>()]
             .try_into()
             .expect("Failed to read i16. Invalid buffer provided."),
     )
@@ -43,7 +43,7 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 #[logfn_inputs(Debug)]
 pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
     i32::from_le_bytes(
-        data[start_index..start_index + 4]
+        data[start_index..][..mem::size_of::<i32>()]
             .try_into()
             .expect("Failed to read i32. Invalid buffer provided."),
     )
@@ -67,7 +67,7 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 #[logfn_inputs(Debug)]
 pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
     i64::from_le_bytes(
-        data[start_index..start_index + 8]
+        data[start_index..][..mem::size_of::<i64>()]
             .try_into()
             .expect("Failed to read i64. Invalid buffer provided."),
     )
@@ -91,7 +91,7 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 #[logfn_inputs(Debug)]
 pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
     u16::from_le_bytes(
-        data[start_index..start_index + 2]
+        data[start_index..][..mem::size_of::<u16>()]
             .try_into()
             .expect("Failed to read u16. Invalid buffer provided."),
     )
@@ -115,7 +115,7 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 #[logfn_inputs(Debug)]
 pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
     u32::from_le_bytes(
-        data[start_index..start_index + 4]
+        data[start_index..][..mem::size_of::<u32>()]
             .try_into()
             .expect("Failed to read u32. Invalid buffer provided."),
     )
@@ -139,7 +139,7 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 #[logfn_inputs(Debug)]
 pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     u64::from_le_bytes(
-        data[start_index..start_index + 8]
+        data[start_index..][..mem::size_of::<u64>()]
             .try_into()
             .expect("Failed to read u64. Invalid buffer provided."),
     )
@@ -168,10 +168,8 @@ impl ByteArray {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub(crate) fn copy_to(self: &Self, dest: &mut [u8], index: u32) {
-        let start_index = index as usize;
-        let end_index = start_index + self.size;
-        dest[start_index..end_index].copy_from_slice(&self.src);
+    pub(crate) fn copy_to(self: &Self, dest: &mut [u8], index: usize) {
+        dest[index..][..self.size].copy_from_slice(&self.src);
     }
 }
 

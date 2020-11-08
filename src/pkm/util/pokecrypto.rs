@@ -98,7 +98,7 @@ pub fn shuffle_array8(data: &[u8; 344], sv: u32, block_size: usize) -> [u8; 344]
         let data_start = start + block_size * ofs as usize;
         let data_end = data_start + block_size;
         let slice_size = data_end - data_start;
-        sdata[sdata_start..sdata_start + slice_size].copy_from_slice(&data[data_start..data_end]);
+        sdata[sdata_start..][..slice_size].copy_from_slice(&data[data_start..data_end]);
     }
     sdata
 }

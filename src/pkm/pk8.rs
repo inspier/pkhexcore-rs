@@ -240,8 +240,7 @@ pub struct PK8Config {
     // 0x52-0x57 unused
     _unused52_57: [u8; 6],
     // Block B
-    #[deku(count = "NICK_LENGTH")]
-    raw_nickname: Vec<u16>,
+    raw_nickname: [u16; NICK_LENGTH as usize],
     _raw_nickname_terminator: u16,
     #[deku(
         skip,
@@ -283,6 +282,9 @@ pub struct PK8Config {
     #[deku(skip, default = "(((*iv32 >> 31) & 1) == 1) as u8")]
     is_nicknamed: u8,
     dynamax_level: u8,
+    _unused90_93: [u8; 4],
+    status_condition: i32,
+    _unk98: i32,
 }
 
 impl From<&[u8; 344]> for PK8Config {
