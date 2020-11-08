@@ -6,6 +6,7 @@ use deku::prelude::*;
 /// Ability IDs for the corresponding English ability name.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u16", ctx = "_endian: deku::ctx::Endian")]
+#[non_exhaustive]
 pub enum Ability {
     #[deku(id = "0")]
     None,

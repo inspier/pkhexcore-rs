@@ -11,8 +11,8 @@ static FORMAT: u32 = 8;
 
 pub const MAX_IV: i32 = 31;
 pub const MAX_EV: i32 = 252;
-pub const OT_LENGTH: i32 = 12;
-pub const NICK_LENGTH: i32 = 12;
+pub const OT_LENGTH: usize = 12;
+pub const NICK_LENGTH: usize = 12;
 
 // TODO: PersonalInfo
 
@@ -240,7 +240,7 @@ pub struct PK8Config {
     // 0x52-0x57 unused
     _unused52_57: [u8; 6],
     // Block B
-    raw_nickname: [u16; NICK_LENGTH as usize],
+    raw_nickname: [u16; NICK_LENGTH],
     _raw_nickname_terminator: u16,
     #[deku(
         skip,

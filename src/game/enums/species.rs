@@ -7,6 +7,7 @@ use deku::prelude::*;
 /// Species IDs for the corresponding English species name.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u16", ctx = "_endian: deku::ctx::Endian")]
+#[non_exhaustive]
 pub enum Species {
     #[deku(id = "0")]
     None,
