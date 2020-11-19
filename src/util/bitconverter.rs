@@ -168,7 +168,7 @@ impl ByteArray {
 
     #[logfn(INFO)]
     #[logfn_inputs(Debug)]
-    pub(crate) fn copy_to(self: &Self, dest: &mut [u8], index: usize) {
+    pub(crate) fn copy_to(&self, dest: &mut [u8], index: usize) {
         dest[index..][..self.size].copy_from_slice(&self.src);
     }
 }

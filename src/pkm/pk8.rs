@@ -1,10 +1,11 @@
 #![allow(non_snake_case)]
-use core::fmt;
+use core::{convert::TryFrom, fmt};
 use deku::prelude::*;
 
 use crate::game::enums::{ability::Ability, gender::Gender, nature::Nature, species::Species};
-use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, SIZE_8PARTY, SIZE_8STORED};
-use crate::util::{bitconverter, flagutil::Flag};
+use crate::pkm::strings::string_converter::get_string7;
+use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED};
+use crate::util::flagutil::Flag;
 
 #[allow(dead_code)]
 static FORMAT: u32 = 8;
@@ -26,6 +27,9 @@ pub struct PK8 {
 pub struct PK8Config {
     encryption_constant: u32,
     sanity: u16,
+    #[deku(
+        update = "get_chk::<SIZE_8PARTY>(&<[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap(), SIZE_8STORED)"
+    )]
     checksum: u16,
 
     // Block A
@@ -242,11 +246,8 @@ pub struct PK8Config {
     // Block B
     raw_nickname: [u16; NICK_LENGTH],
     _raw_nickname_terminator: u16,
-    #[deku(
-        skip,
-        default = "String::from_utf16(raw_nickname).unwrap().trim_end_matches(char::from(0)).to_string()"
-    )]
-    nickname: String, // TODO use string_converter when implemented
+    #[deku(skip, default = "get_string7(raw_nickname)")]
+    nickname: String,
     move1: u16,
     move2: u16,
     move3: u16,
@@ -265,7 +266,7 @@ pub struct PK8Config {
     relearn_move4: u16,
     stat_hp_current: u16,
     iv32: u32,
-    #[deku(skip, default = "((*iv32 >> 00) & 0x1F) as u8")]
+    #[deku(skip, default = "((*iv32) & 0x1F) as u8")]
     iv_hp: u8,
     #[deku(skip, default = "((*iv32 >> 05) & 0x1F) as u8")]
     iv_atk: u8,
@@ -285,6 +286,14 @@ pub struct PK8Config {
     _unused90_93: [u8; 4],
     status_condition: i32,
     _unk98: i32,
+    _unused9C_A7: [u8; 12],
+    raw_ht_name: [u16; NICK_LENGTH],
+    _raw_ht_name_terminator: u16,
+    #[deku(skip, default = "get_string7(raw_ht_name)")]
+    ht_name: String,
+    ht_gender: u8,
+    ht_language: u8,
+    current_handler: u8,
 }
 
 impl From<&[u8; 344]> for PK8Config {
@@ -501,6 +510,10 @@ impl fmt::Debug for PK8Config {
             .field("is_egg", &self.is_egg)
             .field("is_nicknamed", &self.is_nicknamed)
             .field("dynamax_level", &self.dynamax_level)
+            .field("ht_name", &self.ht_name)
+            .field("ht_gender", &self.ht_gender)
+            .field("ht_language", &self.ht_language)
+            .field("current_handler", &self.current_handler)
             .finish()
     }
 }
@@ -532,8 +545,8 @@ mod test {
 
     #[test]
     fn pk8_calc_checksum_test() {
-        let orbeetle = PK8Config::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
-        let dracovish = PK8Config::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let mut orbeetle = PK8Config::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
+        let mut dracovish = PK8Config::from(include_bytes!("util/tests/data/Dracovish.pk8"));
         assert_eq!(0x4E8E, orbeetle.checksum);
         assert_eq!(0x5D57, dracovish.checksum);
     }

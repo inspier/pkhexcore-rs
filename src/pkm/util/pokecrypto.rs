@@ -192,7 +192,7 @@ mod test {
     #[test]
     fn get_chk8_test() {
         let orbeetle = include_bytes!("tests/data/Orbeetle.pk8");
-        assert_eq!(0x4E8E, get_chk::<SIZE_8PARTY>(&orbeetle, SIZE_8STORED));
+        assert_eq!(0x4E8E, get_chk::<SIZE_8PARTY>(orbeetle, SIZE_8STORED));
     }
 
     #[test]
