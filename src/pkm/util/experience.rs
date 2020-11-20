@@ -128,7 +128,7 @@ const EXP_TABLE: [[u32; EXP_TABLE_WIDTH as usize]; EXP_TABLE_DEPTH as usize] = [
 /// ```
 /// use pkhexcore::pkm::util::experience::get_level;
 ///
-/// assert_eq!(75, get_level(582914, 2).unwrap());
+/// assert_eq!(Some(75), get_level(582914, 2));
 /// ```
 ///
 #[logfn(INFO)]
@@ -164,7 +164,7 @@ pub fn get_level(experience: u32, growth_rate: u32) -> Option<u32> {
 /// ```
 /// use pkhexcore::pkm::util::experience::get_exp;
 ///
-/// assert_eq!(800000, get_exp(100, 4).unwrap());
+/// assert_eq!(Some(800000), get_exp(100, 4));
 /// ```
 ///
 #[logfn(INFO)]
@@ -235,15 +235,15 @@ mod test {
 
     #[test]
     fn test_get_level() {
-        assert_eq!(100, get_level(900_000, 4).unwrap());
-        assert_eq!(31, get_level(24_000, 4).unwrap());
-        assert_eq!(75, get_level(582914, 2).unwrap());
-        assert_eq!(10, get_level(1000, 0).unwrap());
-        assert_eq!(1, get_level(0, 0).unwrap());
-        assert_eq!(98, get_level(590298, 1).unwrap());
-        assert_eq!(100, get_level(589289198, 3).unwrap());
-        assert_eq!(3, get_level(100, 1).unwrap());
-        assert_eq!(34, get_level(50000, 5).unwrap());
+        assert_eq!(Some(100), get_level(900_000, 4));
+        assert_eq!(Some(31), get_level(24_000, 4));
+        assert_eq!(Some(75), get_level(582914, 2));
+        assert_eq!(Some(10), get_level(1000, 0));
+        assert_eq!(Some(1), get_level(0, 0));
+        assert_eq!(Some(98), get_level(590298, 1));
+        assert_eq!(Some(100), get_level(589289198, 3));
+        assert_eq!(Some(3), get_level(100, 1));
+        assert_eq!(Some(34), get_level(50000, 5));
     }
 
     #[test]
@@ -253,15 +253,15 @@ mod test {
 
     #[test]
     fn test_get_exp() {
-        assert_eq!(800000, get_exp(100, 4).unwrap());
-        assert_eq!(21012, get_exp(24, 1).unwrap());
-        assert_eq!(250047, get_exp(63, 0).unwrap());
+        assert_eq!(Some(800000), get_exp(100, 4));
+        assert_eq!(Some(21012), get_exp(24, 1));
+        assert_eq!(Some(250047), get_exp(63, 0));
         assert_eq!(true, get_exp(1, 4).is_none());
-        assert_eq!(1122660, get_exp(90, 2).unwrap());
-        assert_eq!(30486, get_exp(29, 5).unwrap());
-        assert_eq!(600000, get_exp(100, 1).unwrap());
-        assert_eq!(419, get_exp(9, 3).unwrap());
-        assert_eq!(1059860, get_exp(100, 3).unwrap());
+        assert_eq!(Some(1122660), get_exp(90, 2));
+        assert_eq!(Some(30486), get_exp(29, 5));
+        assert_eq!(Some(600000), get_exp(100, 1));
+        assert_eq!(Some(419), get_exp(9, 3));
+        assert_eq!(Some(1059860), get_exp(100, 3));
     }
 
     #[test]
@@ -283,14 +283,14 @@ mod test {
 
     #[test]
     fn test_get_exp_to_level_up() {
-        assert_eq!(0, get_exp_to_level_up(100, 4).unwrap());
-        assert_eq!(2425, get_exp_to_level_up(24, 1).unwrap());
-        assert_eq!(12097, get_exp_to_level_up(63, 0).unwrap());
-        assert_eq!(6, get_exp_to_level_up(1, 4).unwrap());
-        assert_eq!(37839, get_exp_to_level_up(90, 2).unwrap());
-        assert_eq!(3264, get_exp_to_level_up(29, 5).unwrap());
-        assert_eq!(0, get_exp_to_level_up(100, 1).unwrap());
-        assert_eq!(141, get_exp_to_level_up(9, 3).unwrap());
+        assert_eq!(Some(0), get_exp_to_level_up(100, 4));
+        assert_eq!(Some(2425), get_exp_to_level_up(24, 1));
+        assert_eq!(Some(12097), get_exp_to_level_up(63, 0));
+        assert_eq!(Some(6), get_exp_to_level_up(1, 4));
+        assert_eq!(Some(37839), get_exp_to_level_up(90, 2));
+        assert_eq!(Some(3264), get_exp_to_level_up(29, 5));
+        assert_eq!(Some(0), get_exp_to_level_up(100, 1));
+        assert_eq!(Some(141), get_exp_to_level_up(9, 3));
     }
 
     #[test]

@@ -21,7 +21,7 @@ pub const SECONDS_PER_DAY: i64 = Duration::day().whole_seconds(); // 86400
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
-    if year < 1 || year > 9999 {
+    if !(1..=9999).contains(&year) {
         return false;
     }
 

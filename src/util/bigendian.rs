@@ -156,14 +156,16 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
 #[logfn(INFO)]
 #[logfn_inputs(Debug)]
 pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
-    let mut result: i32 = 0;
-    let upper_bound = offset + length as usize;
-    for p in input.iter().take(upper_bound).skip(offset) {
-        result *= 100;
-        result += (10 * (p >> 4)) as i32;
-        result += (p & 0xf) as i32;
-    }
-    result
+    input
+        .iter()
+        .take(offset + length as usize)
+        .skip(offset)
+        .fold(0i32, |mut result, p| {
+            result *= 100;
+            result += (10 * (p >> 4)) as i32;
+            result += (p & 0xf) as i32;
+            result
+        })
 }
 
 /// Returns the specified 32-bit signed integer value as an array of Binary

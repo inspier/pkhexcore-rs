@@ -4,7 +4,6 @@ use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 const GEN7_ZH_OFS: u16 = 0xE800;
 const SM_ZHCHARTABLE_SIZE: u16 = 0x30F;
 const USUM_CHS_SIZE: u16 = 0x4;
-const GEN8_NICK_LENGTH: usize = 12;
 
 fn sanitize_string(data: &[u16]) -> String {
     decode_utf16(data.iter().take_while(|&&x| x != 0).copied())
