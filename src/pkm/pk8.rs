@@ -545,8 +545,8 @@ mod test {
 
     #[test]
     fn pk8_calc_checksum_test() {
-        let mut orbeetle = PK8Config::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
-        let mut dracovish = PK8Config::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let orbeetle = PK8Config::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
+        let dracovish = PK8Config::from(include_bytes!("util/tests/data/Dracovish.pk8"));
         assert_eq!(0x4E8E, orbeetle.checksum);
         assert_eq!(0x5D57, dracovish.checksum);
     }

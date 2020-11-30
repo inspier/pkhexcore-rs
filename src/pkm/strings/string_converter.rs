@@ -1,21 +1,24 @@
-use beef::Cow;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 
 const GEN7_ZH_OFS: u16 = 0xE800;
 const SM_ZHCHARTABLE_SIZE: u16 = 0x30F;
 const USUM_CHS_SIZE: u16 = 0x4;
 
+fn sanitize_glyph(c: char) -> char {
+    match c {
+        '’' => '\'',       // Farfetch'd
+        '\u{E08F}' => '♀', // ♀ (gen6+)
+        '\u{E08E}' => '♂', // ♂ (gen6+)
+        '\u{246E}' => '♀', // ♀ (gen5)
+        '\u{246D}' => '♂', // ♂ (gen5)
+        _ => c,
+    }
+}
+
+// TODO Extract glyph specific stuff, use and_then to chain the two sanitize functions, use map_or
 fn sanitize_string(data: &[u16]) -> String {
     decode_utf16(data.iter().take_while(|&&x| x != 0).copied())
-        .map(|c| match c {
-            Ok('’') => '\'',       // Farfetch'd
-            Ok('\u{E08F}') => '♀', // ♀ (gen6+)
-            Ok('\u{E08E}') => '♂', // ♂ (gen6+)
-            Ok('\u{246E}') => '♀', // ♀ (gen5)
-            Ok('\u{246D}') => '♂', // ♂ (gen5)
-            Ok(c) => c,
-            Err(_) => REPLACEMENT_CHARACTER,
-        })
+        .map(|r| r.map_or(REPLACEMENT_CHARACTER, sanitize_glyph))
         .collect::<String>()
 }
 
@@ -23,17 +26,6 @@ pub fn get_string7(data: &[u16]) -> String {
     // TODO Language sanitizing.
     sanitize_string(&data)
 }
-
-/*
-fn convert_bin2string_g7_zh(input: &str) {
-    let mut result = String::with_capacity(24);
-    for c in input.chars() {
-        result.push_str();
-    }
-}
-
-fn get_g7_chinese_char(val: u16) -> u16 {}
-*/
 
 #[cfg(test)]
 mod test {
