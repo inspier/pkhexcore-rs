@@ -1,3 +1,4 @@
+use alloc::string::String;
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
 
 const GEN7_ZH_OFS: u16 = 0xE800;

@@ -1,5 +1,8 @@
 #![feature(min_const_generics)]
 #![feature(non_ascii_idents)]
+#![no_std]
+
+extern crate alloc;
 
 /// Module containing utilities to manipulate Pokemon data files
 #[macro_use]

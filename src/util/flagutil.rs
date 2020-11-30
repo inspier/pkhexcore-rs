@@ -1,3 +1,4 @@
+use alloc::format;
 use deku::prelude::*;
 
 #[derive(Debug, PartialEq, Clone, DekuRead, DekuWrite)]

@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+use alloc::format;
 use core::convert::TryFrom;
 use deku::prelude::*;
 use num_enum::TryFromPrimitive;

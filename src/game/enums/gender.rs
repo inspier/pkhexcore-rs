@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+use alloc::format;
 use deku::prelude::*;
 
 #[allow(non_camel_case_types)]

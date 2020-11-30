@@ -1,3 +1,4 @@
+use alloc::vec::Vec;
 use core::{convert::TryInto, fmt::Debug, mem};
 use log_derive::{logfn, logfn_inputs};
 

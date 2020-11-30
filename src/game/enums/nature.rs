@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+use alloc::format;
 use deku::prelude::*;
 
 #[repr(u8)]
