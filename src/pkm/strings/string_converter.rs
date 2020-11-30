@@ -15,7 +15,6 @@ fn sanitize_glyph(c: char) -> char {
     }
 }
 
-// TODO Extract glyph specific stuff, use and_then to chain the two sanitize functions, use map_or
 fn sanitize_string(data: &[u16]) -> String {
     decode_utf16(data.iter().take_while(|&&x| x != 0).copied())
         .map(|r| r.map_or(REPLACEMENT_CHARACTER, sanitize_glyph))
