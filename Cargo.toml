@@ -6,8 +6,6 @@ edition = "2018"
 
 [dependencies]
 
-log = { version = "0.4.11", features = ["release_max_level_off"] }
-log-derive = "0.4.1"
 time = { version = "0.2.23", default-features = false }
-deku = { version = "0.9.1", default-features = false, features = ["alloc"] }
+deku = { git = "https://github.com/sharksforarms/deku", default-features = false, features = ["alloc"] }
 num_enum = "0.5.1"

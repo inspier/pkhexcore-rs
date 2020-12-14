@@ -1,6 +1,5 @@
 use alloc::vec::Vec;
 use core::{convert::TryInto, fmt::Debug, mem};
-use log_derive::{logfn, logfn_inputs};
 
 /// Returns a 16-bit signed integer converted from two bytes at a specified
 /// position in a byte array.
@@ -16,8 +15,6 @@ use log_derive::{logfn, logfn_inputs};
 /// assert_eq!(-256, to_int16(&buffer, 2));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
     i16::from_le_bytes(
         data[start_index..][..mem::size_of::<i16>()]
@@ -40,8 +37,6 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 /// assert_eq!(-265875328, to_int32(&buffer, 3));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
     i32::from_le_bytes(
         data[start_index..][..mem::size_of::<i32>()]
@@ -64,8 +59,6 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 /// assert_eq!(-1019801265028202496, to_int64(&buffer, 1));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
     i64::from_le_bytes(
         data[start_index..][..mem::size_of::<i64>()]
@@ -88,8 +81,6 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 /// assert_eq!(65280, to_uint16(&buffer, 2));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
     u16::from_le_bytes(
         data[start_index..][..mem::size_of::<u16>()]
@@ -112,8 +103,6 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 /// assert_eq!(261888, to_uint32(&buffer, 6));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
     u32::from_le_bytes(
         data[start_index..][..mem::size_of::<u32>()]
@@ -136,8 +125,6 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 /// assert_eq!(255, to_uint64(&buffer, 2));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     u64::from_le_bytes(
         data[start_index..][..mem::size_of::<u64>()]
@@ -146,8 +133,6 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     )
 }
 
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub(crate) fn get_bytes<T: ByteDecomposable + Debug>(value: T) -> ByteArray {
     let data = <T>::get_bytes(value);
     let size = data.len();
@@ -161,14 +146,10 @@ pub(crate) struct ByteArray {
 }
 
 impl ByteArray {
-    #[logfn(INFO)]
-    #[logfn_inputs(Debug)]
     fn new(data: Vec<u8>, size: usize) -> ByteArray {
         ByteArray { src: data, size }
     }
 
-    #[logfn(INFO)]
-    #[logfn_inputs(Debug)]
     pub(crate) fn copy_to(&self, dest: &mut [u8], index: usize) {
         dest[index..][..self.size].copy_from_slice(&self.src);
     }

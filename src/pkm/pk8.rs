@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 use alloc::{format, string::String, vec::Vec};
-use core::{convert::TryFrom, fmt};
+use core::convert::TryFrom;
+use deku::ctx::{Endian, Size};
 use deku::prelude::*;
 
 use crate::game::enums::{ability::Ability, gender::Gender, nature::Nature, species::Species};
@@ -23,7 +24,7 @@ pub struct PK8 {
     affixed_ribbon: i8, // 00 would make it show Kalos Champion
 }
 
-#[derive(PartialEq, DekuRead, DekuWrite)]
+#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
 pub struct PK8Config {
     encryption_constant: u32,
@@ -39,9 +40,8 @@ pub struct PK8Config {
     tid: u16,
     sid: u16,
     exp: u32,
+    #[deku(reader = "pad_bits_after::<Ability>(rest, Size::Bits(3))")]
     ability: Ability,
-    #[deku(bits = 3)]
-    _bit_padding0: u8,
     #[deku(bits = 1)]
     can_gigantamax: u8,
     #[deku(bits = 1)]
@@ -49,23 +49,22 @@ pub struct PK8Config {
     #[deku(bits = 3)]
     ability_number: u8,
     // 0x17 alignment unused
-    _alignment_17: u8,
+    #[deku(reader = "pad_before::<u16>(rest, 1)")]
     mark_value: u16,
     // 0x1A alignment unused
     // 0x1B alignment unused
-    _alignment_1A_1B: u16,
+    #[deku(reader = "pad_before::<u32>(rest, 2)")]
     pid: u32,
     nature: Nature,
+    #[deku(reader = "pad_bits_after::<Nature>(rest, Size::Bits(4))")]
     stat_nature: Nature,
-    #[deku(bits = 4)]
-    _bit_padding1: u8,
     gender: Gender,
     #[deku(bits = 1)]
     flag2: u8,
     #[deku(bits = 1)]
     fateful_encounter: u8,
     // 0x23 alignment unused
-    _alignment_23: u8,
+    #[deku(reader = "pad_before::<u16>(rest, 1)")]
     alt_form: u16,
     ev_hp: u8,
     ev_atk: u8,
@@ -80,6 +79,7 @@ pub struct PK8Config {
     cnt_tough: u8,
     cnt_sheen: u8,
     #[deku(
+        reader = "pad_after::<u8>(rest, 1)",
         update = "(((self.pkrs & !0xF) | self.pkrs_days) | ((self.pkrs & 0xF) | self.pkrs_strain << 4))"
     )]
     pkrs: u8,
@@ -88,7 +88,6 @@ pub struct PK8Config {
     #[deku(skip, default = "*pkrs >> 4")]
     pkrs_strain: u8,
     // 0x33 unused padding
-    _padding33: u8,
     ribbon_champion_kalos: Flag,
     ribbon_champion_g3_hoenn: Flag,
     ribbon_champion_sinnoh: Flag,
@@ -161,10 +160,10 @@ pub struct PK8Config {
     ribbon_mark_dry: Flag,
     ribbon_mark_sandstorm: Flag,
     ribbon_count_memory_contest: u8,
+    #[deku(reader = "pad_after::<u8>(rest, 2)")]
     ribbon_count_memory_battle: u8,
     // 0x3E padding
     // 0x3F padding
-    _padding3E_3F: u16,
     // 0x40 Ribbon 1
     ribbon_mark_misty: Flag,
     ribbon_mark_destiny: Flag,
@@ -237,16 +236,16 @@ pub struct PK8Config {
     rib47_5: Flag,
     rib47_6: Flag,
     rib47_7: Flag,
+    #[deku(reader = "pad_after::<u32>(rest, 4)")]
     u48: u32,
     // 0x4C-0x4F unused
-    _unused4C_4F: [u8; 4],
     height_scalar: u8,
+    #[deku(reader = "pad_after::<u8>(rest, 6)")]
     weight_scalar: u8,
     // 0x52-0x57 unused
-    _unused52_57: [u8; 6],
     // Block B
     raw_nickname: [u16; NICK_LENGTH],
-    _raw_nickname_terminator: u16,
+    raw_nickname_terminator: u16,
     #[deku(skip, default = "get_string7(raw_nickname)")]
     nickname: String,
     move1: u16,
@@ -283,18 +282,66 @@ pub struct PK8Config {
     is_egg: u8,
     #[deku(skip, default = "(((*iv32 >> 31) & 1) == 1) as u8")]
     is_nicknamed: u8,
+    #[deku(reader = "pad_after::<u8>(rest, 4)")]
     dynamax_level: u8,
-    _unused90_93: [u8; 4],
     status_condition: i32,
-    _unk98: i32,
-    _unused9C_A7: [u8; 12],
+    #[deku(reader = "pad_after::<i32>(rest, 12)")]
+    unk98: i32,
     raw_ht_name: [u16; NICK_LENGTH],
-    _raw_ht_name_terminator: u16,
+    raw_ht_name_terminator: u16,
     #[deku(skip, default = "get_string7(raw_ht_name)")]
     ht_name: String,
     ht_gender: u8,
     ht_language: u8,
     current_handler: u8,
+}
+
+fn pad_before<T: DekuRead>(
+    rest: &BitSlice<Msb0, u8>,
+    pad_size: usize,
+) -> Result<(&BitSlice<Msb0, u8>, T), DekuError> {
+    let mut tmp_rest = rest;
+    for _i in 0..pad_size {
+        let (rest, _) = u8::read(tmp_rest, ())?;
+        tmp_rest = rest;
+    }
+    let (rest, value) = T::read(tmp_rest, ())?;
+    Ok((rest, value))
+}
+
+fn pad_after<T: DekuRead>(
+    rest: &BitSlice<Msb0, u8>,
+    pad_size: usize,
+) -> Result<(&BitSlice<Msb0, u8>, T), DekuError> {
+    let (rest, value) = T::read(rest, ())?;
+    let mut tmp_rest = rest;
+    for _i in 0..pad_size {
+        let (rest, _) = u8::read(tmp_rest, ())?;
+        tmp_rest = rest;
+    }
+    Ok((tmp_rest, value))
+}
+
+fn pad_bits_before<T: DekuRead<Endian>>(
+    rest: &BitSlice<Msb0, u8>,
+    pad_size: Size,
+) -> Result<(&BitSlice<Msb0, u8>, T), DekuError> {
+    let mut tmp_rest = rest;
+    let (rest, _) = u8::read(tmp_rest, pad_size)?;
+    tmp_rest = rest;
+    let (rest, value) = T::read(tmp_rest, Endian::Little)?;
+    Ok((rest, value))
+}
+
+fn pad_bits_after<T: DekuRead<Endian>>(
+    rest: &BitSlice<Msb0, u8>,
+    pad_size: Size,
+) -> Result<(&BitSlice<Msb0, u8>, T), DekuError> {
+    let (rest, value) = T::read(rest, Endian::Little)?;
+    let mut tmp_rest = rest;
+    let (rest, _) = u8::read(tmp_rest, pad_size)?;
+    tmp_rest = rest;
+    Ok((tmp_rest, value))
 }
 
 impl From<&[u8; 344]> for PK8Config {
@@ -303,219 +350,6 @@ impl From<&[u8; 344]> for PK8Config {
         decrypt_if_encrypted8(&mut array);
         let (_rest, test_file) = PK8Config::from_bytes((array.as_ref(), 0)).unwrap();
         test_file
-    }
-}
-
-impl fmt::Debug for PK8Config {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("PK8Config")
-            .field("encryption_constant", &self.encryption_constant)
-            .field("sanity", &self.sanity)
-            .field("checksum", &self.checksum)
-            .field("species", &self.species)
-            .field("held_item", &self.held_item)
-            .field("tid", &self.tid)
-            .field("sid", &self.sid)
-            .field("exp", &self.exp)
-            .field("ability", &self.ability)
-            .field("can_gigantamax", &self.can_gigantamax)
-            .field("favourite", &self.favourite)
-            .field("ability_number", &self.ability_number)
-            .field("mark_value", &self.mark_value)
-            .field("pid", &self.pid)
-            .field("nature", &self.nature)
-            .field("stat_nature", &self.stat_nature)
-            .field("fateful_encounter", &self.fateful_encounter)
-            .field("flag2", &self.flag2)
-            .field("gender", &self.gender)
-            .field("alt_form", &self.alt_form)
-            .field("ev_hp", &self.ev_hp)
-            .field("ev_atk", &self.ev_atk)
-            .field("ev_def", &self.ev_def)
-            .field("ev_spe", &self.ev_spe)
-            .field("ev_spa", &self.ev_spa)
-            .field("ev_spd", &self.ev_spd)
-            .field("cnt_cool", &self.cnt_cool)
-            .field("cnt_beauty", &self.cnt_beauty)
-            .field("cnt_cute", &self.cnt_cute)
-            .field("cnt_smart", &self.cnt_smart)
-            .field("cnt_tough", &self.cnt_tough)
-            .field("cnt_sheen", &self.cnt_sheen)
-            .field("pkrs", &self.pkrs)
-            .field("pkrs_days", &self.pkrs_days)
-            .field("pkrs_strain", &self.pkrs_strain)
-            .field("ribbon_champion_kalos", &self.ribbon_champion_kalos)
-            .field("ribbon_champion_g3_hoenn", &self.ribbon_champion_g3_hoenn)
-            .field("ribbon_champion_sinnoh", &self.ribbon_champion_sinnoh)
-            .field("ribbon_best_friends", &self.ribbon_best_friends)
-            .field("ribbon_training", &self.ribbon_training)
-            .field("ribbon_battler_skillful", &self.ribbon_battler_skillful)
-            .field("ribbon_battler_expert", &self.ribbon_battler_expert)
-            .field("ribbon_effort", &self.ribbon_effort)
-            .field("ribbon_alert", &self.ribbon_alert)
-            .field("ribbon_shock", &self.ribbon_shock)
-            .field("ribbon_downcast", &self.ribbon_downcast)
-            .field("ribbon_careless", &self.ribbon_careless)
-            .field("ribbon_relax", &self.ribbon_relax)
-            .field("ribbon_snooze", &self.ribbon_snooze)
-            .field("ribbon_smile", &self.ribbon_smile)
-            .field("ribbon_gorgeous", &self.ribbon_gorgeous)
-            .field("ribbon_royal", &self.ribbon_royal)
-            .field("ribbon_gorgeous_royal", &self.ribbon_gorgeous_royal)
-            .field("ribbon_artist", &self.ribbon_artist)
-            .field("ribbon_footprint", &self.ribbon_footprint)
-            .field("ribbon_record", &self.ribbon_record)
-            .field("ribbon_legend", &self.ribbon_legend)
-            .field("ribbon_country", &self.ribbon_country)
-            .field("ribbon_national", &self.ribbon_national)
-            .field("ribbon_earth", &self.ribbon_earth)
-            .field("ribbon_world", &self.ribbon_world)
-            .field("ribbon_classic", &self.ribbon_classic)
-            .field("ribbon_premier", &self.ribbon_premier)
-            .field("ribbon_event", &self.ribbon_event)
-            .field("ribbon_birthday", &self.ribbon_birthday)
-            .field("ribbon_special", &self.ribbon_special)
-            .field("ribbon_souvenir", &self.ribbon_souvenir)
-            .field("ribbon_wishing", &self.ribbon_wishing)
-            .field("ribbon_champion_battle", &self.ribbon_champion_battle)
-            .field("ribbon_champion_regional", &self.ribbon_champion_regional)
-            .field("ribbon_champion_national", &self.ribbon_champion_national)
-            .field("ribbon_champion_world", &self.ribbon_champion_world)
-            .field("has_contest_memory_ribbon", &self.has_contest_memory_ribbon)
-            .field("has_battle_memory_ribbon", &self.has_battle_memory_ribbon)
-            .field("ribbon_champion_g6_hoenn", &self.ribbon_champion_g6_hoenn)
-            .field("ribbon_contest_star", &self.ribbon_contest_star)
-            .field("ribbon_master_coolness", &self.ribbon_master_coolness)
-            .field("ribbon_master_beauty", &self.ribbon_master_beauty)
-            .field("ribbon_master_cuteness", &self.ribbon_master_cuteness)
-            .field("ribbon_master_cleverness", &self.ribbon_master_cleverness)
-            .field("ribbon_master_toughness", &self.ribbon_master_toughness)
-            .field("ribbon_champion_alola", &self.ribbon_champion_alola)
-            .field("ribbon_battle_royale", &self.ribbon_battle_royale)
-            .field("ribbon_battle_tree_great", &self.ribbon_battle_tree_great)
-            .field("ribbon_battle_tree_master", &self.ribbon_battle_tree_master)
-            .field("ribbon_champion_galar", &self.ribbon_champion_galar)
-            .field("ribbon_tower_master", &self.ribbon_tower_master)
-            .field("ribbon_master_rank", &self.ribbon_master_rank)
-            .field("ribbon_mark_lunchtime", &self.ribbon_mark_lunchtime)
-            .field("ribbon_mark_sleepy_time", &self.ribbon_mark_sleepy_time)
-            .field("ribbon_mark_dusk", &self.ribbon_mark_dusk)
-            .field("ribbon_mark_dawn", &self.ribbon_mark_dawn)
-            .field("ribbon_mark_cloudy", &self.ribbon_mark_cloudy)
-            .field("ribbon_mark_rainy", &self.ribbon_mark_rainy)
-            .field("ribbon_mark_stormy", &self.ribbon_mark_stormy)
-            .field("ribbon_mark_snowy", &self.ribbon_mark_snowy)
-            .field("ribbon_mark_blizzard", &self.ribbon_mark_blizzard)
-            .field("ribbon_mark_dry", &self.ribbon_mark_dry)
-            .field("ribbon_mark_sandstorm", &self.ribbon_mark_sandstorm)
-            .field(
-                "ribbon_count_memory_contest",
-                &self.ribbon_count_memory_contest,
-            )
-            .field(
-                "ribbon_count_memory_battle",
-                &self.ribbon_count_memory_battle,
-            )
-            .field("ribbon_mark_misty", &self.ribbon_mark_misty)
-            .field("ribbon_mark_destiny", &self.ribbon_mark_destiny)
-            .field("ribbon_mark_fishing", &self.ribbon_mark_fishing)
-            .field("ribbon_mark_curry", &self.ribbon_mark_curry)
-            .field("ribbon_mark_uncommon", &self.ribbon_mark_uncommon)
-            .field("ribbon_mark_rare", &self.ribbon_mark_rare)
-            .field("ribbon_mark_rowdy", &self.ribbon_mark_rowdy)
-            .field("ribbon_mark_absent_minded", &self.ribbon_mark_absent_minded)
-            .field("ribbon_mark_jittery", &self.ribbon_mark_jittery)
-            .field("ribbon_mark_excited", &self.ribbon_mark_excited)
-            .field("ribbon_mark_charismatic", &self.ribbon_mark_charismatic)
-            .field("ribbon_mark_calmness", &self.ribbon_mark_calmness)
-            .field("ribbon_mark_intense", &self.ribbon_mark_intense)
-            .field("ribbon_mark_zoned_out", &self.ribbon_mark_zoned_out)
-            .field("ribbon_mark_joyful", &self.ribbon_mark_joyful)
-            .field("ribbon_mark_angry", &self.ribbon_mark_angry)
-            .field("ribbon_mark_smiley", &self.ribbon_mark_smiley)
-            .field("ribbon_mark_teary", &self.ribbon_mark_teary)
-            .field("ribbon_mark_upbeat", &self.ribbon_mark_upbeat)
-            .field("ribbon_mark_peeved", &self.ribbon_mark_peeved)
-            .field("ribbon_mark_intellectual", &self.ribbon_mark_intellectual)
-            .field("ribbon_mark_ferocious", &self.ribbon_mark_ferocious)
-            .field("ribbon_mark_crafty", &self.ribbon_mark_crafty)
-            .field("ribbon_mark_scowling", &self.ribbon_mark_scowling)
-            .field("ribbon_mark_kindly", &self.ribbon_mark_kindly)
-            .field("ribbon_mark_flustered", &self.ribbon_mark_flustered)
-            .field("ribbon_mark_pumped_up", &self.ribbon_mark_pumped_up)
-            .field("ribbon_mark_zero_energy", &self.ribbon_mark_zero_energy)
-            .field("ribbon_mark_prideful", &self.ribbon_mark_prideful)
-            .field("ribbon_mark_unsure", &self.ribbon_mark_unsure)
-            .field("ribbon_mark_humble", &self.ribbon_mark_humble)
-            .field("ribbon_mark_thorny", &self.ribbon_mark_thorny)
-            .field("ribbon_mark_vigor", &self.ribbon_mark_vigor)
-            .field("ribbon_mark_slump", &self.ribbon_mark_slump)
-            .field("rib44_2", &self.rib44_2)
-            .field("rib44_3", &self.rib44_3)
-            .field("rib44_4", &self.rib44_4)
-            .field("rib44_5", &self.rib44_5)
-            .field("rib44_6", &self.rib44_6)
-            .field("rib44_7", &self.rib44_7)
-            .field("rib45_0", &self.rib45_0)
-            .field("rib45_1", &self.rib45_1)
-            .field("rib45_2", &self.rib45_2)
-            .field("rib45_3", &self.rib45_3)
-            .field("rib45_4", &self.rib45_4)
-            .field("rib45_5", &self.rib45_5)
-            .field("rib45_6", &self.rib45_6)
-            .field("rib45_7", &self.rib45_7)
-            .field("rib46_0", &self.rib46_0)
-            .field("rib46_1", &self.rib46_1)
-            .field("rib46_2", &self.rib46_2)
-            .field("rib46_3", &self.rib46_3)
-            .field("rib46_4", &self.rib46_4)
-            .field("rib46_5", &self.rib46_5)
-            .field("rib46_6", &self.rib46_6)
-            .field("rib46_7", &self.rib46_7)
-            .field("rib47_0", &self.rib47_0)
-            .field("rib47_1", &self.rib47_1)
-            .field("rib47_2", &self.rib47_2)
-            .field("rib47_3", &self.rib47_3)
-            .field("rib47_4", &self.rib47_4)
-            .field("rib47_5", &self.rib47_5)
-            .field("rib47_6", &self.rib47_6)
-            .field("rib47_7", &self.rib47_7)
-            .field("u48", &self.u48)
-            .field("height_scalar", &self.height_scalar)
-            .field("weight_scalar", &self.weight_scalar)
-            .field("nickname", &self.nickname)
-            .field("move1", &self.move1)
-            .field("move2", &self.move2)
-            .field("move3", &self.move3)
-            .field("move4", &self.move4)
-            .field("move1_pp", &self.move1_pp)
-            .field("move2_pp", &self.move2_pp)
-            .field("move3_pp", &self.move3_pp)
-            .field("move4_pp", &self.move4_pp)
-            .field("move_1_pp_ups", &self.move_1_pp_ups)
-            .field("move_2_pp_ups", &self.move_2_pp_ups)
-            .field("move_3_pp_ups", &self.move_3_pp_ups)
-            .field("move_4_pp_ups", &self.move_4_pp_ups)
-            .field("relearn_move1", &self.relearn_move1)
-            .field("relearn_move2", &self.relearn_move2)
-            .field("relearn_move3", &self.relearn_move3)
-            .field("relearn_move4", &self.relearn_move4)
-            .field("stat_hp_current", &self.stat_hp_current)
-            .field("iv32", &self.iv32)
-            .field("iv_hp", &self.iv_hp)
-            .field("iv_atk", &self.iv_atk)
-            .field("iv_def", &self.iv_def)
-            .field("iv_spe", &self.iv_spe)
-            .field("iv_spa", &self.iv_spa)
-            .field("iv_spd", &self.iv_spd)
-            .field("is_egg", &self.is_egg)
-            .field("is_nicknamed", &self.is_nicknamed)
-            .field("dynamax_level", &self.dynamax_level)
-            .field("ht_name", &self.ht_name)
-            .field("ht_gender", &self.ht_gender)
-            .field("ht_language", &self.ht_language)
-            .field("current_handler", &self.current_handler)
-            .finish()
     }
 }
 

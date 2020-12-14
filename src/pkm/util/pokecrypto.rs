@@ -1,5 +1,4 @@
 use crate::util::bitconverter;
-use log_derive::{logfn, logfn_inputs};
 
 pub const SIZE_1ULIST: usize = 69;
 pub const SIZE_1JLIST: usize = 59;
@@ -165,8 +164,6 @@ fn crypt(data: &mut [u8], seed: &mut u32, i: usize) {
 ///
 /// * `data` - Decrypted Pokémon data.
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn get_chk<const N: usize>(data: &[u8; N], party_start: usize) -> u16 {
     data[8..party_start].chunks(2).fold(0, |chk, x| {
         u16::wrapping_add(chk, u16::from_le_bytes([x[0], x[1]]))

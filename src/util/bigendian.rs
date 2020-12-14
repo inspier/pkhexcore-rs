@@ -1,5 +1,4 @@
 use core::{convert::TryInto, mem};
-use log_derive::{logfn, logfn_inputs};
 
 /// Returns a 16-bit signed integer converted from two bytes at a specified
 /// position in a byte array.
@@ -15,8 +14,6 @@ use log_derive::{logfn, logfn_inputs};
 /// assert_eq!(255, to_int16(&buffer, 2));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
     i16::from_be_bytes(
         data[start_index..][..mem::size_of::<i16>()]
@@ -39,8 +36,6 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 /// assert_eq!(-2146424848, to_int32(&buffer, 3));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
     i32::from_be_bytes(
         data[start_index..][..mem::size_of::<i32>()]
@@ -63,8 +58,6 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 /// assert_eq!(140806877927665, to_int64(&buffer, 1));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
     i64::from_be_bytes(
         data[start_index..][..mem::size_of::<i64>()]
@@ -86,8 +79,6 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 /// assert_eq!(255, to_uint16(&buffer, 2));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
     u16::from_be_bytes(
         data[start_index..][..mem::size_of::<u16>()]
@@ -109,8 +100,6 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 /// assert_eq!(16712448, to_uint32(&buffer, 6));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
     u32::from_be_bytes(
         data[start_index..][..mem::size_of::<u32>()]
@@ -132,8 +121,6 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 /// assert_eq!(18374686479671623680, to_uint64(&buffer, 2));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     u64::from_be_bytes(
         data[start_index..][..mem::size_of::<u64>()]
@@ -153,8 +140,6 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
 /// assert_eq!(2010, bcd_to_int32(&buffer, 0, 2));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
     input
         .iter()
@@ -178,8 +163,6 @@ pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
 /// assert_eq!([32, 16], int32_to_bcd::<2>(2010));
 /// ```
 ///
-#[logfn(INFO)]
-#[logfn_inputs(Debug)]
 pub fn int32_to_bcd<const N: usize>(mut input: i32) -> [u8; N] {
     let mut result: [u8; N] = [0; N];
     for i in 0..N {
