@@ -7,58 +7,32 @@ use deku::prelude::*;
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u8", ctx = "_endian: deku::ctx::Endian")]
 pub enum Nature {
-    #[deku(id = "0")]
-    Hardy,
-    #[deku(id = "1")]
-    Lonely,
-    #[deku(id = "2")]
-    Brave,
-    #[deku(id = "3")]
-    Adamant,
-    #[deku(id = "4")]
-    Naughty,
-    #[deku(id = "5")]
-    Bold,
-    #[deku(id = "6")]
-    Docile,
-    #[deku(id = "7")]
-    Relaxed,
-    #[deku(id = "8")]
-    Impish,
-    #[deku(id = "9")]
-    Lax,
-    #[deku(id = "10")]
-    Timid,
-    #[deku(id = "11")]
-    Hasty,
-    #[deku(id = "12")]
-    Serious,
-    #[deku(id = "13")]
-    Jolly,
-    #[deku(id = "14")]
-    Naive,
-    #[deku(id = "15")]
-    Modest,
-    #[deku(id = "16")]
-    Mild,
-    #[deku(id = "17")]
-    Quiet,
-    #[deku(id = "18")]
-    Bashful,
-    #[deku(id = "19")]
-    Rash,
-    #[deku(id = "20")]
-    Calm,
-    #[deku(id = "21")]
-    Gentle,
-    #[deku(id = "22")]
-    Sassy,
-    #[deku(id = "23")]
-    Careful,
-    #[deku(id = "24")]
-    Quirky,
-    #[deku(id = "25")]
-    Random,
+    Hardy = 0,
+    Lonely = 1,
+    Brave = 2,
+    Adamant = 3,
+    Naughty = 4,
+    Bold = 5,
+    Docile = 6,
+    Relaxed = 7,
+    Impish = 8,
+    Lax = 9,
+    Timid = 10,
+    Hasty = 11,
+    Serious = 12,
+    Jolly = 13,
+    Naive = 14,
+    Modest = 15,
+    Mild = 16,
+    Quiet = 17,
+    Bashful = 18,
+    Rash = 19,
+    Calm = 20,
+    Gentle = 21,
+    Sassy = 22,
+    Careful = 23,
+    Quirky = 24,
+    Random = 25,
 }
 
 impl_from! (Nature for u8, i32);

@@ -4,7 +4,7 @@ use core::convert::TryFrom;
 use deku::prelude::*;
 
 use crate::game::enums::{
-    ability::Ability, flag::Flag, gender::Gender, nature::Nature, species::Species,
+    ability::Ability, ball::Ball, flag::Flag, gender::Gender, nature::Nature, species::Species,
 };
 use crate::pkm::strings::string_converter::get_string7;
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED};
@@ -65,7 +65,7 @@ pub struct PK8Config {
     fateful_encounter: u8,
     // 0x23 alignment unused
     #[deku(pad_bytes_before = "1")]
-    alt_form: u16,
+    form: u16,
     ev_hp: u8,
     ev_atk: u8,
     ev_def: u8,
@@ -245,8 +245,7 @@ pub struct PK8Config {
     weight_scalar: u8,
     // 0x52-0x57 unused
     // Block B
-    raw_nickname: [u16; NICK_LENGTH],
-    raw_nickname_terminator: u16,
+    raw_nickname: [u16; NICK_LENGTH + 1],
     #[deku(skip, default = "get_string7(raw_nickname)")]
     nickname: String,
     move1: u16,
@@ -288,13 +287,85 @@ pub struct PK8Config {
     status_condition: i32,
     #[deku(pad_bytes_after = "12")]
     unk98: i32,
-    raw_ht_name: [u16; NICK_LENGTH],
-    raw_ht_name_terminator: u16,
+    // Block C
+    raw_ht_name: [u16; NICK_LENGTH + 1],
     #[deku(skip, default = "get_string7(raw_ht_name)")]
     ht_name: String,
     ht_gender: u8,
     ht_language: u8,
+    #[deku(pad_bytes_after = "1")]
     current_handler: u8,
+    // 0xC5 unused (alignment)
+    ht_trainer_id: u16,
+    ht_friendship: u8,
+    ht_intensity: u8,
+    ht_memory: u8,
+    ht_feeling: u8,
+    #[deku(pad_bytes_after = "14")]
+    ht_text_var: u16,
+    // 0xCE-0xDB unused
+    fullness: u8,
+    enjoyment: u8,
+    version: u8,
+    #[deku(pad_bytes_after = "2")]
+    battle_version: u8,
+    // region: u8,
+    // console_region: u8,
+    language: u8,
+    unk_e3: u8,
+    form_argument: u32,
+    #[deku(pad_bytes_after = "14")]
+    affixed_ribbon: i8,
+    // 0xE9-0xF7 unused
+    // Block D
+    raw_ot_name: [u16; NICK_LENGTH + 1],
+    #[deku(skip, default = "get_string7(raw_ot_name)")]
+    ot_name: String,
+    ot_friendship: u8,
+    ot_intensity: u8,
+    #[deku(pad_bytes_after = "1")]
+    ot_memory: u8,
+    // 0x115 unused align
+    ot_text_var: u16,
+    ot_feeling: u8,
+    egg_year: u8,
+    egg_month: u8,
+    egg_day: u8,
+    met_year: u8,
+    met_month: u8,
+    #[deku(pad_bytes_after = "1")]
+    met_day: u8,
+    // 0x11F unused align
+    egg_location: u16,
+    met_location: u16,
+    ball: Ball,
+    met_level: u8,
+    ot_gender: u8,
+    hyper_train_flags: u8,
+    #[deku(skip, default = "((*hyper_train_flags >> 0) & 1) == 1")]
+    ht_hp: bool,
+    #[deku(skip, default = "((*hyper_train_flags >> 1) & 1) == 1")]
+    ht_atk: bool,
+    #[deku(skip, default = "((*hyper_train_flags >> 2) & 1) == 1")]
+    ht_def: bool,
+    #[deku(skip, default = "((*hyper_train_flags >> 3) & 1) == 1")]
+    ht_spa: bool,
+    #[deku(skip, default = "((*hyper_train_flags >> 4) & 1) == 1")]
+    ht_spd: bool,
+    #[deku(skip, default = "((*hyper_train_flags >> 5) & 1) == 1")]
+    ht_spe: bool,
+    raw_move_record: [u8; 14],
+    #[deku(pad_bytes_after = "10")]
+    tracker: u64,
+    #[deku(pad_bytes_after = "1")]
+    stat_level: u8,
+    stat_hp_max: u16,
+    stat_atk: u16,
+    stat_def: u16,
+    stat_spe: u16,
+    stat_spa: u16,
+    stat_spd: u16,
+    dynamax_type: u16,
 }
 
 impl From<&[u8; 344]> for PK8Config {
@@ -365,7 +436,7 @@ mod test {
         assert_eq!(0, dracovish.fateful_encounter);
         assert_eq!(0, dracovish.flag2);
         assert_eq!(Gender::Genderless, dracovish.gender);
-        assert_eq!(0, dracovish.alt_form);
+        assert_eq!(0, dracovish.form);
         assert_eq!(4, dracovish.ev_hp);
         assert_eq!(252, dracovish.ev_atk);
         assert_eq!(0, dracovish.ev_def);

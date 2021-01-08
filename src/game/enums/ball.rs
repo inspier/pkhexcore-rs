@@ -1,5 +1,8 @@
-#[repr(u8)]
-#[derive(PartialEq, PartialOrd)]
+use alloc::format;
+use deku::prelude::*;
+
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
+#[deku(type = "u8", ctx = "_endian: deku::ctx::Endian")]
 /// Ball IDs for the corresponding English ball name.
 pub enum Ball {
     None = 0,

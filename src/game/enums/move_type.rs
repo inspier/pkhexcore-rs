@@ -10,43 +10,24 @@ use num_enum::TryFromPrimitive;
 #[deku(type = "i8", ctx = "_endian: deku::ctx::Endian")]
 #[repr(i8)]
 pub enum MoveType {
-    #[deku(id = "-1")]
-    Any,
-    #[deku(id = "0")]
+    Any = -1,
     Normal,
-    #[deku(id = "1")]
     Fighting,
-    #[deku(id = "2")]
     Flying,
-    #[deku(id = "3")]
     Poison,
-    #[deku(id = "4")]
     Ground,
-    #[deku(id = "5")]
     Rock,
-    #[deku(id = "6")]
     Bug,
-    #[deku(id = "7")]
     Ghost,
-    #[deku(id = "8")]
     Steel,
-    #[deku(id = "9")]
     Fire,
-    #[deku(id = "10")]
     Water,
-    #[deku(id = "11")]
     Grass,
-    #[deku(id = "12")]
     Electric,
-    #[deku(id = "13")]
     Psychic,
-    #[deku(id = "14")]
     Ice,
-    #[deku(id = "15")]
     Dragon,
-    #[deku(id = "16")]
     Dark,
-    #[deku(id = "17")]
     Fairy,
 }
 
