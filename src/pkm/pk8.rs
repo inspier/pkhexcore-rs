@@ -4,13 +4,12 @@ use core::convert::TryFrom;
 use deku::prelude::*;
 
 use crate::game::enums::{
-    ability::Ability, ball::Ball, flag::Flag, gender::Gender, nature::Nature, species::Species,
+    ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID, nature::Nature, species::Species,
 };
 use crate::pkm::strings::string_converter::get_string7;
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED};
 
-#[allow(dead_code)]
-static FORMAT: u32 = 8;
+pub const FORMAT: u32 = 8;
 
 pub const MAX_IV: i32 = 31;
 pub const MAX_EV: i32 = 252;
@@ -282,7 +281,7 @@ pub struct PK8Config {
     is_egg: u8,
     #[deku(skip, default = "(((*iv32 >> 31) & 1) == 1) as u8")]
     is_nicknamed: u8,
-    #[deku(pad_bytes_after = "4")]
+    #[deku(pad_bytes_after = "3")]
     dynamax_level: u8,
     status_condition: i32,
     #[deku(pad_bytes_after = "12")]
@@ -292,7 +291,7 @@ pub struct PK8Config {
     #[deku(skip, default = "get_string7(raw_ht_name)")]
     ht_name: String,
     ht_gender: u8,
-    ht_language: u8,
+    ht_language: LanguageID,
     #[deku(pad_bytes_after = "1")]
     current_handler: u8,
     // 0xC5 unused (alignment)
@@ -311,10 +310,10 @@ pub struct PK8Config {
     battle_version: u8,
     // region: u8,
     // console_region: u8,
-    language: u8,
+    language: LanguageID,
     unk_e3: u8,
     form_argument: u32,
-    #[deku(pad_bytes_after = "14")]
+    #[deku(pad_bytes_after = "15")]
     affixed_ribbon: i8,
     // 0xE9-0xF7 unused
     // Block D
@@ -372,8 +371,8 @@ impl From<&[u8; 344]> for PK8Config {
     fn from(data: &[u8; SIZE_8PARTY]) -> Self {
         let mut array = *data;
         decrypt_if_encrypted8(&mut array);
-        let (_rest, test_file) = PK8Config::from_bytes((array.as_ref(), 0)).unwrap();
-        test_file
+        let (_rest, file) = PK8Config::from_bytes((array.as_ref(), 0)).unwrap();
+        file
     }
 }
 
