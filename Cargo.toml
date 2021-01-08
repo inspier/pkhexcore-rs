@@ -7,5 +7,5 @@ edition = "2018"
 [dependencies]
 
 time = { version = "0.2.23", default-features = false }
-deku = { git = "https://github.com/sharksforarms/deku", default-features = false, features = ["alloc"] }
 num_enum = "0.5.1"
+deku = { git = "https://github.com/sharksforarms/deku", default-features = false, features = ["alloc"] }

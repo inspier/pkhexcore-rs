@@ -1,13 +1,13 @@
 #![allow(non_snake_case)]
 use alloc::{format, string::String, vec::Vec};
 use core::convert::TryFrom;
-use deku::ctx::{Endian, Size};
 use deku::prelude::*;
 
-use crate::game::enums::{ability::Ability, gender::Gender, nature::Nature, species::Species};
+use crate::game::enums::{
+    ability::Ability, flag::Flag, gender::Gender, nature::Nature, species::Species,
+};
 use crate::pkm::strings::string_converter::get_string7;
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED};
-use crate::util::flagutil::Flag;
 
 #[allow(dead_code)]
 static FORMAT: u32 = 8;
@@ -40,7 +40,7 @@ pub struct PK8Config {
     tid: u16,
     sid: u16,
     exp: u32,
-    #[deku(reader = "pad_bits_after::<Ability>(rest, Size::Bits(3))")]
+    #[deku(pad_bits_after = "3")]
     ability: Ability,
     #[deku(bits = 1)]
     can_gigantamax: u8,
@@ -49,14 +49,14 @@ pub struct PK8Config {
     #[deku(bits = 3)]
     ability_number: u8,
     // 0x17 alignment unused
-    #[deku(reader = "pad_before::<u16>(rest, 1)")]
+    #[deku(pad_bytes_before = "1")]
     mark_value: u16,
     // 0x1A alignment unused
     // 0x1B alignment unused
-    #[deku(reader = "pad_before::<u32>(rest, 2)")]
+    #[deku(pad_bytes_before = "2")]
     pid: u32,
     nature: Nature,
-    #[deku(reader = "pad_bits_after::<Nature>(rest, Size::Bits(4))")]
+    #[deku(pad_bits_after = "4")]
     stat_nature: Nature,
     gender: Gender,
     #[deku(bits = 1)]
@@ -64,7 +64,7 @@ pub struct PK8Config {
     #[deku(bits = 1)]
     fateful_encounter: u8,
     // 0x23 alignment unused
-    #[deku(reader = "pad_before::<u16>(rest, 1)")]
+    #[deku(pad_bytes_before = "1")]
     alt_form: u16,
     ev_hp: u8,
     ev_atk: u8,
@@ -79,7 +79,7 @@ pub struct PK8Config {
     cnt_tough: u8,
     cnt_sheen: u8,
     #[deku(
-        reader = "pad_after::<u8>(rest, 1)",
+        pad_bytes_after = "1",
         update = "(((self.pkrs & !0xF) | self.pkrs_days) | ((self.pkrs & 0xF) | self.pkrs_strain << 4))"
     )]
     pkrs: u8,
@@ -160,10 +160,11 @@ pub struct PK8Config {
     ribbon_mark_dry: Flag,
     ribbon_mark_sandstorm: Flag,
     ribbon_count_memory_contest: u8,
-    #[deku(reader = "pad_after::<u8>(rest, 2)")]
+    #[deku(pad_bytes_after = "2")]
     ribbon_count_memory_battle: u8,
     // 0x3E padding
     // 0x3F padding
+
     // 0x40 Ribbon 1
     ribbon_mark_misty: Flag,
     ribbon_mark_destiny: Flag,
@@ -236,11 +237,11 @@ pub struct PK8Config {
     rib47_5: Flag,
     rib47_6: Flag,
     rib47_7: Flag,
-    #[deku(reader = "pad_after::<u32>(rest, 4)")]
+    #[deku(pad_bytes_after = "4")]
     u48: u32,
     // 0x4C-0x4F unused
     height_scalar: u8,
-    #[deku(reader = "pad_after::<u8>(rest, 6)")]
+    #[deku(pad_bytes_after = "6")]
     weight_scalar: u8,
     // 0x52-0x57 unused
     // Block B
@@ -282,10 +283,10 @@ pub struct PK8Config {
     is_egg: u8,
     #[deku(skip, default = "(((*iv32 >> 31) & 1) == 1) as u8")]
     is_nicknamed: u8,
-    #[deku(reader = "pad_after::<u8>(rest, 4)")]
+    #[deku(pad_bytes_after = "4")]
     dynamax_level: u8,
     status_condition: i32,
-    #[deku(reader = "pad_after::<i32>(rest, 12)")]
+    #[deku(pad_bytes_after = "12")]
     unk98: i32,
     raw_ht_name: [u16; NICK_LENGTH],
     raw_ht_name_terminator: u16,
@@ -294,54 +295,6 @@ pub struct PK8Config {
     ht_gender: u8,
     ht_language: u8,
     current_handler: u8,
-}
-
-fn pad_before<T: DekuRead>(
-    rest: &BitSlice<Msb0, u8>,
-    pad_size: usize,
-) -> Result<(&BitSlice<Msb0, u8>, T), DekuError> {
-    let mut tmp_rest = rest;
-    for _i in 0..pad_size {
-        let (rest, _) = u8::read(tmp_rest, ())?;
-        tmp_rest = rest;
-    }
-    let (rest, value) = T::read(tmp_rest, ())?;
-    Ok((rest, value))
-}
-
-fn pad_after<T: DekuRead>(
-    rest: &BitSlice<Msb0, u8>,
-    pad_size: usize,
-) -> Result<(&BitSlice<Msb0, u8>, T), DekuError> {
-    let (rest, value) = T::read(rest, ())?;
-    let mut tmp_rest = rest;
-    for _i in 0..pad_size {
-        let (rest, _) = u8::read(tmp_rest, ())?;
-        tmp_rest = rest;
-    }
-    Ok((tmp_rest, value))
-}
-
-fn pad_bits_before<T: DekuRead<Endian>>(
-    rest: &BitSlice<Msb0, u8>,
-    pad_size: Size,
-) -> Result<(&BitSlice<Msb0, u8>, T), DekuError> {
-    let mut tmp_rest = rest;
-    let (rest, _) = u8::read(tmp_rest, pad_size)?;
-    tmp_rest = rest;
-    let (rest, value) = T::read(tmp_rest, Endian::Little)?;
-    Ok((rest, value))
-}
-
-fn pad_bits_after<T: DekuRead<Endian>>(
-    rest: &BitSlice<Msb0, u8>,
-    pad_size: Size,
-) -> Result<(&BitSlice<Msb0, u8>, T), DekuError> {
-    let (rest, value) = T::read(rest, Endian::Little)?;
-    let mut tmp_rest = rest;
-    let (rest, _) = u8::read(tmp_rest, pad_size)?;
-    tmp_rest = rest;
-    Ok((tmp_rest, value))
 }
 
 impl From<&[u8; 344]> for PK8Config {
