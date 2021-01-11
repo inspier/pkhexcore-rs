@@ -4,7 +4,8 @@ use core::convert::TryFrom;
 use deku::prelude::*;
 
 use crate::game::enums::{
-    ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID, nature::Nature, species::Species,
+    ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID,
+    nature::Nature, species::Species,
 };
 use crate::pkm::strings::string_converter::get_string7;
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED};
@@ -42,9 +43,9 @@ pub struct PK8Config {
     #[deku(pad_bits_after = "3")]
     ability: Ability,
     #[deku(bits = 1)]
-    can_gigantamax: u8,
+    can_gigantamax: bool,
     #[deku(bits = 1)]
-    favourite: u8,
+    favourite: bool,
     #[deku(bits = 3)]
     ability_number: u8,
     // 0x17 alignment unused
@@ -57,11 +58,12 @@ pub struct PK8Config {
     nature: Nature,
     #[deku(pad_bits_after = "4")]
     stat_nature: Nature,
+    #[deku(bits = 2)]
     gender: Gender,
     #[deku(bits = 1)]
-    flag2: u8,
+    flag2: Flag,
     #[deku(bits = 1)]
-    fateful_encounter: u8,
+    fateful_encounter: bool,
     // 0x23 alignment unused
     #[deku(pad_bytes_before = "1")]
     form: u16,
@@ -87,76 +89,140 @@ pub struct PK8Config {
     #[deku(skip, default = "*pkrs >> 4")]
     pkrs_strain: u8,
     // 0x33 unused padding
+    #[deku(bits = 1)]
     ribbon_champion_kalos: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_g3_hoenn: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_sinnoh: Flag,
+    #[deku(bits = 1)]
     ribbon_best_friends: Flag,
+    #[deku(bits = 1)]
     ribbon_training: Flag,
+    #[deku(bits = 1)]
     ribbon_battler_skillful: Flag,
+    #[deku(bits = 1)]
     ribbon_battler_expert: Flag,
+    #[deku(bits = 1)]
     ribbon_effort: Flag,
 
+    #[deku(bits = 1)]
     ribbon_alert: Flag,
+    #[deku(bits = 1)]
     ribbon_shock: Flag,
+    #[deku(bits = 1)]
     ribbon_downcast: Flag,
+    #[deku(bits = 1)]
     ribbon_careless: Flag,
+    #[deku(bits = 1)]
     ribbon_relax: Flag,
+    #[deku(bits = 1)]
     ribbon_snooze: Flag,
+    #[deku(bits = 1)]
     ribbon_smile: Flag,
+    #[deku(bits = 1)]
     ribbon_gorgeous: Flag,
 
+    #[deku(bits = 1)]
     ribbon_royal: Flag,
+    #[deku(bits = 1)]
     ribbon_gorgeous_royal: Flag,
+    #[deku(bits = 1)]
     ribbon_artist: Flag,
+    #[deku(bits = 1)]
     ribbon_footprint: Flag,
+    #[deku(bits = 1)]
     ribbon_record: Flag,
+    #[deku(bits = 1)]
     ribbon_legend: Flag,
+    #[deku(bits = 1)]
     ribbon_country: Flag,
+    #[deku(bits = 1)]
     ribbon_national: Flag,
 
+    #[deku(bits = 1)]
     ribbon_earth: Flag,
+    #[deku(bits = 1)]
     ribbon_world: Flag,
+    #[deku(bits = 1)]
     ribbon_classic: Flag,
+    #[deku(bits = 1)]
     ribbon_premier: Flag,
+    #[deku(bits = 1)]
     ribbon_event: Flag,
+    #[deku(bits = 1)]
     ribbon_birthday: Flag,
+    #[deku(bits = 1)]
     ribbon_special: Flag,
+    #[deku(bits = 1)]
     ribbon_souvenir: Flag,
 
+    #[deku(bits = 1)]
     ribbon_wishing: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_battle: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_regional: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_national: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_world: Flag,
+    #[deku(bits = 1)]
     has_contest_memory_ribbon: Flag,
+    #[deku(bits = 1)]
     has_battle_memory_ribbon: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_g6_hoenn: Flag,
 
+    #[deku(bits = 1)]
     ribbon_contest_star: Flag,
+    #[deku(bits = 1)]
     ribbon_master_coolness: Flag,
+    #[deku(bits = 1)]
     ribbon_master_beauty: Flag,
+    #[deku(bits = 1)]
     ribbon_master_cuteness: Flag,
+    #[deku(bits = 1)]
     ribbon_master_cleverness: Flag,
+    #[deku(bits = 1)]
     ribbon_master_toughness: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_alola: Flag,
+    #[deku(bits = 1)]
     ribbon_battle_royale: Flag,
 
+    #[deku(bits = 1)]
     ribbon_battle_tree_great: Flag,
+    #[deku(bits = 1)]
     ribbon_battle_tree_master: Flag,
+    #[deku(bits = 1)]
     ribbon_champion_galar: Flag,
+    #[deku(bits = 1)]
     ribbon_tower_master: Flag,
+    #[deku(bits = 1)]
     ribbon_master_rank: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_lunchtime: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_sleepy_time: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_dusk: Flag,
 
+    #[deku(bits = 1)]
     ribbon_mark_dawn: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_cloudy: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_rainy: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_stormy: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_snowy: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_blizzard: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_dry: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_sandstorm: Flag,
     ribbon_count_memory_contest: u8,
     #[deku(pad_bytes_after = "2")]
@@ -165,76 +231,140 @@ pub struct PK8Config {
     // 0x3F padding
 
     // 0x40 Ribbon 1
+    #[deku(bits = 1)]
     ribbon_mark_misty: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_destiny: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_fishing: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_curry: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_uncommon: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_rare: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_rowdy: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_absent_minded: Flag,
 
+    #[deku(bits = 1)]
     ribbon_mark_jittery: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_excited: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_charismatic: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_calmness: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_intense: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_zoned_out: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_joyful: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_angry: Flag,
 
+    #[deku(bits = 1)]
     ribbon_mark_smiley: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_teary: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_upbeat: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_peeved: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_intellectual: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_ferocious: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_crafty: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_scowling: Flag,
 
+    #[deku(bits = 1)]
     ribbon_mark_kindly: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_flustered: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_pumped_up: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_zero_energy: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_prideful: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_unsure: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_humble: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_thorny: Flag,
     // 0x44 Ribbon 2
+    #[deku(bits = 1)]
     ribbon_mark_vigor: Flag,
+    #[deku(bits = 1)]
     ribbon_mark_slump: Flag,
+    #[deku(bits = 1)]
     rib44_2: Flag,
+    #[deku(bits = 1)]
     rib44_3: Flag,
+    #[deku(bits = 1)]
     rib44_4: Flag,
+    #[deku(bits = 1)]
     rib44_5: Flag,
+    #[deku(bits = 1)]
     rib44_6: Flag,
+    #[deku(bits = 1)]
     rib44_7: Flag,
 
+    #[deku(bits = 1)]
     rib45_0: Flag,
+    #[deku(bits = 1)]
     rib45_1: Flag,
+    #[deku(bits = 1)]
     rib45_2: Flag,
+    #[deku(bits = 1)]
     rib45_3: Flag,
+    #[deku(bits = 1)]
     rib45_4: Flag,
+    #[deku(bits = 1)]
     rib45_5: Flag,
+    #[deku(bits = 1)]
     rib45_6: Flag,
+    #[deku(bits = 1)]
     rib45_7: Flag,
 
+    #[deku(bits = 1)]
     rib46_0: Flag,
+    #[deku(bits = 1)]
     rib46_1: Flag,
+    #[deku(bits = 1)]
     rib46_2: Flag,
+    #[deku(bits = 1)]
     rib46_3: Flag,
+    #[deku(bits = 1)]
     rib46_4: Flag,
+    #[deku(bits = 1)]
     rib46_5: Flag,
+    #[deku(bits = 1)]
     rib46_6: Flag,
+    #[deku(bits = 1)]
     rib46_7: Flag,
 
+    #[deku(bits = 1)]
     rib47_0: Flag,
+    #[deku(bits = 1)]
     rib47_1: Flag,
+    #[deku(bits = 1)]
     rib47_2: Flag,
+    #[deku(bits = 1)]
     rib47_3: Flag,
+    #[deku(bits = 1)]
     rib47_4: Flag,
+    #[deku(bits = 1)]
     rib47_5: Flag,
+    #[deku(bits = 1)]
     rib47_6: Flag,
+    #[deku(bits = 1)]
     rib47_7: Flag,
     #[deku(pad_bytes_after = "4")]
     u48: u32,
@@ -277,10 +407,10 @@ pub struct PK8Config {
     iv_spa: u8,
     #[deku(skip, default = "((*iv32 >> 25) & 0x1F) as u8")]
     iv_spd: u8,
-    #[deku(skip, default = "(((*iv32 >> 30) & 1) == 1) as u8")]
-    is_egg: u8,
-    #[deku(skip, default = "(((*iv32 >> 31) & 1) == 1) as u8")]
-    is_nicknamed: u8,
+    #[deku(skip, default = "((*iv32 >> 30) & 1) == 1")]
+    is_egg: bool,
+    #[deku(skip, default = "((*iv32 >> 31) & 1) == 1")]
+    is_nicknamed: bool,
     #[deku(pad_bytes_after = "3")]
     dynamax_level: u8,
     status_condition: i32,
@@ -290,7 +420,7 @@ pub struct PK8Config {
     raw_ht_name: [u16; NICK_LENGTH + 1],
     #[deku(skip, default = "get_string7(raw_ht_name)")]
     ht_name: String,
-    ht_gender: u8,
+    ht_gender: Gender,
     ht_language: LanguageID,
     #[deku(pad_bytes_after = "1")]
     current_handler: u8,
@@ -338,8 +468,10 @@ pub struct PK8Config {
     egg_location: u16,
     met_location: u16,
     ball: Ball,
+    #[deku(bits = "1")]
+    ot_gender: Gender,
+    #[deku(bits = "7")]
     met_level: u8,
-    ot_gender: u8,
     hyper_train_flags: u8,
     #[deku(skip, default = "((*hyper_train_flags >> 0) & 1) == 1")]
     ht_hp: bool,
@@ -354,7 +486,7 @@ pub struct PK8Config {
     #[deku(skip, default = "((*hyper_train_flags >> 5) & 1) == 1")]
     ht_spe: bool,
     raw_move_record: [u8; 14],
-    #[deku(pad_bytes_after = "10")]
+    #[deku(pad_bytes_after = "11")]
     tracker: u64,
     #[deku(pad_bytes_after = "1")]
     stat_level: u8,
@@ -424,16 +556,16 @@ mod test {
         assert_eq!(11, dracovish.ability as u16);
         assert_eq!(Ability::WaterAbsorb, dracovish.ability);
         assert_eq!(1, dracovish.ability_number);
-        assert_eq!(0, dracovish.favourite);
-        assert_eq!(0, dracovish.can_gigantamax);
+        assert_eq!(false, dracovish.favourite);
+        assert_eq!(false, dracovish.can_gigantamax);
         assert_eq!(0, dracovish.mark_value);
         assert_eq!(0xC730F59, dracovish.pid);
         assert_eq!(16, dracovish.nature as u8);
         assert_eq!(Nature::Mild, dracovish.nature);
         assert_eq!(16, dracovish.stat_nature as u8);
         assert_eq!(Nature::Mild, dracovish.stat_nature);
-        assert_eq!(0, dracovish.fateful_encounter);
-        assert_eq!(0, dracovish.flag2);
+        assert_eq!(false, dracovish.fateful_encounter);
+        assert_eq!(Flag::Unset, dracovish.flag2);
         assert_eq!(Gender::Genderless, dracovish.gender);
         assert_eq!(0, dracovish.form);
         assert_eq!(4, dracovish.ev_hp);
