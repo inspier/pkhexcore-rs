@@ -33,6 +33,9 @@ pub mod language_id;
 /// Elemental type a move has; additionally, types a PKM can have.
 pub mod move_type;
 
+/// Move IDs for the corresponding English move name.
+pub mod moves;
+
 /// Nature ID values for the corresponding English nature name.
 pub mod nature;
 

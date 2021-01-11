@@ -4,7 +4,7 @@ use core::convert::TryFrom;
 use deku::prelude::*;
 
 use crate::game::enums::{
-    ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID,
+    ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID, moves::Move,
     nature::Nature, species::Species,
 };
 use crate::pkm::strings::string_converter::get_string7;
@@ -377,10 +377,10 @@ pub struct PK8Config {
     raw_nickname: [u16; NICK_LENGTH + 1],
     #[deku(skip, default = "get_string7(raw_nickname)")]
     nickname: String,
-    move1: u16,
-    move2: u16,
-    move3: u16,
-    move4: u16,
+    move1: Move,
+    move2: Move,
+    move3: Move,
+    move4: Move,
     move1_pp: u8,
     move2_pp: u8,
     move3_pp: u8,
@@ -389,10 +389,10 @@ pub struct PK8Config {
     move_2_pp_ups: u8,
     move_3_pp_ups: u8,
     move_4_pp_ups: u8,
-    relearn_move1: u16,
-    relearn_move2: u16,
-    relearn_move3: u16,
-    relearn_move4: u16,
+    relearn_move1: Move,
+    relearn_move2: Move,
+    relearn_move3: Move,
+    relearn_move4: Move,
     stat_hp_current: u16,
     iv32: u32,
     #[deku(skip, default = "((*iv32) & 0x1F) as u8")]
@@ -472,19 +472,18 @@ pub struct PK8Config {
     ot_gender: Gender,
     #[deku(bits = "7")]
     met_level: u8,
-    hyper_train_flags: u8,
-    #[deku(skip, default = "((*hyper_train_flags >> 0) & 1) == 1")]
-    ht_hp: bool,
-    #[deku(skip, default = "((*hyper_train_flags >> 1) & 1) == 1")]
-    ht_atk: bool,
-    #[deku(skip, default = "((*hyper_train_flags >> 2) & 1) == 1")]
-    ht_def: bool,
-    #[deku(skip, default = "((*hyper_train_flags >> 3) & 1) == 1")]
-    ht_spa: bool,
-    #[deku(skip, default = "((*hyper_train_flags >> 4) & 1) == 1")]
-    ht_spd: bool,
-    #[deku(skip, default = "((*hyper_train_flags >> 5) & 1) == 1")]
-    ht_spe: bool,
+    #[deku(bits = "1", pad_bits_before = "2")]
+    ht_spe: Flag,
+    #[deku(bits = "1")]
+    ht_spd: Flag,
+    #[deku(bits = "1")]
+    ht_spa: Flag,
+    #[deku(bits = "1")]
+    ht_def: Flag,
+    #[deku(bits = "1")]
+    ht_atk: Flag,
+    #[deku(bits = "1")]
+    ht_hp: Flag,
     raw_move_record: [u8; 14],
     #[deku(pad_bytes_after = "11")]
     tracker: u64,
