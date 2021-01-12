@@ -8,4 +8,4 @@ edition = "2018"
 
 time = { version = "0.2.23", default-features = false }
 num_enum = "0.5.1"
-deku = { git = "https://github.com/sharksforarms/deku", default-features = false, features = ["alloc"] }
+deku = { version = "0.10.0", default-features = false, features = ["alloc"] }

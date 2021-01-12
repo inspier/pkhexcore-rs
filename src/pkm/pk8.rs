@@ -79,15 +79,10 @@ pub struct PK8Config {
     cnt_smart: u8,
     cnt_tough: u8,
     cnt_sheen: u8,
-    #[deku(
-        pad_bytes_after = "1",
-        update = "(((self.pkrs & !0xF) | self.pkrs_days) | ((self.pkrs & 0xF) | self.pkrs_strain << 4))"
-    )]
-    pkrs: u8,
-    #[deku(skip, default = "*pkrs & 0xF")]
-    pkrs_days: u8,
-    #[deku(skip, default = "*pkrs >> 4")]
+    #[deku(bits = 4)]
     pkrs_strain: u8,
+    #[deku(bits = 4, pad_bytes_after = "1")]
+    pkrs_days: u8,
     // 0x33 unused padding
     #[deku(bits = 1)]
     ribbon_champion_kalos: Flag,
