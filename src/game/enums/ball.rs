@@ -40,6 +40,12 @@ pub enum Ball {
     Beast = 26,
 }
 
+impl Default for Ball {
+    fn default() -> Self {
+        Ball::None
+    }
+}
+
 /// Checks if the <see cref="ball"/> is an Apricorn Ball (HG/SS)
 /// # Arguments
 ///

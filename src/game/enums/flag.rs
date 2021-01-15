@@ -7,6 +7,12 @@ pub enum Flag {
     Set = 0x1,
 }
 
+impl Default for Flag {
+    fn default() -> Self {
+        Flag::Unset
+    }
+}
+
 impl<'a, Ctx> DekuRead<'a, Ctx> for Flag
 where
     Ctx: Copy,

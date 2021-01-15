@@ -19,485 +19,480 @@ pub const NICK_LENGTH: usize = 12;
 
 // TODO: PersonalInfo
 
-pub struct PK8 {
-    data: [u8; SIZE_8PARTY],
-    affixed_ribbon: i8, // 00 would make it show Kalos Champion
-}
-
-#[derive(Debug, PartialEq, DekuRead, DekuWrite)]
+#[derive(Debug, Default, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
-pub struct PK8Config {
-    encryption_constant: u32,
-    sanity: u16,
+pub struct PK8 {
+    pub encryption_constant: u32,
+    pub sanity: u16,
     #[deku(
         update = "get_chk::<SIZE_8PARTY>(&<[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap(), SIZE_8STORED)"
     )]
-    checksum: u16,
+    pub checksum: u16,
 
     // Block A
-    species: Species,
-    held_item: u16,
-    tid: u16,
-    sid: u16,
-    exp: u32,
+    pub species: Species,
+    pub held_item: u16,
+    pub tid: u16,
+    pub sid: u16,
+    pub exp: u32,
     #[deku(pad_bits_after = "3")]
-    ability: Ability,
+    pub ability: Ability,
     #[deku(bits = 1)]
-    can_gigantamax: bool,
+    pub can_gigantamax: bool,
     #[deku(bits = 1)]
-    favourite: bool,
+    pub favourite: bool,
     #[deku(bits = 3)]
-    ability_number: u8,
+    pub ability_number: u8,
     // 0x17 alignment unused
     #[deku(pad_bytes_before = "1")]
-    mark_value: u16,
+    pub mark_value: u16,
     // 0x1A alignment unused
     // 0x1B alignment unused
     #[deku(pad_bytes_before = "2")]
-    pid: u32,
-    nature: Nature,
+    pub pid: u32,
+    pub nature: Nature,
     #[deku(pad_bits_after = "4")]
-    stat_nature: Nature,
+    pub stat_nature: Nature,
     #[deku(bits = 2)]
-    gender: Gender,
+    pub gender: Gender,
     #[deku(bits = 1)]
-    flag2: Flag,
+    pub flag2: Flag,
     #[deku(bits = 1)]
-    fateful_encounter: bool,
+    pub fateful_encounter: bool,
     // 0x23 alignment unused
     #[deku(pad_bytes_before = "1")]
-    form: u16,
-    ev_hp: u8,
-    ev_atk: u8,
-    ev_def: u8,
-    ev_spe: u8,
-    ev_spa: u8,
-    ev_spd: u8,
-    cnt_cool: u8,
-    cnt_beauty: u8,
-    cnt_cute: u8,
-    cnt_smart: u8,
-    cnt_tough: u8,
-    cnt_sheen: u8,
+    pub form: u16,
+    pub ev_hp: u8,
+    pub ev_atk: u8,
+    pub ev_def: u8,
+    pub ev_spe: u8,
+    pub ev_spa: u8,
+    pub ev_spd: u8,
+    pub cnt_cool: u8,
+    pub cnt_beauty: u8,
+    pub cnt_cute: u8,
+    pub cnt_smart: u8,
+    pub cnt_tough: u8,
+    pub cnt_sheen: u8,
     #[deku(bits = 4)]
-    pkrs_strain: u8,
+    pub pkrs_strain: u8,
     #[deku(bits = 4, pad_bytes_after = "1")]
-    pkrs_days: u8,
+    pub pkrs_days: u8,
     // 0x33 unused padding
     #[deku(bits = 1)]
-    ribbon_champion_kalos: Flag,
+    pub ribbon_champion_kalos: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_g3_hoenn: Flag,
+    pub ribbon_champion_g3_hoenn: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_sinnoh: Flag,
+    pub ribbon_champion_sinnoh: Flag,
     #[deku(bits = 1)]
-    ribbon_best_friends: Flag,
+    pub ribbon_best_friends: Flag,
     #[deku(bits = 1)]
-    ribbon_training: Flag,
+    pub ribbon_training: Flag,
     #[deku(bits = 1)]
-    ribbon_battler_skillful: Flag,
+    pub ribbon_battler_skillful: Flag,
     #[deku(bits = 1)]
-    ribbon_battler_expert: Flag,
+    pub ribbon_battler_expert: Flag,
     #[deku(bits = 1)]
-    ribbon_effort: Flag,
+    pub ribbon_effort: Flag,
 
     #[deku(bits = 1)]
-    ribbon_alert: Flag,
+    pub ribbon_alert: Flag,
     #[deku(bits = 1)]
-    ribbon_shock: Flag,
+    pub ribbon_shock: Flag,
     #[deku(bits = 1)]
-    ribbon_downcast: Flag,
+    pub ribbon_downcast: Flag,
     #[deku(bits = 1)]
-    ribbon_careless: Flag,
+    pub ribbon_careless: Flag,
     #[deku(bits = 1)]
-    ribbon_relax: Flag,
+    pub ribbon_relax: Flag,
     #[deku(bits = 1)]
-    ribbon_snooze: Flag,
+    pub ribbon_snooze: Flag,
     #[deku(bits = 1)]
-    ribbon_smile: Flag,
+    pub ribbon_smile: Flag,
     #[deku(bits = 1)]
-    ribbon_gorgeous: Flag,
+    pub ribbon_gorgeous: Flag,
 
     #[deku(bits = 1)]
-    ribbon_royal: Flag,
+    pub ribbon_royal: Flag,
     #[deku(bits = 1)]
-    ribbon_gorgeous_royal: Flag,
+    pub ribbon_gorgeous_royal: Flag,
     #[deku(bits = 1)]
-    ribbon_artist: Flag,
+    pub ribbon_artist: Flag,
     #[deku(bits = 1)]
-    ribbon_footprint: Flag,
+    pub ribbon_footprint: Flag,
     #[deku(bits = 1)]
-    ribbon_record: Flag,
+    pub ribbon_record: Flag,
     #[deku(bits = 1)]
-    ribbon_legend: Flag,
+    pub ribbon_legend: Flag,
     #[deku(bits = 1)]
-    ribbon_country: Flag,
+    pub ribbon_country: Flag,
     #[deku(bits = 1)]
-    ribbon_national: Flag,
+    pub ribbon_national: Flag,
 
     #[deku(bits = 1)]
-    ribbon_earth: Flag,
+    pub ribbon_earth: Flag,
     #[deku(bits = 1)]
-    ribbon_world: Flag,
+    pub ribbon_world: Flag,
     #[deku(bits = 1)]
-    ribbon_classic: Flag,
+    pub ribbon_classic: Flag,
     #[deku(bits = 1)]
-    ribbon_premier: Flag,
+    pub ribbon_premier: Flag,
     #[deku(bits = 1)]
-    ribbon_event: Flag,
+    pub ribbon_event: Flag,
     #[deku(bits = 1)]
-    ribbon_birthday: Flag,
+    pub ribbon_birthday: Flag,
     #[deku(bits = 1)]
-    ribbon_special: Flag,
+    pub ribbon_special: Flag,
     #[deku(bits = 1)]
-    ribbon_souvenir: Flag,
+    pub ribbon_souvenir: Flag,
 
     #[deku(bits = 1)]
-    ribbon_wishing: Flag,
+    pub ribbon_wishing: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_battle: Flag,
+    pub ribbon_champion_battle: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_regional: Flag,
+    pub ribbon_champion_regional: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_national: Flag,
+    pub ribbon_champion_national: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_world: Flag,
+    pub ribbon_champion_world: Flag,
     #[deku(bits = 1)]
-    has_contest_memory_ribbon: Flag,
+    pub has_contest_memory_ribbon: Flag,
     #[deku(bits = 1)]
-    has_battle_memory_ribbon: Flag,
+    pub has_battle_memory_ribbon: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_g6_hoenn: Flag,
+    pub ribbon_champion_g6_hoenn: Flag,
 
     #[deku(bits = 1)]
-    ribbon_contest_star: Flag,
+    pub ribbon_contest_star: Flag,
     #[deku(bits = 1)]
-    ribbon_master_coolness: Flag,
+    pub ribbon_master_coolness: Flag,
     #[deku(bits = 1)]
-    ribbon_master_beauty: Flag,
+    pub ribbon_master_beauty: Flag,
     #[deku(bits = 1)]
-    ribbon_master_cuteness: Flag,
+    pub ribbon_master_cuteness: Flag,
     #[deku(bits = 1)]
-    ribbon_master_cleverness: Flag,
+    pub ribbon_master_cleverness: Flag,
     #[deku(bits = 1)]
-    ribbon_master_toughness: Flag,
+    pub ribbon_master_toughness: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_alola: Flag,
+    pub ribbon_champion_alola: Flag,
     #[deku(bits = 1)]
-    ribbon_battle_royale: Flag,
+    pub ribbon_battle_royale: Flag,
 
     #[deku(bits = 1)]
-    ribbon_battle_tree_great: Flag,
+    pub ribbon_battle_tree_great: Flag,
     #[deku(bits = 1)]
-    ribbon_battle_tree_master: Flag,
+    pub ribbon_battle_tree_master: Flag,
     #[deku(bits = 1)]
-    ribbon_champion_galar: Flag,
+    pub ribbon_champion_galar: Flag,
     #[deku(bits = 1)]
-    ribbon_tower_master: Flag,
+    pub ribbon_tower_master: Flag,
     #[deku(bits = 1)]
-    ribbon_master_rank: Flag,
+    pub ribbon_master_rank: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_lunchtime: Flag,
+    pub ribbon_mark_lunchtime: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_sleepy_time: Flag,
+    pub ribbon_mark_sleepy_time: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_dusk: Flag,
+    pub ribbon_mark_dusk: Flag,
 
     #[deku(bits = 1)]
-    ribbon_mark_dawn: Flag,
+    pub ribbon_mark_dawn: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_cloudy: Flag,
+    pub ribbon_mark_cloudy: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_rainy: Flag,
+    pub ribbon_mark_rainy: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_stormy: Flag,
+    pub ribbon_mark_stormy: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_snowy: Flag,
+    pub ribbon_mark_snowy: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_blizzard: Flag,
+    pub ribbon_mark_blizzard: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_dry: Flag,
+    pub ribbon_mark_dry: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_sandstorm: Flag,
-    ribbon_count_memory_contest: u8,
+    pub ribbon_mark_sandstorm: Flag,
+    pub ribbon_count_memory_contest: u8,
     #[deku(pad_bytes_after = "2")]
-    ribbon_count_memory_battle: u8,
+    pub ribbon_count_memory_battle: u8,
     // 0x3E padding
     // 0x3F padding
 
     // 0x40 Ribbon 1
     #[deku(bits = 1)]
-    ribbon_mark_misty: Flag,
+    pub ribbon_mark_misty: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_destiny: Flag,
+    pub ribbon_mark_destiny: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_fishing: Flag,
+    pub ribbon_mark_fishing: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_curry: Flag,
+    pub ribbon_mark_curry: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_uncommon: Flag,
+    pub ribbon_mark_uncommon: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_rare: Flag,
+    pub ribbon_mark_rare: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_rowdy: Flag,
+    pub ribbon_mark_rowdy: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_absent_minded: Flag,
+    pub ribbon_mark_absent_minded: Flag,
 
     #[deku(bits = 1)]
-    ribbon_mark_jittery: Flag,
+    pub ribbon_mark_jittery: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_excited: Flag,
+    pub ribbon_mark_excited: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_charismatic: Flag,
+    pub ribbon_mark_charismatic: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_calmness: Flag,
+    pub ribbon_mark_calmness: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_intense: Flag,
+    pub ribbon_mark_intense: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_zoned_out: Flag,
+    pub ribbon_mark_zoned_out: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_joyful: Flag,
+    pub ribbon_mark_joyful: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_angry: Flag,
+    pub ribbon_mark_angry: Flag,
 
     #[deku(bits = 1)]
-    ribbon_mark_smiley: Flag,
+    pub ribbon_mark_smiley: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_teary: Flag,
+    pub ribbon_mark_teary: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_upbeat: Flag,
+    pub ribbon_mark_upbeat: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_peeved: Flag,
+    pub ribbon_mark_peeved: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_intellectual: Flag,
+    pub ribbon_mark_intellectual: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_ferocious: Flag,
+    pub ribbon_mark_ferocious: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_crafty: Flag,
+    pub ribbon_mark_crafty: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_scowling: Flag,
+    pub ribbon_mark_scowling: Flag,
 
     #[deku(bits = 1)]
-    ribbon_mark_kindly: Flag,
+    pub ribbon_mark_kindly: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_flustered: Flag,
+    pub ribbon_mark_flustered: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_pumped_up: Flag,
+    pub ribbon_mark_pumped_up: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_zero_energy: Flag,
+    pub ribbon_mark_zero_energy: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_prideful: Flag,
+    pub ribbon_mark_prideful: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_unsure: Flag,
+    pub ribbon_mark_unsure: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_humble: Flag,
+    pub ribbon_mark_humble: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_thorny: Flag,
+    pub ribbon_mark_thorny: Flag,
     // 0x44 Ribbon 2
     #[deku(bits = 1)]
-    ribbon_mark_vigor: Flag,
+    pub ribbon_mark_vigor: Flag,
     #[deku(bits = 1)]
-    ribbon_mark_slump: Flag,
+    pub ribbon_mark_slump: Flag,
     #[deku(bits = 1)]
-    rib44_2: Flag,
+    pub rib44_2: Flag,
     #[deku(bits = 1)]
-    rib44_3: Flag,
+    pub rib44_3: Flag,
     #[deku(bits = 1)]
-    rib44_4: Flag,
+    pub rib44_4: Flag,
     #[deku(bits = 1)]
-    rib44_5: Flag,
+    pub rib44_5: Flag,
     #[deku(bits = 1)]
-    rib44_6: Flag,
+    pub rib44_6: Flag,
     #[deku(bits = 1)]
-    rib44_7: Flag,
+    pub rib44_7: Flag,
 
     #[deku(bits = 1)]
-    rib45_0: Flag,
+    pub rib45_0: Flag,
     #[deku(bits = 1)]
-    rib45_1: Flag,
+    pub rib45_1: Flag,
     #[deku(bits = 1)]
-    rib45_2: Flag,
+    pub rib45_2: Flag,
     #[deku(bits = 1)]
-    rib45_3: Flag,
+    pub rib45_3: Flag,
     #[deku(bits = 1)]
-    rib45_4: Flag,
+    pub rib45_4: Flag,
     #[deku(bits = 1)]
-    rib45_5: Flag,
+    pub rib45_5: Flag,
     #[deku(bits = 1)]
-    rib45_6: Flag,
+    pub rib45_6: Flag,
     #[deku(bits = 1)]
-    rib45_7: Flag,
+    pub rib45_7: Flag,
 
     #[deku(bits = 1)]
-    rib46_0: Flag,
+    pub rib46_0: Flag,
     #[deku(bits = 1)]
-    rib46_1: Flag,
+    pub rib46_1: Flag,
     #[deku(bits = 1)]
-    rib46_2: Flag,
+    pub rib46_2: Flag,
     #[deku(bits = 1)]
-    rib46_3: Flag,
+    pub rib46_3: Flag,
     #[deku(bits = 1)]
-    rib46_4: Flag,
+    pub rib46_4: Flag,
     #[deku(bits = 1)]
-    rib46_5: Flag,
+    pub rib46_5: Flag,
     #[deku(bits = 1)]
-    rib46_6: Flag,
+    pub rib46_6: Flag,
     #[deku(bits = 1)]
-    rib46_7: Flag,
+    pub rib46_7: Flag,
 
     #[deku(bits = 1)]
-    rib47_0: Flag,
+    pub rib47_0: Flag,
     #[deku(bits = 1)]
-    rib47_1: Flag,
+    pub rib47_1: Flag,
     #[deku(bits = 1)]
-    rib47_2: Flag,
+    pub rib47_2: Flag,
     #[deku(bits = 1)]
-    rib47_3: Flag,
+    pub rib47_3: Flag,
     #[deku(bits = 1)]
-    rib47_4: Flag,
+    pub rib47_4: Flag,
     #[deku(bits = 1)]
-    rib47_5: Flag,
+    pub rib47_5: Flag,
     #[deku(bits = 1)]
-    rib47_6: Flag,
+    pub rib47_6: Flag,
     #[deku(bits = 1)]
-    rib47_7: Flag,
+    pub rib47_7: Flag,
     #[deku(pad_bytes_after = "4")]
-    u48: u32,
+    pub u48: u32,
     // 0x4C-0x4F unused
-    height_scalar: u8,
+    pub height_scalar: u8,
     #[deku(pad_bytes_after = "6")]
-    weight_scalar: u8,
+    pub weight_scalar: u8,
     // 0x52-0x57 unused
     // Block B
-    raw_nickname: [u16; NICK_LENGTH + 1],
+    pub raw_nickname: [u16; NICK_LENGTH + 1],
     #[deku(skip, default = "get_string7(raw_nickname)")]
-    nickname: String,
-    move1: Move,
-    move2: Move,
-    move3: Move,
-    move4: Move,
-    move1_pp: u8,
-    move2_pp: u8,
-    move3_pp: u8,
-    move4_pp: u8,
-    move_1_pp_ups: u8,
-    move_2_pp_ups: u8,
-    move_3_pp_ups: u8,
-    move_4_pp_ups: u8,
-    relearn_move1: Move,
-    relearn_move2: Move,
-    relearn_move3: Move,
-    relearn_move4: Move,
-    stat_hp_current: u16,
-    iv32: u32,
+    pub nickname: String,
+    pub move1: Move,
+    pub move2: Move,
+    pub move3: Move,
+    pub move4: Move,
+    pub move1_pp: u8,
+    pub move2_pp: u8,
+    pub move3_pp: u8,
+    pub move4_pp: u8,
+    pub move_1_pp_ups: u8,
+    pub move_2_pp_ups: u8,
+    pub move_3_pp_ups: u8,
+    pub move_4_pp_ups: u8,
+    pub relearn_move1: Move,
+    pub relearn_move2: Move,
+    pub relearn_move3: Move,
+    pub relearn_move4: Move,
+    pub stat_hp_current: u16,
+    pub iv32: u32,
     #[deku(skip, default = "((*iv32) & 0x1F) as u8")]
-    iv_hp: u8,
+    pub iv_hp: u8,
     #[deku(skip, default = "((*iv32 >> 05) & 0x1F) as u8")]
-    iv_atk: u8,
+    pub iv_atk: u8,
     #[deku(skip, default = "((*iv32 >> 10) & 0x1F) as u8")]
-    iv_def: u8,
+    pub iv_def: u8,
     #[deku(skip, default = "((*iv32 >> 15) & 0x1F) as u8")]
-    iv_spe: u8,
+    pub iv_spe: u8,
     #[deku(skip, default = "((*iv32 >> 20) & 0x1F) as u8")]
-    iv_spa: u8,
+    pub iv_spa: u8,
     #[deku(skip, default = "((*iv32 >> 25) & 0x1F) as u8")]
-    iv_spd: u8,
+    pub iv_spd: u8,
     #[deku(skip, default = "((*iv32 >> 30) & 1) == 1")]
-    is_egg: bool,
+    pub is_egg: bool,
     #[deku(skip, default = "((*iv32 >> 31) & 1) == 1")]
-    is_nicknamed: bool,
+    pub is_nicknamed: bool,
     #[deku(pad_bytes_after = "3")]
-    dynamax_level: u8,
-    status_condition: i32,
+    pub dynamax_level: u8,
+    pub status_condition: i32,
     #[deku(pad_bytes_after = "12")]
-    unk98: i32,
+    pub unk98: i32,
     // Block C
-    raw_ht_name: [u16; NICK_LENGTH + 1],
+    pub raw_ht_name: [u16; NICK_LENGTH + 1],
     #[deku(skip, default = "get_string7(raw_ht_name)")]
-    ht_name: String,
-    ht_gender: Gender,
-    ht_language: LanguageID,
+    pub ht_name: String,
+    pub ht_gender: Gender,
+    pub ht_language: LanguageID,
     #[deku(pad_bytes_after = "1")]
-    current_handler: u8,
+    pub current_handler: u8,
     // 0xC5 unused (alignment)
-    ht_trainer_id: u16,
-    ht_friendship: u8,
-    ht_intensity: u8,
-    ht_memory: u8,
-    ht_feeling: u8,
+    pub ht_trainer_id: u16,
+    pub ht_friendship: u8,
+    pub ht_intensity: u8,
+    pub ht_memory: u8,
+    pub ht_feeling: u8,
     #[deku(pad_bytes_after = "14")]
-    ht_text_var: u16,
+    pub ht_text_var: u16,
     // 0xCE-0xDB unused
-    fullness: u8,
-    enjoyment: u8,
-    version: u8,
+    pub fullness: u8,
+    pub enjoyment: u8,
+    pub version: u8,
     #[deku(pad_bytes_after = "2")]
-    battle_version: u8,
+    pub battle_version: u8,
     // region: u8,
     // console_region: u8,
-    language: LanguageID,
-    unk_e3: u8,
-    form_argument: u32,
+    pub language: LanguageID,
+    pub unk_e3: u8,
+    pub form_argument: u32,
     #[deku(pad_bytes_after = "15")]
-    affixed_ribbon: i8,
+    pub affixed_ribbon: i8,
     // 0xE9-0xF7 unused
     // Block D
-    raw_ot_name: [u16; NICK_LENGTH + 1],
+    pub raw_ot_name: [u16; NICK_LENGTH + 1],
     #[deku(skip, default = "get_string7(raw_ot_name)")]
-    ot_name: String,
-    ot_friendship: u8,
-    ot_intensity: u8,
+    pub ot_name: String,
+    pub ot_friendship: u8,
+    pub ot_intensity: u8,
     #[deku(pad_bytes_after = "1")]
-    ot_memory: u8,
+    pub ot_memory: u8,
     // 0x115 unused align
-    ot_text_var: u16,
-    ot_feeling: u8,
-    egg_year: u8,
-    egg_month: u8,
-    egg_day: u8,
-    met_year: u8,
-    met_month: u8,
+    pub ot_text_var: u16,
+    pub ot_feeling: u8,
+    pub egg_year: u8,
+    pub egg_month: u8,
+    pub egg_day: u8,
+    pub met_year: u8,
+    pub met_month: u8,
     #[deku(pad_bytes_after = "1")]
-    met_day: u8,
+    pub met_day: u8,
     // 0x11F unused align
-    egg_location: u16,
-    met_location: u16,
-    ball: Ball,
+    pub egg_location: u16,
+    pub met_location: u16,
+    pub ball: Ball,
     #[deku(bits = "1")]
-    ot_gender: Gender,
+    pub ot_gender: Gender,
     #[deku(bits = "7")]
-    met_level: u8,
+    pub met_level: u8,
     #[deku(bits = "1", pad_bits_before = "2")]
-    ht_spe: Flag,
+    pub ht_spe: Flag,
     #[deku(bits = "1")]
-    ht_spd: Flag,
+    pub ht_spd: Flag,
     #[deku(bits = "1")]
-    ht_spa: Flag,
+    pub ht_spa: Flag,
     #[deku(bits = "1")]
-    ht_def: Flag,
+    pub ht_def: Flag,
     #[deku(bits = "1")]
-    ht_atk: Flag,
+    pub ht_atk: Flag,
     #[deku(bits = "1")]
-    ht_hp: Flag,
-    raw_move_record: [u8; 14],
+    pub ht_hp: Flag,
+    pub raw_move_record: [u8; 14],
     #[deku(pad_bytes_after = "11")]
-    tracker: u64,
+    pub tracker: u64,
     #[deku(pad_bytes_after = "1")]
-    stat_level: u8,
-    stat_hp_max: u16,
-    stat_atk: u16,
-    stat_def: u16,
-    stat_spe: u16,
-    stat_spa: u16,
-    stat_spd: u16,
-    dynamax_type: u16,
+    pub stat_level: u8,
+    pub stat_hp_max: u16,
+    pub stat_atk: u16,
+    pub stat_def: u16,
+    pub stat_spe: u16,
+    pub stat_spa: u16,
+    pub stat_spd: u16,
+    pub dynamax_type: u16,
 }
 
-impl From<&[u8; 344]> for PK8Config {
+impl From<&[u8; 344]> for PK8 {
     fn from(data: &[u8; SIZE_8PARTY]) -> Self {
         let mut array = *data;
         decrypt_if_encrypted8(&mut array);
-        let (_rest, file) = PK8Config::from_bytes((array.as_ref(), 0)).unwrap();
+        let (_rest, file) = PK8::from_bytes((array.as_ref(), 0)).unwrap();
         file
     }
 }
@@ -510,9 +505,9 @@ mod test {
 
     #[test]
     fn pk8_from_array_test() {
-        let orbeetle_d = PK8Config::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
-        let orbeetle_e = PK8Config::from(include_bytes!("util/tests/data/Orbeetle.ek8"));
-        let dracovish = PK8Config::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let orbeetle_d = PK8::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
+        let orbeetle_e = PK8::from(include_bytes!("util/tests/data/Orbeetle.ek8"));
+        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
 
         assert_eq!(true, orbeetle_d == orbeetle_e);
         assert_eq!(false, dracovish == orbeetle_d);
@@ -520,24 +515,23 @@ mod test {
 
     #[test]
     fn pk8_from_vec_test() {
-        let orbeetle_e = PK8Config::from(include_bytes!("util/tests/data/Orbeetle.ek8"));
-        let orbeetle_d =
-            PK8Config::try_from(&*include_bytes!("util/tests/data/Orbeetle.pk8")).unwrap();
+        let orbeetle_e = PK8::from(include_bytes!("util/tests/data/Orbeetle.ek8"));
+        let orbeetle_d = PK8::try_from(&*include_bytes!("util/tests/data/Orbeetle.pk8")).unwrap();
 
         assert_eq!(true, orbeetle_e == orbeetle_d);
     }
 
     #[test]
     fn pk8_calc_checksum_test() {
-        let orbeetle = PK8Config::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
-        let dracovish = PK8Config::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let orbeetle = PK8::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
+        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
         assert_eq!(0x4E8E, orbeetle.checksum);
         assert_eq!(0x5D57, dracovish.checksum);
     }
 
     #[test]
     fn pk8_get_test_1() {
-        let dracovish = PK8Config::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
         assert_eq!(0xAC731A09, dracovish.encryption_constant);
         assert_eq!(0x0, dracovish.sanity);
         assert_eq!(0x5D57, dracovish.checksum);
@@ -572,7 +566,7 @@ mod test {
 
     #[test]
     fn pk8_get_test_2() {
-        let dracovish = PK8Config::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
         assert_eq!(88, dracovish.height_scalar);
         assert_eq!(33, dracovish.weight_scalar);
         assert_eq!(35, dracovish.move1_pp);

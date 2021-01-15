@@ -11,6 +11,12 @@ pub enum Gender {
     Genderless = 0x2,
 }
 
+impl Default for Gender {
+    fn default() -> Self {
+        Gender::Male
+    }
+}
+
 impl<'a, Ctx> DekuRead<'a, Ctx> for Gender
 where
     Ctx: Copy,

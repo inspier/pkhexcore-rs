@@ -836,3 +836,9 @@ pub enum Move {
     EerieSpell,
     MAX_COUNT,
 }
+
+impl Default for Move {
+    fn default() -> Self {
+        Move::None
+    }
+}

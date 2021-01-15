@@ -912,6 +912,12 @@ pub enum Species {
     MAX_COUNT,
 }
 
+impl Default for Species {
+    fn default() -> Self {
+        Species::None
+    }
+}
+
 #[allow(non_snake_case)]
 impl_from!(Species for u16, i32);
 

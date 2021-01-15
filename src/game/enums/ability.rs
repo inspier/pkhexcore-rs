@@ -280,6 +280,12 @@ pub enum Ability {
     MAX_COUNT,
 }
 
+impl Default for Ability {
+    fn default() -> Self {
+        Ability::None
+    }
+}
+
 impl_from! (Ability for i32);
 
 #[allow(unused_macros)]

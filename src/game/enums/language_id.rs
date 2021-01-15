@@ -41,3 +41,9 @@ pub enum LanguageID {
     /// Chinese Traditional (繁體中文)
     ChineseT = 10,
 }
+
+impl Default for LanguageID {
+    fn default() -> Self {
+        LanguageID::English
+    }
+}

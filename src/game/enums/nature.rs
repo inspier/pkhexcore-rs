@@ -35,6 +35,12 @@ pub enum Nature {
     Random = 25,
 }
 
+impl Default for Nature {
+    fn default() -> Self {
+        Nature::Hardy
+    }
+}
+
 impl_from! (Nature for u8, i32);
 
 #[allow(unused_macros)]
