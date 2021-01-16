@@ -16,7 +16,6 @@ use crate::game::enums::flag::Flag;
 /// let buffer = [15, 0, 16, 255];
 /// assert_eq!(Flag::Set, get_flag(&buffer, 0, 0));
 /// ```
-///
 pub fn get_flag(array: &[u8], offset: usize, mut bit_index: u32) -> Flag {
     bit_index &= 7; // ensure bit access is 0-7
     match (array[offset] >> bit_index & 1) != 0 {
@@ -43,7 +42,6 @@ pub fn get_flag(array: &[u8], offset: usize, mut bit_index: u32) -> Flag {
 /// set_flag(&mut buffer, 0, 0, Flag::Unset);
 /// assert_eq!(Flag::Unset, get_flag(&buffer, 0, 0));
 /// ```
-///
 pub fn set_flag(array: &mut [u8], offset: usize, mut bit_index: u32, value: Flag) {
     bit_index &= 7; // ensure bit access is 0-7
     array[offset] &= !(1 << bit_index) as u8;

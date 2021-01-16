@@ -16,7 +16,6 @@ pub const SECONDS_PER_DAY: i64 = Duration::day().whole_seconds(); // 86400
 /// assert_eq!(true, is_date_valid(2000, 1, 1));
 /// assert_eq!(false, is_date_valid(0, 1, 1));
 /// ```
-///
 pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
     if !(1..=9999).contains(&year) {
         return false;
@@ -32,15 +31,13 @@ pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
 ///
 ///# Example
 /// ```
-/// use pkhexcore::util::dateutil::get_seconds_since2000;
-/// use pkhexcore::util::dateutil::SECONDS_PER_DAY;
+/// use pkhexcore::util::dateutil::{get_seconds_since2000, SECONDS_PER_DAY};
 /// use time::date;
 ///
 /// // (2000/1/2)  (2000,1,1)
 /// // 946771200 - 946684800 = 86,400 a full day in secs
-/// assert_eq!(SECONDS_PER_DAY, get_seconds_since2000(date!(2000-1-2)));
+/// assert_eq!(SECONDS_PER_DAY, get_seconds_since2000(date!(2000 - 1 - 2)));
 /// ```
-///
 pub fn get_seconds_since2000(date: Date) -> i64 {
     (date - EPOCH_2000).whole_seconds()
 }

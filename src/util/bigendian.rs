@@ -13,7 +13,6 @@ use core::{convert::TryInto, mem};
 /// let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
 /// assert_eq!(255, to_int16(&buffer, 2));
 /// ```
-///
 pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
     i16::from_be_bytes(
         data[start_index..][..mem::size_of::<i16>()]
@@ -35,7 +34,6 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 /// let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(-2146424848, to_int32(&buffer, 3));
 /// ```
-///
 pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
     i32::from_be_bytes(
         data[start_index..][..mem::size_of::<i32>()]
@@ -57,7 +55,6 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 /// let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
 /// assert_eq!(140806877927665, to_int64(&buffer, 1));
 /// ```
-///
 pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
     i64::from_be_bytes(
         data[start_index..][..mem::size_of::<i64>()]
@@ -75,10 +72,9 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_uint16;
-/// let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127 ];
+/// let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
 /// assert_eq!(255, to_uint16(&buffer, 2));
 /// ```
-///
 pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
     u16::from_be_bytes(
         data[start_index..][..mem::size_of::<u16>()]
@@ -96,10 +92,9 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_uint32;
-/// let buffer = [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 19,];
+/// let buffer = [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 19];
 /// assert_eq!(16712448, to_uint32(&buffer, 6));
 /// ```
-///
 pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
     u32::from_be_bytes(
         data[start_index..][..mem::size_of::<u32>()]
@@ -117,10 +112,9 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 ///
 /// ```
 /// use pkhexcore::util::bigendian::to_uint64;
-/// let buffer = [255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 170, 170, 170, 170, 170,];
+/// let buffer = [255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 170, 170, 170, 170, 170];
 /// assert_eq!(18374686479671623680, to_uint64(&buffer, 2));
 /// ```
-///
 pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     u64::from_be_bytes(
         data[start_index..][..mem::size_of::<u64>()]
@@ -139,18 +133,13 @@ pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
 /// let buffer = [32, 16];
 /// assert_eq!(2010, bcd_to_int32(&buffer, 0, 2));
 /// ```
-///
 pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
-    input
-        .iter()
-        .take(offset + length as usize)
-        .skip(offset)
-        .fold(0i32, |mut result, p| {
-            result *= 100;
-            result += (10 * (p >> 4)) as i32;
-            result += (p & 0xf) as i32;
-            result
-        })
+    input.iter().take(offset + length as usize).skip(offset).fold(0i32, |mut result, p| {
+        result *= 100;
+        result += (10 * (p >> 4)) as i32;
+        result += (p & 0xf) as i32;
+        result
+    })
 }
 
 /// Returns the specified 32-bit signed integer value as an array of Binary
@@ -162,7 +151,6 @@ pub fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
 /// use pkhexcore::util::bigendian::int32_to_bcd;
 /// assert_eq!([32, 16], int32_to_bcd::<2>(2010));
 /// ```
-///
 pub fn int32_to_bcd<const N: usize>(mut input: i32) -> [u8; N] {
     let mut result: [u8; N] = [0; N];
     for i in 0..N {
@@ -198,9 +186,7 @@ mod test {
 
     #[test]
     fn to_int32_test_be() {
-        let buffer = [
-            15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
-        ];
+        let buffer = [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127];
         assert_eq!(251658240, to_int32(&buffer, 0));
         assert_eq!(16, to_int32(&buffer, 2));
         assert_eq!(1048831, to_int32(&buffer, 4));
@@ -213,9 +199,7 @@ mod test {
     #[test]
     #[should_panic]
     fn to_int32_panic_test() {
-        let buffer = [
-            15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
-        ];
+        let buffer = [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127];
         to_int32(&buffer, 16);
     }
 
@@ -272,9 +256,7 @@ mod test {
 
     #[test]
     fn to_uint32_test_be() {
-        let buffer = [
-            15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
-        ];
+        let buffer = [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127];
         assert_eq!(251658240, to_uint32(&buffer, 0));
         assert_eq!(0, to_uint32(&buffer, 1));
         assert_eq!(4096, to_uint32(&buffer, 3));
@@ -287,9 +269,7 @@ mod test {
     #[test]
     #[should_panic]
     fn to_uint32_panic_test() {
-        let buffer = [
-            15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127,
-        ];
+        let buffer = [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 154, 59, 255, 255, 255, 255, 127];
         to_uint32(&buffer, 16);
     }
 

@@ -50,7 +50,6 @@ impl Default for Ball {
 /// # Arguments
 ///
 /// * `ball` - Ball ID
-///
 pub fn is_apricorn_ball(ball: Ball) -> bool {
     Ball::Fast <= ball && ball <= Ball::Moon
 }

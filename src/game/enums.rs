@@ -12,7 +12,8 @@ pub mod ball;
 /// Statuses of a bitflag.
 pub mod flag;
 
-/// GameVersion analogues used by Colosseum/XD instead of the main-series values.
+/// GameVersion analogues used by Colosseum/XD instead of the main-series
+/// values.
 pub mod gc_version;
 
 /// Gender a PKM can have.
@@ -21,7 +22,8 @@ pub mod gender;
 /// Species IDs for the corresponding English species name.
 pub mod species;
 
-/// Game Version ID enum shared between actual Version IDs and lumped version groupings.
+/// Game Version ID enum shared between actual Version IDs and lumped version
+/// groupings.
 pub mod game_version;
 
 /// Game Language IDs.

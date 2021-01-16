@@ -9,8 +9,11 @@ pub mod bitconverter;
 /// Utility logic for dealing with bitflags in a byte array.
 pub mod flagutil;
 
-/// Utility to work with game dates
+/// Utility to work with game dates.
 pub mod dateutil;
 
-/// Several helpers for deku
+/// Bit-packing related helpers.
+pub mod packutil;
+
+/// Several helpers for deku.
 pub mod custom_read_write;

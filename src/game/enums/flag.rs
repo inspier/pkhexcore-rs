@@ -29,10 +29,7 @@ where
         let ret = match val {
             0x00 => Ok(Flag::Unset),
             0x01 => Ok(Flag::Set),
-            _ => Err(DekuError::Parse(format!(
-                "cannot parse Flag value: {}",
-                val
-            ))),
+            _ => Err(DekuError::Parse(format!("cannot parse Flag value: {}", val))),
         }?;
 
         Ok((rest, ret))

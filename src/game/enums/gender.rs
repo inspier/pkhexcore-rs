@@ -34,10 +34,7 @@ where
             0x00 => Ok(Gender::Male),
             0x01 => Ok(Gender::Female),
             0x02 => Ok(Gender::Genderless),
-            _ => Err(DekuError::Parse(format!(
-                "cannot parse Gender value: {}",
-                val
-            ))),
+            _ => Err(DekuError::Parse(format!("cannot parse Gender value: {}", val))),
         }?;
 
         Ok((rest, ret))

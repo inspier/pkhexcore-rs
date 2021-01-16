@@ -1,6 +1,8 @@
 use alloc::{string::String, vec, vec::Vec};
-use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
-use core::iter;
+use core::{
+    char::{decode_utf16, REPLACEMENT_CHARACTER},
+    iter,
+};
 
 use crate::game::enums::language_id::LanguageID;
 
@@ -38,9 +40,10 @@ pub fn set_string7b(
     pad_with: u16,
     is_chinese: bool,
 ) -> Vec<u16> {
+    // TODO Language and unsanitizing stuff.
     let mut result = data.encode_utf16().take(max_length).collect::<Vec<u16>>();
-    result.extend(vec![0; max_length - result.len()]);
-    result.extend(iter::once(0));
+    result.extend(vec![0; max_length - result.len()]); // Pad to max_length if necessary
+    result.extend(iter::once(0)); // Null terminator
     let delta = pad_to.checked_sub(max_length + 1).unwrap_or(0);
     result.extend(vec![pad_with; delta]);
     result
@@ -56,22 +59,10 @@ mod test {
             "Farfetch\'d",
             get_string7(&[0x46, 0x61, 0x72, 0x66, 0x65, 0x74, 0x63, 0x68, 0x27, 0x64])
         );
-        assert_eq!(
-            "Nidoran♀",
-            get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0xe08f])
-        );
-        assert_eq!(
-            "Nidoran♂",
-            get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0xe08e])
-        );
-        assert_eq!(
-            "Nidoran♀",
-            get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0x246e])
-        );
-        assert_eq!(
-            "Nidoran♂",
-            get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0x246d])
-        );
+        assert_eq!("Nidoran♀", get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0xe08f]));
+        assert_eq!("Nidoran♂", get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0xe08e]));
+        assert_eq!("Nidoran♀", get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0x246e]));
+        assert_eq!("Nidoran♂", get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0x246d]));
         assert_eq!(
             "Fletchinder",
             get_string7(&[0x46, 0x6c, 0x65, 0x74, 0x63, 0x68, 0x69, 0x6e, 0x64, 0x65, 0x72])

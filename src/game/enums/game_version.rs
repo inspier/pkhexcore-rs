@@ -1,13 +1,16 @@
-/// Game Version ID enum shared between actual Version IDs and lumped version groupings.
+/// Game Version ID enum shared between actual Version IDs and lumped version
+/// groupings.
 #[non_exhaustive]
 pub enum GameVersion {
-    // Indicators for method empty arguments & result indication. Not stored values.
+    // Indicators for method empty arguments & result indication. Not stored
+    // values.
     Invalid = -2,
     Any = -1,
     Unknown = 0,
     // End Indicators
 
-    // The following values are IDs stored within PKM data, and can also identify individual games.
+    // The following values are IDs stored within PKM data, and can also
+    // identify individual games.
 
     // Gen3
     /// Pokémon Sapphire (GBA)
@@ -130,7 +133,8 @@ pub enum GameVersion {
     // End Nintendo Switch
 
     // The following values are not actually stored values in pkm data,
-    // These values are assigned within PKHeX as properties for various logic branching.
+    // These values are assigned within PKHeX as properties for various logic
+    // branching.
 
     // Game Groupings (SaveFile type, roughly)
     /// Pokémon Red & Blue SAV1 identifier.

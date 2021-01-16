@@ -1,6 +1,5 @@
 use alloc::{string::String, vec::Vec};
-use deku::ctx::Limit;
-use deku::prelude::*;
+use deku::{ctx::Limit, prelude::*};
 
 pub mod read {
     use super::*;

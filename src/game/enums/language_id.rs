@@ -7,7 +7,8 @@ use deku::prelude::*;
 /// Contiguous series Game Language IDs
 pub enum LanguageID {
     /// Undefined Language ID, usually indicative of a value not being set.
-    // Gen5 Japanese In-game Trades happen to not have their Language value set, and express Language=0.
+    // Gen5 Japanese In-game Trades happen to not have their Language value
+    // set, and express Language=0.
     Hacked = 0,
 
     /// Japanese (日本語)

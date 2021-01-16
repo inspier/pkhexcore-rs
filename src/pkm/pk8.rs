@@ -3,13 +3,20 @@ use alloc::{format, string::String, vec::Vec};
 use core::convert::TryFrom;
 use deku::prelude::*;
 
-use crate::game::enums::{
-    ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID, moves::Move,
-    nature::Nature, species::Species,
+use crate::{
+    game::enums::{
+        ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID,
+        moves::Move, nature::Nature, species::Species,
+    },
+    pkm::{
+        strings::string_converter::{get_string7, set_string7b},
+        util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED},
+    },
+    util::{
+        custom_read_write::{read, write},
+        packutil::pack_u32,
+    },
 };
-use crate::pkm::strings::string_converter::{get_string7, set_string7b};
-use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED};
-use crate::util::custom_read_write::{read, write};
 
 pub const FORMAT: u32 = 8;
 
@@ -387,6 +394,9 @@ pub struct PK8 {
     pub relearn_move3: Move,
     pub relearn_move4: Move,
     pub stat_hp_current: u16,
+    #[deku(
+        update = "pack_u32(&[(self.iv_hp, 5), (self.iv_atk, 5), (self.iv_def, 5), (self.iv_spe, 5), (self.iv_spa, 5), (self.iv_spd, 5), (self.is_egg as u8, 1), (self.is_nicknamed as u8, 1)])"
+    )]
     pub iv32: u32,
     #[deku(skip, default = "((*iv32) & 0x1F) as u8")]
     pub iv_hp: u8,
@@ -605,7 +615,8 @@ mod test {
 
     // #[test]
     // fn pk8_set_test() {
-    //     let mut dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+    //     let mut dracovish =
+    // PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
     //     assert_eq!(0xAC731A09, dracovish.EncryptionConstant));
     //     set!(dracovish.EncryptionConstant, 0xDEADBEEF);
     //     assert_eq!(0xDEADBEEF, dracovish.EncryptionConstant));
