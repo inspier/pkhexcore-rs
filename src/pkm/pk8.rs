@@ -7,8 +7,9 @@ use crate::game::enums::{
     ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID, moves::Move,
     nature::Nature, species::Species,
 };
-use crate::pkm::strings::string_converter::get_string7;
+use crate::pkm::strings::string_converter::{get_string7, set_string7b};
 use crate::pkm::util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED};
+use crate::util::custom_read_write::{read, write};
 
 pub const FORMAT: u32 = 8;
 
@@ -364,8 +365,10 @@ pub struct PK8 {
     pub weight_scalar: u8,
     // 0x52-0x57 unused
     // Block B
-    pub raw_nickname: [u16; NICK_LENGTH + 1],
-    #[deku(skip, default = "get_string7(raw_nickname)")]
+    #[deku(
+        reader = "read::read_string_custom(deku::rest, NICK_LENGTH + 1, Self::get_string)",
+        writer = "write::write_string_custom(deku::output, self.set_string(&self.nickname, NICK_LENGTH))"
+    )]
     pub nickname: String,
     pub move1: Move,
     pub move2: Move,
@@ -407,8 +410,10 @@ pub struct PK8 {
     #[deku(pad_bytes_after = "12")]
     pub unk98: i32,
     // Block C
-    pub raw_ht_name: [u16; NICK_LENGTH + 1],
-    #[deku(skip, default = "get_string7(raw_ht_name)")]
+    #[deku(
+        reader = "read::read_string_custom(deku::rest, OT_LENGTH + 1, Self::get_string)",
+        writer = "write::write_string_custom(deku::output, self.set_string(&self.ht_name, OT_LENGTH))"
+    )]
     pub ht_name: String,
     pub ht_gender: Gender,
     pub ht_language: LanguageID,
@@ -437,8 +442,10 @@ pub struct PK8 {
     pub affixed_ribbon: i8,
     // 0xE9-0xF7 unused
     // Block D
-    pub raw_ot_name: [u16; NICK_LENGTH + 1],
-    #[deku(skip, default = "get_string7(raw_ot_name)")]
+    #[deku(
+        reader = "read::read_string_custom(deku::rest, OT_LENGTH + 1, Self::get_string)",
+        writer = "write::write_string_custom(deku::output, self.set_string(&self.ot_name, OT_LENGTH))"
+    )]
     pub ot_name: String,
     pub ot_friendship: u8,
     pub ot_intensity: u8,
@@ -486,6 +493,16 @@ pub struct PK8 {
     pub stat_spa: u16,
     pub stat_spd: u16,
     pub dynamax_type: u16,
+}
+
+impl PK8 {
+    fn get_string(data: &[u16]) -> String {
+        get_string7(data)
+    }
+
+    fn set_string(&self, data: &str, max_length: usize) -> Vec<u16> {
+        set_string7b(data, max_length, self.language, 0, 0, false)
+    }
 }
 
 impl From<&[u8; 344]> for PK8 {

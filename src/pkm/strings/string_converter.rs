@@ -1,5 +1,8 @@
-use alloc::string::String;
+use alloc::{string::String, vec, vec::Vec};
 use core::char::{decode_utf16, REPLACEMENT_CHARACTER};
+use core::iter;
+
+use crate::game::enums::language_id::LanguageID;
 
 const GEN7_ZH_OFS: u16 = 0xE800;
 const SM_ZHCHARTABLE_SIZE: u16 = 0x30F;
@@ -25,6 +28,22 @@ fn sanitize_string(data: &[u16]) -> String {
 pub fn get_string7(data: &[u16]) -> String {
     // TODO Language sanitizing.
     sanitize_string(&data)
+}
+
+pub fn set_string7b(
+    data: &str,
+    max_length: usize,
+    language: LanguageID,
+    pad_to: usize,
+    pad_with: u16,
+    is_chinese: bool,
+) -> Vec<u16> {
+    let mut result = data.encode_utf16().take(max_length).collect::<Vec<u16>>();
+    result.extend(vec![0; max_length - result.len()]);
+    result.extend(iter::once(0));
+    let delta = pad_to.checked_sub(max_length + 1).unwrap_or(0);
+    result.extend(vec![pad_with; delta]);
+    result
 }
 
 #[cfg(test)]
