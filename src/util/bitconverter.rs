@@ -1,5 +1,5 @@
 use alloc::vec::Vec;
-use core::{convert::TryInto, fmt::Debug, mem};
+use core::{convert::TryInto, mem};
 
 /// Returns a 16-bit signed integer converted from two bytes at a specified
 /// position in a byte array.
@@ -7,18 +7,11 @@ use core::{convert::TryInto, fmt::Debug, mem};
 /// The `to_int16` function converts the bytes from index start_index to
 /// start_index + 1 to a `i16` value. The order of bytes in the array must
 /// reflect the endianness of the computer system's architecture.
-/// # Example
-///
-/// ```
-/// use pkhexcore::util::bitconverter::to_int16;
-/// let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
-/// assert_eq!(-256, to_int16(&buffer, 2));
-/// ```
-pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
+pub(crate) fn to_int16(data: &[u8], start_index: usize) -> i16 {
     i16::from_le_bytes(
         data[start_index..][..mem::size_of::<i16>()]
             .try_into()
-            .expect("Failed to read i16. Invalid buffer provided."),
+            .unwrap_or_else(|_| unreachable!())
     )
 }
 
@@ -28,18 +21,11 @@ pub fn to_int16(data: &[u8], start_index: usize) -> i16 {
 /// The `to_int32` function converts the bytes from index start_index to
 /// start_index + 3 to a `i32` value. The order of bytes in the array must
 /// reflect the endianness of the computer system's architecture.
-/// # Example
-///
-/// ```
-/// use pkhexcore::util::bitconverter::to_int32;
-/// let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
-/// assert_eq!(-265875328, to_int32(&buffer, 3));
-/// ```
-pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
+pub(crate) fn to_int32(data: &[u8], start_index: usize) -> i32 {
     i32::from_le_bytes(
         data[start_index..][..mem::size_of::<i32>()]
             .try_into()
-            .expect("Failed to read i32. Invalid buffer provided."),
+            .unwrap_or_else(|_| unreachable!())
     )
 }
 
@@ -49,18 +35,11 @@ pub fn to_int32(data: &[u8], start_index: usize) -> i32 {
 /// The `to_int64` function converts the bytes from index start_index to
 /// start_index + 7 to a `i64` value. The order of bytes in the array must
 /// reflect the endianness of the computer system's architecture.
-/// # Example
-///
-/// ```
-/// use pkhexcore::util::bitconverter::to_int64;
-/// let buffer = [15, 0, 0, 128, 16, 39, 240, 216, 241, 255, 127];
-/// assert_eq!(-1019801265028202496, to_int64(&buffer, 1));
-/// ```
-pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
+pub(crate) fn to_int64(data: &[u8], start_index: usize) -> i64 {
     i64::from_le_bytes(
         data[start_index..][..mem::size_of::<i64>()]
             .try_into()
-            .expect("Failed to read i64. Invalid buffer provided."),
+            .unwrap_or_else(|_| unreachable!())
     )
 }
 
@@ -70,18 +49,11 @@ pub fn to_int64(data: &[u8], start_index: usize) -> i64 {
 /// The `to_uint16` function converts the bytes from index start_index to
 /// start_index + 1 to a `u16` value. The order of bytes in the array must
 /// reflect the endianness of the  computer system's architecture.
-/// # Example
-///
-/// ```
-/// use pkhexcore::util::bitconverter::to_uint16;
-/// let buffer = [15, 0, 0, 255, 3, 16, 39, 255, 255, 127];
-/// assert_eq!(65280, to_uint16(&buffer, 2));
-/// ```
-pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
+pub(crate) fn to_uint16(data: &[u8], start_index: usize) -> u16 {
     u16::from_le_bytes(
         data[start_index..][..mem::size_of::<u16>()]
             .try_into()
-            .expect("Failed to read u16. Invalid buffer provided."),
+            .unwrap_or_else(|_| unreachable!())
     )
 }
 
@@ -91,18 +63,11 @@ pub fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 /// The `to_uint32` function converts the bytes from index start_index to
 /// start_index + 3 to a `u32` value. The order of bytes in the array must
 /// reflect the endianness of the computer system's architecture.
-/// # Example
-///
-/// ```
-/// use pkhexcore::util::bitconverter::to_uint32;
-/// let buffer = [15, 0, 0, 0, 0, 16, 0, 255, 3, 0, 0, 202, 19];
-/// assert_eq!(261888, to_uint32(&buffer, 6));
-/// ```
-pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
+pub(crate) fn to_uint32(data: &[u8], start_index: usize) -> u32 {
     u32::from_le_bytes(
         data[start_index..][..mem::size_of::<u32>()]
             .try_into()
-            .expect("Failed to read u32. Invalid buffer provided."),
+            .unwrap_or_else(|_| unreachable!())
     )
 }
 
@@ -112,28 +77,20 @@ pub fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 /// The `to_uint64` function converts the bytes from index start_index to
 /// start_index + 7 to a `u64` value. The order of bytes in the array must
 /// reflect the endianness of the computer system's architecture.
-/// # Example
-///
-/// ```
-/// use pkhexcore::util::bitconverter::to_uint64;
-/// let buffer = [255, 255, 255, 0, 0, 0, 0, 0, 0, 0, 170, 170, 170, 170, 170];
-/// assert_eq!(255, to_uint64(&buffer, 2));
-/// ```
-pub fn to_uint64(data: &[u8], start_index: usize) -> u64 {
+pub(crate) fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     u64::from_le_bytes(
         data[start_index..][..mem::size_of::<u64>()]
             .try_into()
-            .expect("Failed to read u64. Invalid buffer provided."),
+            .unwrap_or_else(|_| unreachable!())
     )
 }
 
-pub(crate) fn get_bytes<T: ByteDecomposable + Debug>(value: T) -> ByteArray {
+pub(crate) fn get_bytes<T: ByteDecomposable>(value: T) -> ByteArray {
     let data = <T>::get_bytes(value);
     let size = data.len();
     ByteArray::new(data, size)
 }
 
-#[derive(Debug)]
 pub(crate) struct ByteArray {
     src: Vec<u8>,
     size: usize,

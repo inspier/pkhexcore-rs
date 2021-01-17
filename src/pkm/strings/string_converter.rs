@@ -1,4 +1,4 @@
-use alloc::{string::String, vec, vec::Vec};
+use alloc::{string::String, vec::Vec};
 use core::{
     char::{decode_utf16, REPLACEMENT_CHARACTER},
     iter,
@@ -42,10 +42,13 @@ pub fn set_string7b(
 ) -> Vec<u16> {
     // TODO Language and unsanitizing stuff.
     let mut result = data.encode_utf16().take(max_length).collect::<Vec<u16>>();
-    result.extend(vec![0; max_length - result.len()]); // Pad to max_length if necessary
-    result.extend(iter::once(0)); // Null terminator
+    // Pad to max_length if necessary
+    result.extend([0].iter().cycle().take(max_length - result.len()));
+    // Null terminator
+    result.extend(iter::once(0));
+    // Pad remaining if requested.
     let delta = pad_to.checked_sub(max_length + 1).unwrap_or(0);
-    result.extend(vec![pad_with; delta]);
+    result.extend([pad_with].iter().cycle().take(delta));
     result
 }
 
