@@ -1,10 +1,10 @@
 use alloc::{string::String, vec::Vec};
 use deku::{ctx::Limit, prelude::*};
 
-pub mod read {
+pub(crate) mod read {
     use super::*;
 
-    pub fn read_string_custom(
+    pub(crate) fn read_string_custom(
         rest: &BitSlice<Msb0, u8>,
         byte_count: usize,
         f: fn(&[u16]) -> String,
@@ -14,10 +14,10 @@ pub mod read {
     }
 }
 
-pub mod write {
+pub(crate) mod write {
     use super::*;
 
-    pub fn write_string_custom(
+    pub(crate) fn write_string_custom(
         output: &mut BitVec<Msb0, u8>,
         field: Vec<u16>,
     ) -> Result<(), DekuError> {

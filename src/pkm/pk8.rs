@@ -513,9 +513,16 @@ impl PK8 {
     fn set_string(&self, data: &str, max_length: usize) -> Vec<u16> {
         set_string7b(data, max_length, self.language, 0, 0, false)
     }
+
+    fn as_bytes(&mut self) -> [u8; SIZE_8PARTY] {
+        // Note: Double updated needed to make sure changes to checksum propagate.
+        let _ = self.update();
+        let _ = self.update();
+        <[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap()
+    }
 }
 
-impl From<&[u8; 344]> for PK8 {
+impl From<&[u8; SIZE_8PARTY]> for PK8 {
     fn from(data: &[u8; SIZE_8PARTY]) -> Self {
         let mut array = *data;
         decrypt_if_encrypted8(&mut array);

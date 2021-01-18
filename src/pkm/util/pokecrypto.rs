@@ -85,7 +85,7 @@ const BLOCK_POSITION_INVERT: [u8; 32] = [
 /// * `sv` - Block Shuffle order
 /// * `block_size` - Size of shuffling chunks
 #[inline]
-pub fn shuffle_array8(data: &[u8; 344], sv: u32, block_size: usize) -> [u8; 344] {
+pub fn shuffle_array<const N: usize>(data: &[u8; N], sv: u32, block_size: usize) -> [u8; N] {
     let mut sdata = *data;
     let index: u32 = sv * 4;
     let start: usize = 8;
@@ -109,7 +109,7 @@ pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
     let pv: u32 = bitconverter::to_uint32(ekm, 0);
     let sv = pv >> 13 & 31;
     crypt_pkm(ekm, pv, SIZE_8BLOCK);
-    shuffle_array8(ekm, sv, SIZE_8BLOCK)
+    shuffle_array::<SIZE_8PARTY>(ekm, sv, SIZE_8BLOCK)
 }
 
 /// Decrypts a Gen8 pkm byte array.
@@ -120,7 +120,7 @@ pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
 pub fn encrypt_array8(pkm: &mut [u8; 344]) -> [u8; 344] {
     let pv: u32 = bitconverter::to_uint32(pkm, 0);
     let sv = pv >> 13 & 31;
-    let mut ekm = shuffle_array8(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
+    let mut ekm = shuffle_array::<SIZE_8PARTY>(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
     crypt_pkm(&mut ekm, pv, SIZE_8BLOCK);
     ekm
 }

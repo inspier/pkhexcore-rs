@@ -8,9 +8,7 @@ use core::{convert::TryInto, mem};
 /// reflect the endianness of the computer system's architecture.
 pub(crate) fn to_int16(data: &[u8], start_index: usize) -> i16 {
     i16::from_be_bytes(
-        data[start_index..][..mem::size_of::<i16>()]
-            .try_into()
-            .unwrap_or_else(|_| unreachable!())
+        data[start_index..][..mem::size_of::<i16>()].try_into().unwrap_or_else(|_| unreachable!()),
     )
 }
 
@@ -23,9 +21,7 @@ pub(crate) fn to_int16(data: &[u8], start_index: usize) -> i16 {
 /// # Example
 pub(crate) fn to_int32(data: &[u8], start_index: usize) -> i32 {
     i32::from_be_bytes(
-        data[start_index..][..mem::size_of::<i32>()]
-            .try_into()
-            .unwrap_or_else(|_| unreachable!())
+        data[start_index..][..mem::size_of::<i32>()].try_into().unwrap_or_else(|_| unreachable!()),
     )
 }
 
@@ -37,9 +33,7 @@ pub(crate) fn to_int32(data: &[u8], start_index: usize) -> i32 {
 /// reflect the endianness of the computer system's architecture.
 pub(crate) fn to_int64(data: &[u8], start_index: usize) -> i64 {
     i64::from_be_bytes(
-        data[start_index..][..mem::size_of::<i64>()]
-            .try_into()
-            .unwrap_or_else(|_| unreachable!())
+        data[start_index..][..mem::size_of::<i64>()].try_into().unwrap_or_else(|_| unreachable!()),
     )
 }
 
@@ -50,9 +44,7 @@ pub(crate) fn to_int64(data: &[u8], start_index: usize) -> i64 {
 /// start_index + 1 to a `u16` value.
 pub(crate) fn to_uint16(data: &[u8], start_index: usize) -> u16 {
     u16::from_be_bytes(
-        data[start_index..][..mem::size_of::<u16>()]
-            .try_into()
-            .unwrap_or_else(|_| unreachable!())
+        data[start_index..][..mem::size_of::<u16>()].try_into().unwrap_or_else(|_| unreachable!()),
     )
 }
 
@@ -63,9 +55,7 @@ pub(crate) fn to_uint16(data: &[u8], start_index: usize) -> u16 {
 /// start_index + 3 to a `u32` value.
 pub(crate) fn to_uint32(data: &[u8], start_index: usize) -> u32 {
     u32::from_be_bytes(
-        data[start_index..][..mem::size_of::<u32>()]
-            .try_into()
-            .unwrap_or_else(|_| unreachable!())
+        data[start_index..][..mem::size_of::<u32>()].try_into().unwrap_or_else(|_| unreachable!()),
     )
 }
 
@@ -76,9 +66,7 @@ pub(crate) fn to_uint32(data: &[u8], start_index: usize) -> u32 {
 /// start_index + 7 to a `u64` value.
 pub(crate) fn to_uint64(data: &[u8], start_index: usize) -> u64 {
     u64::from_be_bytes(
-        data[start_index..][..mem::size_of::<u64>()]
-            .try_into()
-            .unwrap_or_else(|_| unreachable!())
+        data[start_index..][..mem::size_of::<u64>()].try_into().unwrap_or_else(|_| unreachable!()),
     )
 }
 

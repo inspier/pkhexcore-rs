@@ -1,4 +1,4 @@
-use alloc::{string::String, vec::Vec};
+use alloc::{string::{String, ToString}, vec::Vec};
 use core::{
     char::{decode_utf16, REPLACEMENT_CHARACTER},
     iter,
@@ -27,6 +27,29 @@ fn sanitize_string(data: &[u16]) -> String {
         .collect::<String>()
 }
 
+// TODO Refactor to be more idiomatic.
+fn unsanitize_string(s: &str, generation: u32) -> String {
+    let mut s = s.to_string();
+    if generation >= 6 {
+        s = s.replace("\'", "’"); // Farfetch'd
+    }
+    if generation <= 5 {
+        s = s.replace("\u{2640}", "\u{246E}") // ♀
+        .replace("\u{2642}", "\u{246D}"); // ♂
+        return s.into();
+    }
+    let full_width = s
+        .chars()
+        .filter(|c| !['\u{2640}', '\u{2642}'].contains(c))
+        .any(|x| ![0, 0xE].contains(&(x as u16 >> 12)));
+    if full_width {
+        return s.into();
+    }
+    s = s.replace("\u{2640}", "\u{E08F}") // ♀
+       .replace("\u{2642}", "\u{E08E}"); // ♂
+    s.into()
+}
+
 pub fn get_string7(data: &[u16]) -> String {
     // TODO Language sanitizing.
     sanitize_string(&data)
@@ -40,7 +63,8 @@ pub fn set_string7b(
     pad_with: u16,
     is_chinese: bool,
 ) -> Vec<u16> {
-    // TODO Language and unsanitizing stuff.
+    // TODO Language unsanitizing.
+    let data = unsanitize_string(data, 7);
     let mut result = data.encode_utf16().take(max_length).collect::<Vec<u16>>();
     // Pad to max_length if necessary
     result.extend([0].iter().cycle().take(max_length - result.len()));
