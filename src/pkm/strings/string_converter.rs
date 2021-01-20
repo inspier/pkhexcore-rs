@@ -1,7 +1,4 @@
-use alloc::{
-    string::{String, ToString},
-    vec::Vec,
-};
+use alloc::{string::String, vec::Vec};
 use core::{
     char::{decode_utf16, REPLACEMENT_CHARACTER},
     iter,
@@ -24,33 +21,30 @@ fn sanitize_glyph(c: char) -> char {
     }
 }
 
+fn unsanitize_glyph(c: char, generation: u32, full_width: bool) -> char {
+    match c {
+        '\'' if generation >= 6 => '’',
+        '\u{2640}' if generation <= 5 => '\u{246E}',
+        '\u{2642}' if generation <= 5 => '\u{246D}',
+        '\u{2640}' if generation >= 6 && !full_width => '\u{E08F}',
+        '\u{2642}' if generation >= 6 && !full_width => '\u{E08E}',
+        _ => c,
+    }
+}
+
 fn sanitize_string(data: &[u16]) -> String {
     decode_utf16(data.iter().take_while(|&&x| x != 0).copied())
         .map(|r| r.map_or(REPLACEMENT_CHARACTER, sanitize_glyph))
         .collect::<String>()
 }
 
-// TODO Refactor to be more idiomatic.
 fn unsanitize_string(s: &str, generation: u32) -> String {
-    let mut s = s.to_string();
-    if generation >= 6 {
-        s = s.replace("\'", "’"); // Farfetch'd
-    }
-    if generation <= 5 {
-        s = s.replace("\u{2640}", "\u{246E}") // ♀
-        .replace("\u{2642}", "\u{246D}"); // ♂
-        return s.into();
-    }
     let full_width = s
         .chars()
         .filter(|c| !['\u{2640}', '\u{2642}'].contains(c))
         .any(|x| ![0, 0xE].contains(&(x as u16 >> 12)));
-    if full_width {
-        return s.into();
-    }
-    s = s.replace("\u{2640}", "\u{E08F}") // ♀
-       .replace("\u{2642}", "\u{E08E}"); // ♂
-    s.into()
+
+    s.chars().map(|c| unsanitize_glyph(c, generation, full_width)).collect()
 }
 
 pub fn get_string7(data: &[u16]) -> String {
