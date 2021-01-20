@@ -5,6 +5,7 @@ use deku::prelude::*;
 #[allow(non_camel_case_types)]
 /// Gender a PKM can have
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+#[repr(u8)]
 pub enum Gender {
     Male = 0x0,
     Female = 0x1,

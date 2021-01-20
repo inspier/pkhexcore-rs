@@ -3,6 +3,8 @@ use deku::prelude::*;
 
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u8", ctx = "_endian: deku::ctx::Endian")]
+#[non_exhaustive]
+#[repr(u8)]
 /// Ball IDs for the corresponding English ball name.
 pub enum Ball {
     None = 0,

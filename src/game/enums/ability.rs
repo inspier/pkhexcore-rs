@@ -8,6 +8,7 @@ use deku::prelude::*;
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u16", ctx = "_endian: deku::ctx::Endian")]
 #[non_exhaustive]
+#[repr(u16)]
 pub enum Ability {
     None = 0x0,
     Stench,

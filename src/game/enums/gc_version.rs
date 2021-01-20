@@ -2,6 +2,7 @@ use crate::game::enums::game_version::GameVersion;
 
 /// GameVersion analogues used by Colosseum/XD instead of the main-series
 /// values.
+#[non_exhaustive]
 #[repr(u8)]
 pub enum GCVersion {
     None = 0,

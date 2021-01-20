@@ -120,7 +120,8 @@ pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
 pub fn encrypt_array8(pkm: &mut [u8; 344]) -> [u8; 344] {
     let pv: u32 = bitconverter::to_uint32(pkm, 0);
     let sv = pv >> 13 & 31;
-    let mut ekm = shuffle_array::<SIZE_8PARTY>(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
+    let mut ekm =
+        shuffle_array::<SIZE_8PARTY>(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
     crypt_pkm(&mut ekm, pv, SIZE_8BLOCK);
     ekm
 }

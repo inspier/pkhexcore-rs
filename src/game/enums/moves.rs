@@ -6,6 +6,8 @@ use deku::prelude::*;
 /// Elemental type a move has; additionally, types a PKM can have.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u16", ctx = "_endian: deku::ctx::Endian")]
+#[non_exhaustive]
+#[repr(u16)]
 pub enum Move {
     None = 0x0,
     Pound,

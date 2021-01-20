@@ -1,6 +1,7 @@
 /// Game Version ID enum shared between actual Version IDs and lumped version
 /// groupings.
 #[non_exhaustive]
+#[repr(i32)]
 pub enum GameVersion {
     // Indicators for method empty arguments & result indication. Not stored
     // values.

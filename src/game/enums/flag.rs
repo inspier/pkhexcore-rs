@@ -2,6 +2,7 @@ use alloc::format;
 use deku::prelude::*;
 
 #[derive(Debug, PartialEq, Clone)]
+#[repr(u8)]
 pub enum Flag {
     Unset = 0x0,
     Set = 0x1,
@@ -18,8 +19,6 @@ where
     Ctx: Copy,
     u8: DekuRead<'a, Ctx>,
 {
-    /// wrapper around u8::read with consideration to context, such as bit size
-    /// true if the result of the read is `1`, false if `0` and error otherwise
     fn read(
         input: &'a BitSlice<Msb0, u8>,
         inner_ctx: Ctx,
@@ -40,7 +39,6 @@ impl<Ctx> DekuWrite<Ctx> for Flag
 where
     u8: DekuWrite<Ctx>,
 {
-    /// wrapper around u8::write with consideration to context, such as bit size
     fn write(&self, output: &mut BitVec<Msb0, u8>, inner_ctx: Ctx) -> Result<(), DekuError> {
         match self {
             Flag::Unset => (0x00u8).write(output, inner_ctx),

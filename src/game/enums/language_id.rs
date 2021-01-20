@@ -5,6 +5,7 @@ use deku::prelude::*;
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u8", ctx = "_endian: deku::ctx::Endian")]
 /// Contiguous series Game Language IDs
+#[repr(u8)]
 pub enum LanguageID {
     /// Undefined Language ID, usually indicative of a value not being set.
     // Gen5 Japanese In-game Trades happen to not have their Language value

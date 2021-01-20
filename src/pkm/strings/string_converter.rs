@@ -1,4 +1,7 @@
-use alloc::{string::{String, ToString}, vec::Vec};
+use alloc::{
+    string::{String, ToString},
+    vec::Vec,
+};
 use core::{
     char::{decode_utf16, REPLACEMENT_CHARACTER},
     iter,
@@ -84,7 +87,7 @@ mod test {
     fn get_string7_test() {
         assert_eq!(
             "Farfetch\'d",
-            get_string7(&[0x46, 0x61, 0x72, 0x66, 0x65, 0x74, 0x63, 0x68, 0x27, 0x64])
+            get_string7(&[0x46, 0x61, 0x72, 0x66, 0x65, 0x74, 0x63, 0x68, 0x2019, 0x64])
         );
         assert_eq!("Nidoran♀", get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0xe08f]));
         assert_eq!("Nidoran♂", get_string7(&[0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0xe08e]));
@@ -95,5 +98,34 @@ mod test {
             get_string7(&[0x46, 0x6c, 0x65, 0x74, 0x63, 0x68, 0x69, 0x6e, 0x64, 0x65, 0x72])
         );
         assert_eq!("Ho-Oh", get_string7(&[0x48, 0x6f, 0x2d, 0x4f, 0x68]));
+    }
+
+    #[test]
+    fn set_string7b_test() {
+        let set_string = |s| {
+            set_string7b(s, 12, LanguageID::English, 0, 0, false)
+                .into_iter()
+                .take_while(|&x| x != 0)
+                .collect::<Vec<u16>>()
+        };
+        assert_eq!(
+            set_string("Farfetch\'d"),
+            [0x46, 0x61, 0x72, 0x66, 0x65, 0x74, 0x63, 0x68, 0x2019, 0x64]
+        );
+        assert_eq!(set_string("Nidoran♀"), [0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0xe08f]);
+        assert_eq!(set_string("Nidoran♂"), [0x4e, 0x69, 0x64, 0x6f, 0x72, 0x61, 0x6e, 0xe08e]);
+        assert_eq!(
+            set_string("Fletchinder"),
+            [0x46, 0x6c, 0x65, 0x74, 0x63, 0x68, 0x69, 0x6e, 0x64, 0x65, 0x72]
+        );
+        assert_eq!(set_string("Ho-Oh"), [0x48, 0x6f, 0x2d, 0x4f, 0x68]);
+    }
+
+    #[test]
+    fn unsanitize_string_test() {
+        assert_eq!(unsanitize_string("Nidoran♀", 5), "Nidoran\u{246E}");
+        assert_eq!(unsanitize_string("Nidoran♂", 5), "Nidoran\u{246D}");
+        assert_eq!(unsanitize_string("Nidoran♀", 7), "Nidoran\u{E08F}");
+        assert_eq!(unsanitize_string("Nidoran♂", 7), "Nidoran\u{E08E}");
     }
 }

@@ -4,11 +4,11 @@ use alloc::format;
 use deku::prelude::*;
 
 #[allow(non_camel_case_types)]
-#[repr(u16)]
 /// Species IDs for the corresponding English species name.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u16", ctx = "_endian: deku::ctx::Endian")]
 #[non_exhaustive]
+#[repr(u16)]
 pub enum Species {
     None = 0x0,
     Bulbasaur,

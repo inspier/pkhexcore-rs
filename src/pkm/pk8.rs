@@ -29,6 +29,7 @@ pub const NICK_LENGTH: usize = 12;
 
 #[derive(Debug, Default, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
+#[repr(C)]
 pub struct PK8 {
     pub encryption_constant: u32,
     pub sanity: u16,
@@ -514,7 +515,7 @@ impl PK8 {
         set_string7b(data, max_length, self.language, 0, 0, false)
     }
 
-    fn as_bytes(&mut self) -> [u8; SIZE_8PARTY] {
+    pub fn as_bytes(&mut self) -> [u8; SIZE_8PARTY] {
         // Note: Double updated needed to make sure changes to checksum propagate.
         let _ = self.update();
         let _ = self.update();

@@ -2,10 +2,10 @@
 use alloc::format;
 use deku::prelude::*;
 
-#[repr(u8)]
 /// Nature ID values for the corresponding English nature name.
 #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite)]
 #[deku(type = "u8", ctx = "_endian: deku::ctx::Endian")]
+#[repr(u8)]
 pub enum Nature {
     Hardy = 0,
     Lonely = 1,

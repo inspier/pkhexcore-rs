@@ -6,6 +6,6 @@ edition = "2018"
 
 [dependencies]
 
-time = { version = "0.2.23", default-features = false }
+time = { version = "0.2.24", default-features = false }
 deku = { version = "0.10.0", default-features = false, features = ["alloc"] }
 num_enum = "0.5.1"
