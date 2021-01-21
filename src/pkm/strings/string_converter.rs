@@ -4,9 +4,8 @@ use core::{
     iter,
 };
 
-use crate::game::enums::language_id::LanguageID;
+use crate::{game::enums::language_id::LanguageID, pkm::strings::resources::char_zh::*};
 
-const GEN7_ZH_OFS: u16 = 0xE800;
 const SM_ZHCHARTABLE_SIZE: u16 = 0x30F;
 const USUM_CHS_SIZE: u16 = 0x4;
 
@@ -32,13 +31,22 @@ fn unsanitize_glyph(c: char, generation: u32, full_width: bool) -> char {
     }
 }
 
+fn remap_chinese_glyphs(c: char) -> char {
+    match c as u16 {
+        v if v < GEN7_ZH_OFS || v >= GEN7_ZH_OFS + GEN7_ZH.len() as u16 => c,
+        _ => GEN7_ZH[(c as u16 - GEN7_ZH_OFS) as usize],
+    }
+}
+
 fn sanitize_string(data: &[u16]) -> String {
     decode_utf16(data.iter().take_while(|&&x| x != 0).copied())
         .map(|r| r.map_or(REPLACEMENT_CHARACTER, sanitize_glyph))
+        .map(|c| remap_chinese_glyphs(c))
         .collect::<String>()
 }
 
-fn unsanitize_string(s: &str, generation: u32) -> String {
+fn unsanitize_string<S: AsRef<str>>(s: S, generation: u32) -> String {
+    let s = s.as_ref();
     let full_width = s
         .chars()
         .filter(|c| !['\u{2640}', '\u{2642}'].contains(c))
@@ -48,7 +56,6 @@ fn unsanitize_string(s: &str, generation: u32) -> String {
 }
 
 pub fn get_string7(data: &[u16]) -> String {
-    // TODO Language sanitizing.
     sanitize_string(&data)
 }
 

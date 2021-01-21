@@ -511,8 +511,8 @@ impl PK8 {
         get_string7(data)
     }
 
-    fn set_string(&self, data: &str, max_length: usize) -> Vec<u16> {
-        set_string7b(data, max_length, self.language, 0, 0, false)
+    fn set_string<S: AsRef<str>>(&self, data: S, max_length: usize) -> Vec<u16> {
+        set_string7b(data.as_ref(), max_length, self.language, 0, 0, false)
     }
 
     pub fn as_bytes(&mut self) -> [u8; SIZE_8PARTY] {
