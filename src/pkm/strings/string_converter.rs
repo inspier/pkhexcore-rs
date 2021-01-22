@@ -78,7 +78,7 @@ fn is_g7chs_char(index: usize) -> bool {
 }
 
 fn sanitize_string(data: &[u16]) -> String {
-    decode_utf16(data.iter().filter(|&&x| x != 0).copied())
+    decode_utf16(data.iter().take_while(|&&x| x != 0).copied())
         .map(|r| r.map_or(REPLACEMENT_CHARACTER, sanitize_glyph))
         .map(|c| remap_chinese_glyphs(c))
         .collect::<String>()
