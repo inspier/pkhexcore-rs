@@ -27,7 +27,7 @@ pub const NICK_LENGTH: usize = 12;
 
 // TODO: PersonalInfo
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 #[repr(C)]
 pub struct RawPK8 {
     data: [u8; SIZE_8PARTY],
@@ -39,7 +39,7 @@ impl RawPK8 {
     }
 }
 
-#[derive(Debug, Default, Copy, Clone, PartialEq, DekuRead, DekuWrite)]
+#[derive(Debug, Default, Clone, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
 #[repr(C)]
 pub struct PK8 {

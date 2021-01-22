@@ -1,7 +1,7 @@
 use alloc::format;
 use deku::prelude::*;
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 #[repr(u8)]
 pub enum Flag {
     Unset = 0x0,
