@@ -27,7 +27,19 @@ pub const NICK_LENGTH: usize = 12;
 
 // TODO: PersonalInfo
 
-#[derive(Debug, Default, PartialEq, DekuRead, DekuWrite)]
+#[derive(Debug, Copy, Clone, PartialEq)]
+#[repr(C)]
+pub struct RawPK8 {
+    data: [u8; SIZE_8PARTY],
+}
+
+impl RawPK8 {
+    pub fn to_bytes(&self) -> [u8; SIZE_8PARTY] {
+        self.data
+    }
+}
+
+#[derive(Debug, Default, Copy, Clone, PartialEq, DekuRead, DekuWrite)]
 #[deku(endian = "little")]
 #[repr(C)]
 pub struct PK8 {
@@ -515,13 +527,12 @@ impl PK8 {
         set_string7b(data.as_ref(), max_length, self.language, 0, 0, false)
     }
 
-    pub fn as_bytes(&mut self) -> [u8; SIZE_8PARTY] {
+    pub fn build(&mut self) -> RawPK8 {
         // Note: Double updated needed to make sure changes to checksum propagate.
-        /*
         let _ = self.update();
         let _ = self.update();
-        */
-        <[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap()
+
+        RawPK8 { data: <[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap() }
     }
 }
 
