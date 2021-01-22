@@ -517,8 +517,10 @@ impl PK8 {
 
     pub fn as_bytes(&mut self) -> [u8; SIZE_8PARTY] {
         // Note: Double updated needed to make sure changes to checksum propagate.
+        /*
         let _ = self.update();
         let _ = self.update();
+        */
         <[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap()
     }
 }

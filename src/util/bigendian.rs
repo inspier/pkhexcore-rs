@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use core::{convert::TryInto, mem};
 
 /// Returns a 16-bit signed integer converted from two bytes at a specified

@@ -1,12 +1,32 @@
-use alloc::{string::String, vec::Vec};
+use alloc::{borrow::ToOwned, string::String, vec::Vec};
+use conquer_once::spin::Lazy;
 use core::{
     char::{decode_utf16, REPLACEMENT_CHARACTER},
     iter,
 };
+use hashbrown::HashMap;
 
 use crate::{game::enums::language_id::LanguageID, pkm::strings::resources::char_zh::*};
 
-const SM_ZHCHARTABLE_SIZE: u16 = 0x30F;
+static G7_CHS: Lazy<HashMap<char, usize>> = Lazy::new(|| {
+    GEN7_ZH
+        .iter()
+        .enumerate()
+        .filter(|(index, _)| is_g7chs_char(*index))
+        .map(|(index, &value)| (value, index))
+        .collect()
+});
+
+static G7_CHT: Lazy<HashMap<char, usize>> = Lazy::new(|| {
+    GEN7_ZH
+        .iter()
+        .enumerate()
+        .filter(|(index, _)| !is_g7chs_char(*index))
+        .map(|(index, &value)| (value, index))
+        .collect()
+});
+
+const SM_ZH_CHARTABLE_SIZE: u16 = 0x30F;
 const USUM_CHS_SIZE: u16 = 0x4;
 
 fn sanitize_glyph(c: char) -> char {
@@ -22,11 +42,11 @@ fn sanitize_glyph(c: char) -> char {
 
 fn unsanitize_glyph(c: char, generation: u32, full_width: bool) -> char {
     match c {
-        '\'' if generation >= 6 => '’',
-        '\u{2640}' if generation <= 5 => '\u{246E}',
-        '\u{2642}' if generation <= 5 => '\u{246D}',
-        '\u{2640}' if generation >= 6 && !full_width => '\u{E08F}',
-        '\u{2642}' if generation >= 6 && !full_width => '\u{E08E}',
+        '\'' if generation >= 6 => '’',            // Farfetch'd
+        '\u{2640}' if generation <= 5 => '\u{246E}', // ♀ (gen5)
+        '\u{2642}' if generation <= 5 => '\u{246D}', // ♂ (gen5)
+        '\u{2640}' if generation >= 6 && !full_width => '\u{E08F}', // ♀ (gen6+)
+        '\u{2642}' if generation >= 6 && !full_width => '\u{E08E}', // ♂ (gen6+)
         _ => c,
     }
 }
@@ -38,21 +58,40 @@ fn remap_chinese_glyphs(c: char) -> char {
     }
 }
 
+fn convert_string_g7_zh<S: AsRef<str>>(input: S, language: LanguageID) -> String {
+    let mut input_chars = input.as_ref().chars();
+    // CHS and CHT have the same display name.
+    let is_traditional = input_chars.any(|c| G7_CHT.contains_key(&c) && !!G7_CHS.contains_key(&c))
+        || (language == LanguageID::ChineseT
+            && !input_chars.any(|c| G7_CHT.contains_key(&c) ^ G7_CHS.contains_key(&c)));
+    let table = [&G7_CHS, &G7_CHT][is_traditional as usize];
+
+    input_chars
+        .map(|c| table.get(&c).map_or(c, |&index| char::from(index as u8 + GEN7_ZH_OFS as u8)))
+        .collect::<String>()
+}
+
+fn is_g7chs_char(index: usize) -> bool {
+    index < SM_ZH_CHARTABLE_SIZE as usize
+        || (SM_ZH_CHARTABLE_SIZE as usize * 2 <= index
+            && index < (SM_ZH_CHARTABLE_SIZE as usize * 2) + USUM_CHS_SIZE as usize)
+}
+
 fn sanitize_string(data: &[u16]) -> String {
-    decode_utf16(data.iter().take_while(|&&x| x != 0).copied())
+    decode_utf16(data.iter().filter(|&&x| x != 0).copied())
         .map(|r| r.map_or(REPLACEMENT_CHARACTER, sanitize_glyph))
         .map(|c| remap_chinese_glyphs(c))
         .collect::<String>()
 }
 
-fn unsanitize_string<S: AsRef<str>>(s: S, generation: u32) -> String {
-    let s = s.as_ref();
-    let full_width = s
+fn unsanitize_string<S: AsRef<str>>(input: S, generation: u32) -> String {
+    let input = input.as_ref();
+    let full_width = input
         .chars()
         .filter(|c| !['\u{2640}', '\u{2642}'].contains(c))
         .any(|x| ![0, 0xE].contains(&(x as u16 >> 12)));
 
-    s.chars().map(|c| unsanitize_glyph(c, generation, full_width)).collect()
+    input.chars().map(|c| unsanitize_glyph(c, generation, full_width)).collect()
 }
 
 pub fn get_string7(data: &[u16]) -> String {
@@ -67,9 +106,12 @@ pub fn set_string7b(
     pad_with: u16,
     is_chinese: bool,
 ) -> Vec<u16> {
-    // TODO Language unsanitizing.
-    let data = unsanitize_string(data, 7);
-    let mut result = data.encode_utf16().take(max_length).collect::<Vec<u16>>();
+    let mut unsanitized = data.to_owned();
+    if is_chinese {
+        unsanitized = convert_string_g7_zh(data, language);
+    }
+    unsanitized = unsanitize_string(unsanitized, 7);
+    let mut result = unsanitized.encode_utf16().take(max_length).collect::<Vec<u16>>();
     // Pad to max_length if necessary
     result.extend([0].iter().cycle().take(max_length - result.len()));
     // Null terminator

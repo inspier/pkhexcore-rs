@@ -8,4 +8,6 @@ edition = "2018"
 
 time = { version = "0.2.24", default-features = false }
 deku = { version = "0.10.0", default-features = false, features = ["alloc"] }
-num_enum = "0.5.1"
+num_enum = { version = "0.5.1", default-features = false }
+hashbrown = { version = "0.9.1", default-features = false, features = ["nightly", "inline-more", "ahash"] }
+conquer-once = { version = "0.3.2", default-features = false }
