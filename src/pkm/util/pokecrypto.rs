@@ -1,4 +1,4 @@
-use crate::util::bitconverter;
+use bitconv::{endian::Little, to_uint16, to_uint32};
 
 pub const SIZE_1ULIST: usize = 69;
 pub const SIZE_1JLIST: usize = 59;
@@ -106,7 +106,7 @@ pub fn shuffle_array<const N: usize>(data: &[u8; N], sv: u32, block_size: usize)
 ///
 /// * `ekm` - Encrypted Pokémon data
 pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
-    let pv: u32 = bitconverter::to_uint32(ekm, 0);
+    let pv: u32 = to_uint32::<Little>(ekm, 0);
     let sv = pv >> 13 & 31;
     crypt_pkm(ekm, pv, SIZE_8BLOCK);
     shuffle_array::<SIZE_8PARTY>(ekm, sv, SIZE_8BLOCK)
@@ -118,7 +118,7 @@ pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
 ///
 /// * `pkm` - Decrypted Pokémon data
 pub fn encrypt_array8(pkm: &mut [u8; 344]) -> [u8; 344] {
-    let pv: u32 = bitconverter::to_uint32(pkm, 0);
+    let pv: u32 = to_uint32::<Little>(pkm, 0);
     let sv = pv >> 13 & 31;
     let mut ekm =
         shuffle_array::<SIZE_8PARTY>(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
@@ -173,7 +173,7 @@ pub fn get_chk<const N: usize>(data: &[u8; N], party_start: usize) -> u16 {
 ///
 /// * `pkm` - Possibly encrypted Pokémon data.
 pub fn decrypt_if_encrypted8(pkm: &mut [u8; 344]) {
-    if bitconverter::to_uint16(pkm, 0x70) != 0 || bitconverter::to_uint16(pkm, 0xC0) != 0 {
+    if to_uint16::<Little>(pkm, 0x70) != 0 || to_uint16::<Little>(pkm, 0xC0) != 0 {
         *pkm = decrypt_array8(pkm);
     }
 }
