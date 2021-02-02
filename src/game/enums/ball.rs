@@ -48,7 +48,7 @@ impl Default for Ball {
     }
 }
 
-/// Checks if the <see cref="ball"/> is an Apricorn Ball (HG/SS)
+/// Checks if the [`Ball`] is an Apricorn Ball (HG/SS)
 /// # Arguments
 ///
 /// * `ball` - Ball ID

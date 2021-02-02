@@ -98,13 +98,13 @@ pub enum GameVersion {
     /// Pokémon Red (3DS Virtual Console)
     RD = 35,
 
-    /// Pokémon Green[JP]/Blue[INT] (3DS Virtual Console)
+    /// Pokémon Green(JP)/Blue(INT) (3DS Virtual Console)
     GN = 36,
 
-    /// Pokémon Blue[JP] (3DS Virtual Console)
+    /// Pokémon Blue(JP) (3DS Virtual Console)
     BU = 37,
 
-    /// Pokémon Yellow [JP] (3DS Virtual Console)
+    /// Pokémon Yellow (JP) (3DS Virtual Console)
     YW = 38,
     // End Virtual Console (3DS) Gen1
 

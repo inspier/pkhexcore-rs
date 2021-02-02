@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+use crate::pkm::PKM;
 use alloc::{format, string::String, vec::Vec};
 use core::convert::TryFrom;
 use deku::prelude::*;
@@ -34,7 +35,7 @@ pub struct RawPK8 {
 }
 
 impl RawPK8 {
-    pub fn to_bytes(&self) -> [u8; SIZE_8PARTY] {
+    fn to_bytes(&self) -> [u8; SIZE_8PARTY] {
         self.data
     }
 }
@@ -71,6 +72,11 @@ pub struct PK8 {
     // 0x1B alignment unused
     #[deku(pad_bytes_before = "2")]
     pub pid: u32,
+    #[deku(skip, default = "((pid >> 16 ^ (pid & 0xFFFF)) >> 4) as i32")]
+    pub psv: i32,
+    #[deku(skip, default = "((tid ^ sid) >> 4) as i32")]
+    pub tsv: i32,
+
     pub nature: Nature,
     #[deku(pad_bits_after = "4")]
     pub stat_nature: Nature,
@@ -456,6 +462,11 @@ pub struct PK8 {
     pub version: u8,
     #[deku(pad_bytes_after = "2")]
     pub battle_version: u8,
+    /*
+     TODO
+    #[deku(skip, default = "ht_name.chars().nth(0).contains(&'\u{0}') && FORMAT == get_generation(version)")]
+    pub is_untraded: bool,
+    */
     // region: u8,
     // console_region: u8,
     pub language: LanguageID,
@@ -518,7 +529,9 @@ pub struct PK8 {
     pub dynamax_type: u16,
 }
 
-impl PK8 {
+impl PKM for PK8 {
+    type RawVariant = RawPK8;
+
     fn get_string(data: &[u16]) -> String {
         get_string7(data)
     }
@@ -527,13 +540,7 @@ impl PK8 {
         set_string7b(data.as_ref(), max_length, self.language, 0, 0, false)
     }
 
-    pub fn refresh_checksum(&mut self) {
-        // Note: Double update needed to make sure changes to checksum propagate.
-        let _ = self.update();
-        let _ = self.update();
-    }
-
-    pub fn build(&mut self) -> RawPK8 {
+    fn build(&mut self) -> RawPK8 {
         self.refresh_checksum();
         RawPK8 { data: <[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap() }
     }
