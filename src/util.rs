@@ -9,3 +9,6 @@ pub mod packutil;
 
 /// Several helpers for deku.
 pub mod custom_read_write;
+
+/// Big Endian operation related helpers.
+pub mod bigendian;

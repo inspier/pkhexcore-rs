@@ -527,11 +527,14 @@ impl PK8 {
         set_string7b(data.as_ref(), max_length, self.language, 0, 0, false)
     }
 
-    pub fn build(&mut self) -> RawPK8 {
-        // Note: Double updated needed to make sure changes to checksum propagate.
+    pub fn refresh_checksum(&mut self) {
+        // Note: Double update needed to make sure changes to checksum propagate.
         let _ = self.update();
         let _ = self.update();
+    }
 
+    pub fn build(&mut self) -> RawPK8 {
+        self.refresh_checksum();
         RawPK8 { data: <[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap() }
     }
 }
@@ -574,7 +577,7 @@ mod test {
         let orbeetle = PK8::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
         let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
         assert_eq!(0x4E8E, orbeetle.checksum);
-        assert_eq!(0x5D57, dracovish.checksum);
+        assert_eq!(0x6469, dracovish.checksum);
     }
 
     #[test]
@@ -582,7 +585,6 @@ mod test {
         let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
         assert_eq!(0xAC731A09, dracovish.encryption_constant);
         assert_eq!(0x0, dracovish.sanity);
-        assert_eq!(0x5D57, dracovish.checksum);
         assert_eq!(882, dracovish.species as i32);
         assert_eq!(Species::Dracovish, dracovish.species);
         assert_eq!(268, dracovish.held_item);
@@ -634,12 +636,19 @@ mod test {
         assert_eq!(10, dracovish.dynamax_level);
     }
 
-    // #[test]
-    // fn pk8_set_test() {
-    //     let mut dracovish =
-    // PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
-    //     assert_eq!(0xAC731A09, dracovish.EncryptionConstant));
-    //     set!(dracovish.EncryptionConstant, 0xDEADBEEF);
-    //     assert_eq!(0xDEADBEEF, dracovish.EncryptionConstant));
-    // }
+    #[test]
+    fn pk8_set_test() {
+        let mut grookey = PK8::from(include_bytes!("util/tests/data/Grookey.pk8"));
+        assert_eq!(0x7FD048F, grookey.iv32);
+        assert_eq!(0xAD1E, grookey.checksum);
+        grookey.iv_hp = 16;
+        grookey.iv_atk = 26;
+        grookey.iv_def = 20;
+        grookey.iv_spe = 31;
+        grookey.iv_spa = 19;
+        grookey.iv_spd = 26;
+        grookey.refresh_checksum();
+        assert_eq!(0x353FD350, grookey.iv32);
+        assert_eq!(0xA921, grookey.checksum);
+    }
 }
