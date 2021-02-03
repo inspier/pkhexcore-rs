@@ -10,49 +10,49 @@ pub trait PKM {
     fn set_string<S: AsRef<str>>(&self, data: S, max_length: usize) -> Vec<u16>;
 
     fn is_e(version: GameVersion) -> bool {
-        version == GameVersion::E 
+        version == GameVersion::E
     }
     fn is_frlg(version: GameVersion) -> bool {
         [GameVersion::FR, GameVersion::LG].contains(&version)
     }
     fn is_pt(version: GameVersion) -> bool {
-        version == GameVersion::Pt 
+        version == GameVersion::Pt
     }
     fn is_hgss(version: GameVersion) -> bool {
-        [GameVersion::HG , GameVersion::SS ].contains(&version)
+        [GameVersion::HG, GameVersion::SS].contains(&version)
     }
     fn is_bw(version: GameVersion) -> bool {
-        [GameVersion::B , GameVersion::W ].contains(&version)
+        [GameVersion::B, GameVersion::W].contains(&version)
     }
     fn is_b2w2(version: GameVersion) -> bool {
-        [GameVersion::B2 , GameVersion::W2 ].contains(&version)
+        [GameVersion::B2, GameVersion::W2].contains(&version)
     }
     fn is_xy(version: GameVersion) -> bool {
-        [GameVersion::X , GameVersion::Y ].contains(&version)
+        [GameVersion::X, GameVersion::Y].contains(&version)
     }
     fn is_ao(version: GameVersion) -> bool {
-        [GameVersion::AS , GameVersion::OR ].contains(&version)
+        [GameVersion::AS, GameVersion::OR].contains(&version)
     }
     fn is_sm(version: GameVersion) -> bool {
-        [GameVersion::SN , GameVersion::MN ].contains(&version)
+        [GameVersion::SN, GameVersion::MN].contains(&version)
     }
     fn is_usum(version: GameVersion) -> bool {
-        [GameVersion::US , GameVersion::UM ].contains(&version)
+        [GameVersion::US, GameVersion::UM].contains(&version)
     }
     fn is_go(version: GameVersion) -> bool {
-        version == GameVersion::GO 
+        version == GameVersion::GO
     }
     fn is_vc1(version: GameVersion) -> bool {
-        version >= GameVersion::RD  && version <= GameVersion::YW 
+        version >= GameVersion::RD && version <= GameVersion::YW
     }
     fn is_vc2(version: GameVersion) -> bool {
-        version >= GameVersion::GD  && version <= GameVersion::C 
+        version >= GameVersion::GD && version <= GameVersion::C
     }
     fn is_lgpe(version: GameVersion) -> bool {
-        [GameVersion::GP , GameVersion::GE ].contains(&version)
+        [GameVersion::GP, GameVersion::GE].contains(&version)
     }
     fn is_swsh(version: GameVersion) -> bool {
-        [GameVersion::SW , GameVersion::SH ].contains(&version)
+        [GameVersion::SW, GameVersion::SH].contains(&version)
     }
 
     fn is_pt_hgss(version: GameVersion) -> bool {
@@ -71,10 +71,12 @@ pub trait PKM {
         Self::is_lgpe(version) || Self::is_go_lgpe(version, met_location)
     }
     fn is_gen8(version: GameVersion, met_location: u16) -> bool {
-        version >= GameVersion::SW && version <= GameVersion::SH || Self::is_go_home(version, met_location)
+        version >= GameVersion::SW && version <= GameVersion::SH
+            || Self::is_go_home(version, met_location)
     }
     fn is_gen7(version: GameVersion, met_location: u16) -> bool {
-        version >= GameVersion::SN && version <= GameVersion::UM || Self::is_gg(version, met_location)
+        version >= GameVersion::SN && version <= GameVersion::UM
+            || Self::is_gg(version, met_location)
     }
     fn is_gen6(version: GameVersion) -> bool {
         version >= GameVersion::X && version < GameVersion::SN
@@ -89,10 +91,10 @@ pub trait PKM {
         version >= GameVersion::S && version <= GameVersion::LG || version == GameVersion::CXD
     }
     fn is_gen2(version: GameVersion) -> bool {
-        version == GameVersion::GSC  // Fixed value set by the Gen2 PKM classes
+        version == GameVersion::GSC // Fixed value set by the Gen2 PKM classes
     }
     fn is_gen1(version: GameVersion) -> bool {
-        version == GameVersion::RBY  // Fixed value set by the Gen2 PKM classes
+        version == GameVersion::RBY // Fixed value set by the Gen2 PKM classes
     }
     fn is_genu(generation: i32) -> bool {
         generation <= 0 // Fixed value set by the Gen2 PKM classes
@@ -108,7 +110,7 @@ pub trait PKM {
             _x if Self::is_gen3(version) => 3,
             _x if Self::is_gen2(version) | Self::is_vc2(version) => 2,
             _x if Self::is_gen1(version) | Self::is_vc1(version) => 1,
-            _ => -1
+            _ => -1,
         }
     }
 
