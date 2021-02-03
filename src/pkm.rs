@@ -1,6 +1,6 @@
+use crate::{game::enums::game_version::GameVersion, legality::tables::location};
 use alloc::{string::String, vec::Vec};
 use deku::DekuUpdate;
-use crate::game::enums::game_version::GameVersion;
 
 pub trait PKM {
     type RawVariant;
@@ -9,29 +9,108 @@ pub trait PKM {
 
     fn set_string<S: AsRef<str>>(&self, data: S, max_length: usize) -> Vec<u16>;
 
-    fn e(version: u8) -> bool { version == GameVersion::E as u8 }
-    fn frlg(version: u8) -> bool { [GameVersion::FR as u8, GameVersion::LG as u8].contains(&version) }
-    fn pt(version: u8) -> bool { version == GameVersion::Pt as u8 }
-    fn hgss(version: u8) -> bool { [GameVersion::HG as u8, GameVersion::SS as u8].contains(&version) }
-    fn bw(version: u8) -> bool { [GameVersion::B as u8, GameVersion::W as u8].contains(&version) }
-    fn b2w2(version: u8) -> bool { [GameVersion::B2 as u8, GameVersion::W2 as u8].contains(&version) }
-    fn xy(version: u8) -> bool { [GameVersion::X as u8, GameVersion::Y as u8].contains(&version) }
-    fn ao(version: u8) -> bool { [GameVersion::AS as u8, GameVersion::OR as u8].contains(&version) }
-    fn sm(version: u8) -> bool { [GameVersion::SN as u8, GameVersion::MN as u8].contains(&version) }
-    fn usum(version: u8) -> bool { [GameVersion::US as u8, GameVersion::UM as u8].contains(&version) }
-    fn go(version: u8) -> bool { version == GameVersion::GO as u8 }
-    fn vc1(version: u8) -> bool { version >= GameVersion::RD as u8 && version <= GameVersion::YW as u8 }
-    fn vc2(version: u8) -> bool { version >= GameVersion::GD as u8 && version <= GameVersion::C as u8 }
-    fn lgpe(version: u8) -> bool { [GameVersion::GP as u8, GameVersion::GE as u8].contains(&version) }
-    fn swsh(version: u8) -> bool { [GameVersion::SW as u8, GameVersion::SH as u8].contains(&version) }
-
-//    fn is_gen8(version: u8, met_location: u16) -> bool { version >= 44 && version <= 45 || GO_HOME }
-
-    /*
-    fn get_generation(version: u8, met_location: u16) -> {
-
+    fn is_e(version: GameVersion) -> bool {
+        version == GameVersion::E 
     }
-    */
+    fn is_frlg(version: GameVersion) -> bool {
+        [GameVersion::FR, GameVersion::LG].contains(&version)
+    }
+    fn is_pt(version: GameVersion) -> bool {
+        version == GameVersion::Pt 
+    }
+    fn is_hgss(version: GameVersion) -> bool {
+        [GameVersion::HG , GameVersion::SS ].contains(&version)
+    }
+    fn is_bw(version: GameVersion) -> bool {
+        [GameVersion::B , GameVersion::W ].contains(&version)
+    }
+    fn is_b2w2(version: GameVersion) -> bool {
+        [GameVersion::B2 , GameVersion::W2 ].contains(&version)
+    }
+    fn is_xy(version: GameVersion) -> bool {
+        [GameVersion::X , GameVersion::Y ].contains(&version)
+    }
+    fn is_ao(version: GameVersion) -> bool {
+        [GameVersion::AS , GameVersion::OR ].contains(&version)
+    }
+    fn is_sm(version: GameVersion) -> bool {
+        [GameVersion::SN , GameVersion::MN ].contains(&version)
+    }
+    fn is_usum(version: GameVersion) -> bool {
+        [GameVersion::US , GameVersion::UM ].contains(&version)
+    }
+    fn is_go(version: GameVersion) -> bool {
+        version == GameVersion::GO 
+    }
+    fn is_vc1(version: GameVersion) -> bool {
+        version >= GameVersion::RD  && version <= GameVersion::YW 
+    }
+    fn is_vc2(version: GameVersion) -> bool {
+        version >= GameVersion::GD  && version <= GameVersion::C 
+    }
+    fn is_lgpe(version: GameVersion) -> bool {
+        [GameVersion::GP , GameVersion::GE ].contains(&version)
+    }
+    fn is_swsh(version: GameVersion) -> bool {
+        [GameVersion::SW , GameVersion::SH ].contains(&version)
+    }
+
+    fn is_pt_hgss(version: GameVersion) -> bool {
+        Self::is_pt(version) || Self::is_hgss(version)
+    }
+    fn is_go_lgpe(version: GameVersion, met_location: u16) -> bool {
+        Self::is_go(version) && met_location == location::GO7 as u16
+    }
+    fn is_go_home(version: GameVersion, met_location: u16) -> bool {
+        Self::is_go(version) && met_location == location::GO8 as u16
+    }
+    fn is_vc(version: GameVersion) -> bool {
+        Self::is_vc1(version) || Self::is_vc2(version)
+    }
+    fn is_gg(version: GameVersion, met_location: u16) -> bool {
+        Self::is_lgpe(version) || Self::is_go_lgpe(version, met_location)
+    }
+    fn is_gen8(version: GameVersion, met_location: u16) -> bool {
+        version >= GameVersion::SW && version <= GameVersion::SH || Self::is_go_home(version, met_location)
+    }
+    fn is_gen7(version: GameVersion, met_location: u16) -> bool {
+        version >= GameVersion::SN && version <= GameVersion::UM || Self::is_gg(version, met_location)
+    }
+    fn is_gen6(version: GameVersion) -> bool {
+        version >= GameVersion::X && version < GameVersion::SN
+    }
+    fn is_gen5(version: GameVersion) -> bool {
+        version >= GameVersion::W && version <= GameVersion::B2
+    }
+    fn is_gen4(version: GameVersion) -> bool {
+        version as u8 >= 7 && version as u8 <= 12 && version as u8 != 9
+    }
+    fn is_gen3(version: GameVersion) -> bool {
+        version >= GameVersion::S && version <= GameVersion::LG || version == GameVersion::CXD
+    }
+    fn is_gen2(version: GameVersion) -> bool {
+        version == GameVersion::GSC  // Fixed value set by the Gen2 PKM classes
+    }
+    fn is_gen1(version: GameVersion) -> bool {
+        version == GameVersion::RBY  // Fixed value set by the Gen2 PKM classes
+    }
+    fn is_genu(generation: i32) -> bool {
+        generation <= 0 // Fixed value set by the Gen2 PKM classes
+    }
+
+    fn get_generation(version: GameVersion, met_location: u16) -> i32 {
+        match true {
+            _x if Self::is_gen8(version, met_location) => 8,
+            _x if Self::is_gen7(version, met_location) => 7,
+            _x if Self::is_gen6(version) => 6,
+            _x if Self::is_gen5(version) => 5,
+            _x if Self::is_gen4(version) => 4,
+            _x if Self::is_gen3(version) => 3,
+            _x if Self::is_gen2(version) | Self::is_vc2(version) => 2,
+            _x if Self::is_gen1(version) | Self::is_vc1(version) => 1,
+            _ => -1
+        }
+    }
 
     fn refresh_checksum(&mut self)
     where

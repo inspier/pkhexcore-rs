@@ -1,6 +1,12 @@
+use alloc::format;
+use deku::prelude::*;
+use num_enum::TryFromPrimitive;
+
 /// Game Version ID enum shared between actual Version IDs and lumped version
 /// groupings.
 #[non_exhaustive]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite, TryFromPrimitive)]
+#[deku(type = "i32", ctx = "_endian: deku::ctx::Endian")]
 #[repr(i32)]
 pub enum GameVersion {
     // Indicators for method empty arguments & result indication. Not stored
@@ -260,4 +266,10 @@ pub enum GameVersion {
     /// Generation 1/2 3DS Virtual Console data origin identifier
     VCEvents,
     // End Game Groupings (SaveFile type, roughly)
+}
+
+impl Default for GameVersion {
+    fn default() -> Self {
+        GameVersion::Unknown
+    }
 }

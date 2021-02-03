@@ -6,8 +6,8 @@ use deku::prelude::*;
 
 use crate::{
     game::enums::{
-        ability::Ability, ball::Ball, flag::Flag, gender::Gender, language_id::LanguageID,
-        moves::Move, nature::Nature, species::Species,
+        ability::Ability, ball::Ball, flag::Flag, game_version::GameVersion, gender::Gender,
+        language_id::LanguageID, moves::Move, nature::Nature, species::Species,
     },
     pkm::{
         strings::string_converter::{get_string7, set_string7b},
@@ -19,7 +19,7 @@ use crate::{
     },
 };
 
-pub const FORMAT: u32 = 8;
+pub const FORMAT: i32 = 8;
 
 pub const MAX_IV: i32 = 31;
 pub const MAX_EV: i32 = 252;
@@ -35,7 +35,7 @@ pub struct RawPK8 {
 }
 
 impl RawPK8 {
-    fn to_bytes(&self) -> [u8; SIZE_8PARTY] {
+    pub fn to_bytes(&self) -> [u8; SIZE_8PARTY] {
         self.data
     }
 }
@@ -459,14 +459,17 @@ pub struct PK8 {
     // 0xCE-0xDB unused
     pub fullness: u8,
     pub enjoyment: u8,
-    pub version: u8,
-    #[deku(pad_bytes_after = "2")]
-    pub battle_version: u8,
-    /*
-     TODO
-    #[deku(skip, default = "ht_name.chars().nth(0).contains(&'\u{0}') && FORMAT == get_generation(version)")]
-    pub is_untraded: bool,
-    */
+    #[deku(
+        reader = "read::read_game_version(deku::rest)",
+        writer = "write::write_game_version(deku::output, self.version)"
+    )]
+    pub version: GameVersion,
+    #[deku(
+        reader = "read::read_game_version(deku::rest)",
+        writer = "write::write_game_version(deku::output, self.battle_version)",
+        pad_bytes_after = "2"
+    )]
+    pub battle_version: GameVersion,
     // region: u8,
     // console_region: u8,
     pub language: LanguageID,
@@ -527,6 +530,10 @@ pub struct PK8 {
     pub stat_spa: u16,
     pub stat_spd: u16,
     pub dynamax_type: u16,
+    #[deku(skip, default = "Self::get_generation(*version, *met_location)")]
+    pub generation: i32,
+    #[deku(skip, default = "ht_name.chars().nth(0).contains(&'\u{0}') && FORMAT == *generation")]
+    pub is_untraded: bool,
 }
 
 impl PKM for PK8 {
