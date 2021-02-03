@@ -76,6 +76,8 @@ pub struct PK8 {
     pub psv: i32,
     #[deku(skip, default = "((tid ^ sid) >> 4) as i32")]
     pub tsv: i32,
+    #[deku(skip, default = "psv == tsv")]
+    pub is_shiny: bool,
 
     pub nature: Nature,
     #[deku(pad_bits_after = "4")]
