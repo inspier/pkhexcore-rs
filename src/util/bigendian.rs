@@ -10,6 +10,7 @@ pub(crate) fn bcd_to_int32(input: &[u8], offset: usize, length: u32) -> i32 {
     })
 }
 
+/*
 /// Returns the specified 32-bit signed integer value as an array of Binary
 /// Coded Decimal format bytes.
 pub(crate) fn int32_to_bcd<const N: usize>(mut input: i32) -> [u8; N] {
@@ -21,6 +22,7 @@ pub(crate) fn int32_to_bcd<const N: usize>(mut input: i32) -> [u8; N] {
     }
     result
 }
+*/
 
 #[cfg(test)]
 mod test {
@@ -32,8 +34,10 @@ mod test {
         assert_eq!(2010, bcd_to_int32(&buffer, 0, 2));
     }
 
+    /*
     #[test]
     fn int32_to_bcd_test() {
         assert_eq!([32, 16], int32_to_bcd::<2>(2010));
     }
+    */
 }

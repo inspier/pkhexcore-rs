@@ -1,3 +1,4 @@
+use alloc::vec::Vec;
 use bitconv::{endian::Little, to_uint16, to_uint32};
 
 pub const SIZE_1ULIST: usize = 69;
@@ -85,8 +86,8 @@ const BLOCK_POSITION_INVERT: [u8; 32] = [
 /// * `sv` - Block Shuffle order
 /// * `block_size` - Size of shuffling chunks
 #[inline]
-pub fn shuffle_array<const N: usize>(data: &[u8; N], sv: u32, block_size: usize) -> [u8; N] {
-    let mut sdata = *data;
+pub fn shuffle_array(data: &Vec<u8>, sv: u32, block_size: usize) -> Vec<u8> {
+    let mut sdata = data.to_vec();
     let index: u32 = sv * 4;
     let start: usize = 8;
     for block in 0..4 {
@@ -105,11 +106,11 @@ pub fn shuffle_array<const N: usize>(data: &[u8; N], sv: u32, block_size: usize)
 /// # Arguments
 ///
 /// * `ekm` - Encrypted Pokémon data
-pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
+pub fn decrypt_array8(ekm: &mut Vec<u8>) -> Vec<u8> {
     let pv: u32 = to_uint32::<Little>(ekm, 0);
     let sv = pv >> 13 & 31;
     crypt_pkm(ekm, pv, SIZE_8BLOCK);
-    shuffle_array::<SIZE_8PARTY>(ekm, sv, SIZE_8BLOCK)
+    shuffle_array(ekm, sv, SIZE_8BLOCK)
 }
 
 /// Decrypts a Gen8 pkm byte array.
@@ -117,11 +118,10 @@ pub fn decrypt_array8(ekm: &mut [u8; 344]) -> [u8; 344] {
 /// # Arguments
 ///
 /// * `pkm` - Decrypted Pokémon data
-pub fn encrypt_array8(pkm: &mut [u8; 344]) -> [u8; 344] {
+pub fn encrypt_array8(pkm: &mut Vec<u8>) -> Vec<u8> {
     let pv: u32 = to_uint32::<Little>(pkm, 0);
     let sv = pv >> 13 & 31;
-    let mut ekm =
-        shuffle_array::<SIZE_8PARTY>(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
+    let mut ekm = shuffle_array(pkm, BLOCK_POSITION_INVERT[sv as usize] as u32, SIZE_8BLOCK);
     crypt_pkm(&mut ekm, pv, SIZE_8BLOCK);
     ekm
 }
@@ -161,7 +161,7 @@ fn crypt(data: &mut [u8], seed: &mut u32, i: usize) {
 /// # Arguments
 ///
 /// * `data` - Decrypted Pokémon data.
-pub fn get_chk<const N: usize>(data: &[u8; N], party_start: usize) -> u16 {
+pub fn get_chk(data: &Vec<u8>, party_start: usize) -> u16 {
     data[8..party_start]
         .chunks(2)
         .fold(0, |chk, x| u16::wrapping_add(chk, u16::from_le_bytes([x[0], x[1]])))
@@ -172,7 +172,7 @@ pub fn get_chk<const N: usize>(data: &[u8; N], party_start: usize) -> u16 {
 /// # Arguments
 ///
 /// * `pkm` - Possibly encrypted Pokémon data.
-pub fn decrypt_if_encrypted8(pkm: &mut [u8; 344]) {
+pub fn decrypt_if_encrypted8(pkm: &mut Vec<u8>) {
     if to_uint16::<Little>(pkm, 0x70) != 0 || to_uint16::<Little>(pkm, 0xC0) != 0 {
         *pkm = decrypt_array8(pkm);
     }

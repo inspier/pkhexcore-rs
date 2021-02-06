@@ -26,11 +26,11 @@ pub const NICK_LENGTH: usize = 12;
 #[derive(Debug, Clone, PartialEq)]
 #[repr(C)]
 pub struct RawPK8 {
-    data: [u8; SIZE_8PARTY],
+    data: Vec<u8>,
 }
 
 impl RawPK8 {
-    pub fn to_bytes(&self) -> [u8; SIZE_8PARTY] { self.data }
+    pub fn to_bytes(&self) -> Vec<u8> { self.data.clone() }
 }
 
 #[derive(Debug, Default, Clone, PartialEq, DekuRead, DekuWrite)]
@@ -39,9 +39,7 @@ impl RawPK8 {
 pub struct PK8 {
     pub encryption_constant: u32,
     pub sanity: u16,
-    #[deku(
-        update = "get_chk::<SIZE_8PARTY>(&<[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap(), SIZE_8STORED)"
-    )]
+    #[deku(update = "get_chk(&self.to_bytes().unwrap(), SIZE_8STORED)")]
     pub checksum: u16,
 
     // Block A
@@ -542,13 +540,15 @@ impl PKM for PK8 {
 
     fn build(&mut self) -> RawPK8 {
         self.refresh_checksum();
-        RawPK8 { data: <[u8; SIZE_8PARTY]>::try_from(self.to_bytes().unwrap()).unwrap() }
+        let data = self.to_bytes().unwrap();
+        assert!(data.len() == SIZE_8PARTY);
+        RawPK8 { data }
     }
 }
 
-impl From<&[u8; SIZE_8PARTY]> for PK8 {
-    fn from(data: &[u8; SIZE_8PARTY]) -> Self {
-        let mut array = *data;
+impl From<&Vec<u8>> for PK8 {
+    fn from(data: &Vec<u8>) -> Self {
+        let mut array = data.to_vec();
         decrypt_if_encrypted8(&mut array);
         let (_rest, file) = PK8::from_bytes((array.as_ref(), 0)).unwrap();
         file
