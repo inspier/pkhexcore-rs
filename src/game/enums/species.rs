@@ -913,9 +913,7 @@ pub enum Species {
 }
 
 impl Default for Species {
-    fn default() -> Self {
-        Species::None
-    }
+    fn default() -> Self { Species::None }
 }
 
 #[allow(non_snake_case)]

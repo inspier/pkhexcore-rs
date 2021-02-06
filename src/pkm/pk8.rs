@@ -6,17 +6,12 @@ use deku::prelude::*;
 
 use crate::{
     game::enums::{
-        ability::Ability, ball::Ball, flag::Flag, game_version::GameVersion, gender::Gender,
-        language_id::LanguageID, moves::Move, nature::Nature, species::Species,
-    },
-    pkm::{
-        strings::string_converter::{get_string7, set_string7b},
-        util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED},
-    },
-    util::{
-        custom_read_write::{read, write},
-        packutil::pack_u32,
-    },
+        ability::Ability, ball::Ball, flag::Flag, game_version::GameVersion, gender::Gender, language_id::LanguageID, moves::Move, nature::Nature, species::Species
+    }, pkm::{
+        strings::string_converter::{get_string7, set_string7b}, util::pokecrypto::{decrypt_if_encrypted8, get_chk, SIZE_8PARTY, SIZE_8STORED}
+    }, util::{
+        custom_read_write::{read, write}, packutil::pack_u32
+    }
 };
 
 pub const FORMAT: i32 = 8;
@@ -35,9 +30,7 @@ pub struct RawPK8 {
 }
 
 impl RawPK8 {
-    pub fn to_bytes(&self) -> [u8; SIZE_8PARTY] {
-        self.data
-    }
+    pub fn to_bytes(&self) -> [u8; SIZE_8PARTY] { self.data }
 }
 
 #[derive(Debug, Default, Clone, PartialEq, DekuRead, DekuWrite)]
@@ -534,16 +527,14 @@ pub struct PK8 {
     pub dynamax_type: u16,
     #[deku(skip, default = "Self::get_generation(*version, *met_location)")]
     pub generation: i32,
-    #[deku(skip, default = "ht_name.chars().nth(0).contains(&'\u{0}') && FORMAT == *generation")]
+    #[deku(skip, default = "ht_name.is_empty() && FORMAT == *generation")]
     pub is_untraded: bool,
 }
 
 impl PKM for PK8 {
     type RawVariant = RawPK8;
 
-    fn get_string(data: &[u16]) -> String {
-        get_string7(data)
-    }
+    fn get_string(data: &[u16]) -> String { get_string7(data) }
 
     fn set_string<S: AsRef<str>>(&self, data: S, max_length: usize) -> Vec<u16> {
         set_string7b(data.as_ref(), max_length, self.language, 0, 0, false)

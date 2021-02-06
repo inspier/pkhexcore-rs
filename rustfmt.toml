@@ -8,3 +8,5 @@ merge_imports = true
 wrap_comments = true
 format_macro_matchers = true
 format_macro_bodies = true
+fn_single_line = true
+imports_layout = "Horizontal"

@@ -36,9 +36,7 @@ pub enum Nature {
 }
 
 impl Default for Nature {
-    fn default() -> Self {
-        Nature::Hardy
-    }
+    fn default() -> Self { Nature::Hardy }
 }
 
 impl_from! (Nature for u8, i32);

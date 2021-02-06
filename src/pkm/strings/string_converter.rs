@@ -1,8 +1,7 @@
 use alloc::{borrow::ToOwned, string::String, vec::Vec};
 use conquer_once::spin::Lazy;
 use core::{
-    char::{decode_utf16, REPLACEMENT_CHARACTER},
-    iter,
+    char::{decode_utf16, REPLACEMENT_CHARACTER}, iter
 };
 use hashbrown::HashMap;
 
@@ -94,9 +93,7 @@ fn unsanitize_string<S: AsRef<str>>(input: S, generation: u32) -> String {
     input.chars().map(|c| unsanitize_glyph(c, generation, full_width)).collect()
 }
 
-pub fn get_string7(data: &[u16]) -> String {
-    sanitize_string(&data)
-}
+pub fn get_string7(data: &[u16]) -> String { sanitize_string(&data) }
 
 pub fn set_string7b(
     data: &str,

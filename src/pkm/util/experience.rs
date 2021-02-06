@@ -182,9 +182,7 @@ pub fn get_exp(current_level: u32, growth_rate: u32) -> Option<u32> {
 /// assert_eq!(0, get_nature_vc(25));
 /// assert_eq!(10, get_nature_vc(10));
 /// ```
-pub fn get_nature_vc(exp: u32) -> u32 {
-    exp % 25
-}
+pub fn get_nature_vc(exp: u32) -> u32 { exp % 25 }
 
 /// Gets the amount of EXP to be earned until the next level-up occurs.
 ///

@@ -9,9 +9,7 @@ pub enum Flag {
 }
 
 impl Default for Flag {
-    fn default() -> Self {
-        Flag::Unset
-    }
+    fn default() -> Self { Flag::Unset }
 }
 
 impl<'a, Ctx> DekuRead<'a, Ctx> for Flag

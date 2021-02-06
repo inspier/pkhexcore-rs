@@ -38,9 +38,7 @@ pub fn is_date_valid(year: u32, month: u32, day: u32) -> bool {
 /// // 946771200 - 946684800 = 86,400 a full day in secs
 /// assert_eq!(SECONDS_PER_DAY, get_seconds_since2000(date!(2000 - 1 - 2)));
 /// ```
-pub fn get_seconds_since2000(date: Date) -> i64 {
-    (date - EPOCH_2000).whole_seconds()
-}
+pub fn get_seconds_since2000(date: Date) -> i64 { (date - EPOCH_2000).whole_seconds() }
 
 #[cfg(test)]
 mod test {

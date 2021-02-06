@@ -43,15 +43,11 @@ pub enum Ball {
 }
 
 impl Default for Ball {
-    fn default() -> Self {
-        Ball::None
-    }
+    fn default() -> Self { Ball::None }
 }
 
 /// Checks if the [`Ball`] is an Apricorn Ball (HG/SS)
 /// # Arguments
 ///
 /// * `ball` - Ball ID
-pub fn is_apricorn_ball(ball: Ball) -> bool {
-    Ball::Fast <= ball && ball <= Ball::Moon
-}
+pub fn is_apricorn_ball(ball: Ball) -> bool { Ball::Fast <= ball && ball <= Ball::Moon }

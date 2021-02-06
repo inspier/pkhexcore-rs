@@ -116,15 +116,9 @@ pub fn traded_egg_location(generation: u32) -> i32 {
     }
 }
 
-pub fn is_pt_hgss_location(location: i32) -> bool {
-    111 < location && location < 2000
-}
-pub fn is_pt_hgss_location_egg(location: i32) -> bool {
-    2010 < location && location < 3000
-}
-pub fn is_event_location_5(location: i32) -> bool {
-    40000 < location && location < 50000
-}
+pub fn is_pt_hgss_location(location: i32) -> bool { 111 < location && location < 2000 }
+pub fn is_pt_hgss_location_egg(location: i32) -> bool { 2010 < location && location < 3000 }
+pub fn is_event_location_5(location: i32) -> bool { 40000 < location && location < 50000 }
 
 const SAFARI_LOCATION_RSE: i32 = 57;
 const SAFARI_LOCATION_FRLG: i32 = 136;

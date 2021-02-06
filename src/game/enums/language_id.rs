@@ -45,7 +45,5 @@ pub enum LanguageID {
 }
 
 impl Default for LanguageID {
-    fn default() -> Self {
-        LanguageID::English
-    }
+    fn default() -> Self { LanguageID::English }
 }

@@ -840,7 +840,5 @@ pub enum Move {
 }
 
 impl Default for Move {
-    fn default() -> Self {
-        Move::None
-    }
+    fn default() -> Self { Move::None }
 }

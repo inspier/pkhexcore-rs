@@ -269,7 +269,5 @@ pub enum GameVersion {
 }
 
 impl Default for GameVersion {
-    fn default() -> Self {
-        GameVersion::Unknown
-    }
+    fn default() -> Self { GameVersion::Unknown }
 }

@@ -282,9 +282,7 @@ pub enum Ability {
 }
 
 impl Default for Ability {
-    fn default() -> Self {
-        Ability::None
-    }
+    fn default() -> Self { Ability::None }
 }
 
 impl_from! (Ability for i32);
