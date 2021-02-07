@@ -184,14 +184,14 @@ mod test {
 
     #[test]
     fn get_chk8_test() {
-        let orbeetle = include_bytes!("tests/data/Orbeetle.pk8");
-        assert_eq!(0x4E8E, get_chk::<SIZE_8PARTY>(orbeetle, SIZE_8STORED));
+        let orbeetle = include_bytes!("tests/data/Orbeetle.pk8").to_vec();
+        assert_eq!(0x4E8E, get_chk(&orbeetle, SIZE_8STORED));
     }
 
     #[test]
     fn array8_test() {
-        let mut pk8 = include_bytes!("tests/data/Orbeetle.pk8").clone();
-        let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").clone();
+        let mut pk8 = include_bytes!("tests/data/Orbeetle.pk8").to_vec();
+        let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").to_vec();
 
         assert_eq!(ek8, encrypt_array8(&mut pk8));
         assert_eq!(pk8, decrypt_array8(&mut ek8));
@@ -199,9 +199,9 @@ mod test {
 
     #[test]
     fn decrypt_if_encrypted_test() {
-        let pk8 = include_bytes!("tests/data/Orbeetle.pk8").clone();
-        let mut pk8_temp = include_bytes!("tests/data/Orbeetle.pk8").clone();
-        let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").clone();
+        let pk8 = include_bytes!("tests/data/Orbeetle.pk8").to_vec();
+        let mut pk8_temp = include_bytes!("tests/data/Orbeetle.pk8").to_vec();
+        let mut ek8 = include_bytes!("tests/data/Orbeetle.ek8").to_vec();
 
         decrypt_if_encrypted8(&mut ek8);
         assert_eq!(pk8, ek8);

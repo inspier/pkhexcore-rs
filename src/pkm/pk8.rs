@@ -563,9 +563,9 @@ mod test {
 
     #[test]
     fn pk8_from_array_test() {
-        let orbeetle_d = PK8::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
-        let orbeetle_e = PK8::from(include_bytes!("util/tests/data/Orbeetle.ek8"));
-        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let orbeetle_d = PK8::from(&include_bytes!("util/tests/data/Orbeetle.pk8").to_vec());
+        let orbeetle_e = PK8::from(&include_bytes!("util/tests/data/Orbeetle.ek8").to_vec());
+        let dracovish = PK8::from(&include_bytes!("util/tests/data/Dracovish.pk8").to_vec());
 
         assert_eq!(true, orbeetle_d == orbeetle_e);
         assert_eq!(false, dracovish == orbeetle_d);
@@ -573,23 +573,24 @@ mod test {
 
     #[test]
     fn pk8_from_vec_test() {
-        let orbeetle_e = PK8::from(include_bytes!("util/tests/data/Orbeetle.ek8"));
-        let orbeetle_d = PK8::try_from(&*include_bytes!("util/tests/data/Orbeetle.pk8")).unwrap();
+        let orbeetle_e = PK8::from(&include_bytes!("util/tests/data/Orbeetle.ek8").to_vec());
+        let orbeetle_d =
+            PK8::try_from(&*include_bytes!("util/tests/data/Orbeetle.pk8").to_vec()).unwrap();
 
         assert_eq!(true, orbeetle_e == orbeetle_d);
     }
 
     #[test]
     fn pk8_calc_checksum_test() {
-        let orbeetle = PK8::from(include_bytes!("util/tests/data/Orbeetle.pk8"));
-        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let orbeetle = PK8::from(&include_bytes!("util/tests/data/Orbeetle.pk8").to_vec());
+        let dracovish = PK8::from(&include_bytes!("util/tests/data/Dracovish.pk8").to_vec());
         assert_eq!(0x4E8E, orbeetle.checksum);
         assert_eq!(0x6469, dracovish.checksum);
     }
 
     #[test]
     fn pk8_get_test_1() {
-        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let dracovish = PK8::from(&include_bytes!("util/tests/data/Dracovish.pk8").to_vec());
         assert_eq!(0xAC731A09, dracovish.encryption_constant);
         assert_eq!(0x0, dracovish.sanity);
         assert_eq!(882, dracovish.species as i32);
@@ -623,7 +624,7 @@ mod test {
 
     #[test]
     fn pk8_get_test_2() {
-        let dracovish = PK8::from(include_bytes!("util/tests/data/Dracovish.pk8"));
+        let dracovish = PK8::from(&include_bytes!("util/tests/data/Dracovish.pk8").to_vec());
         assert_eq!(88, dracovish.height_scalar);
         assert_eq!(33, dracovish.weight_scalar);
         assert_eq!(35, dracovish.move1_pp);
@@ -645,7 +646,7 @@ mod test {
 
     #[test]
     fn pk8_set_test() {
-        let mut grookey = PK8::from(include_bytes!("util/tests/data/Grookey.pk8"));
+        let mut grookey = PK8::from(&include_bytes!("util/tests/data/Grookey.pk8").to_vec());
         assert_eq!(0x7FD048F, grookey.iv32);
         assert_eq!(0xAD1E, grookey.checksum);
         grookey.iv_hp = 16;
