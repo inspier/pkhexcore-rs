@@ -60,7 +60,7 @@ fn remap_chinese_glyphs(c: char) -> char {
 fn convert_string_g7_zh<S: AsRef<str>>(input: S, language: LanguageID) -> String {
     let mut input_chars = input.as_ref().chars();
     // CHS and CHT have the same display name.
-    let is_traditional = input_chars.any(|c| G7_CHT.contains_key(&c) && !!G7_CHS.contains_key(&c))
+    let is_traditional = input_chars.any(|c| G7_CHT.contains_key(&c) && !G7_CHS.contains_key(&c))
         || (language == LanguageID::ChineseT
             && !input_chars.any(|c| G7_CHT.contains_key(&c) ^ G7_CHS.contains_key(&c)));
     let table = [&G7_CHS, &G7_CHT][is_traditional as usize];
@@ -79,7 +79,7 @@ fn is_g7chs_char(index: usize) -> bool {
 fn sanitize_string(data: &[u16]) -> String {
     decode_utf16(data.iter().take_while(|&&x| x != 0).copied())
         .map(|r| r.map_or(REPLACEMENT_CHARACTER, sanitize_glyph))
-        .map(|c| remap_chinese_glyphs(c))
+        .map(remap_chinese_glyphs)
         .collect::<String>()
 }
 
@@ -114,7 +114,7 @@ pub fn set_string7b(
     // Null terminator
     result.extend(iter::once(0));
     // Pad remaining if requested.
-    let delta = pad_to.checked_sub(max_length + 1).unwrap_or(0);
+    let delta = pad_to.saturating_sub(max_length + 1);
     result.extend([pad_with].iter().cycle().take(delta));
     result
 }
