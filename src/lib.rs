@@ -1,5 +1,4 @@
 #![feature(non_ascii_idents)]
-#![feature(option_result_contains)]
 #![no_std]
 
 extern crate alloc;
