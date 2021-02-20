@@ -1,11 +1,11 @@
 use alloc::format;
 use deku::prelude::*;
-use num_enum::TryFromPrimitive;
+use enumn::N;
 
 /// Game Version ID enum shared between actual Version IDs and lumped version
 /// groupings.
 #[non_exhaustive]
-#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite, TryFromPrimitive)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite, N)]
 #[deku(type = "i32", ctx = "_endian: deku::ctx::Endian")]
 #[repr(i32)]
 pub enum GameVersion {

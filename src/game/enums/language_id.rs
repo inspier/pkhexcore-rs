@@ -29,7 +29,7 @@ pub enum LanguageID {
 
     /// Unused Language ID
     // Was reserved for Korean in Gen3 but never utilized.
-    UNUSED_6 = 6,
+    Unused6 = 6,
 
     /// Spanish (Español)
     Spanish = 7,

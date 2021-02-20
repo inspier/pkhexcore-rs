@@ -1,12 +1,11 @@
 #![allow(non_snake_case)]
 use alloc::format;
-use core::convert::TryFrom;
 use deku::prelude::*;
-use num_enum::TryFromPrimitive;
+use enumn::N;
 
 #[allow(non_camel_case_types)]
 /// Elemental type a move has; additionally, types a PKM can have.
-#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite, TryFromPrimitive)]
+#[derive(Debug, Copy, Clone, PartialEq, PartialOrd, DekuRead, DekuWrite, N)]
 #[deku(type = "i8", ctx = "_endian: deku::ctx::Endian")]
 #[repr(i8)]
 pub enum MoveType {
@@ -45,10 +44,10 @@ fn get_move_type_from_g12(mut move_type: MoveType) -> MoveType {
     if move_type <= MoveType::Rock {
         return move_type;
     }
-    move_type = MoveType::try_from(move_type as i8 - 1).unwrap(); // Skip unused Bird type
+    move_type = MoveType::n(move_type as i8 - 1).unwrap(); // Skip unused Bird type
     if move_type <= MoveType::Steel {
         return move_type;
     }
-    move_type = MoveType::try_from(move_type as i8 - 10).unwrap(); // 10 Normal duplicates
+    move_type = MoveType::n(move_type as i8 - 10).unwrap(); // 10 Normal duplicates
     move_type
 }

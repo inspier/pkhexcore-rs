@@ -1,6 +1,5 @@
 use crate::game::enums::game_version::GameVersion;
 use alloc::{string::String, vec::Vec};
-use core::convert::TryFrom;
 use deku::{ctx::Limit, prelude::*};
 
 pub(crate) mod read {
@@ -19,7 +18,7 @@ pub(crate) mod read {
         rest: &BitSlice<Msb0, u8>,
     ) -> Result<(&BitSlice<Msb0, u8>, GameVersion), DekuError> {
         let (rest, value) = u8::read(rest, ())?;
-        Ok((rest, GameVersion::try_from(value as i32).unwrap()))
+        Ok((rest, GameVersion::n(value as i32).unwrap()))
     }
 }
 
