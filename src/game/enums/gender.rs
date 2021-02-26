@@ -1,6 +1,8 @@
 #![allow(non_snake_case)]
 use alloc::format;
-use deku::prelude::*;
+use deku::{
+    bitvec::{BitSlice, BitVec, Msb0}, prelude::*
+};
 
 #[allow(non_camel_case_types)]
 /// Gender a PKM can have

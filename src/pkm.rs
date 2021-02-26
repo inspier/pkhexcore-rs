@@ -1,3 +1,4 @@
+#![allow(clippy::upper_case_acronyms)]
 use crate::{game::enums::game_version::GameVersion, legality::tables::location};
 use alloc::{string::String, vec::Vec};
 use deku::DekuUpdate;

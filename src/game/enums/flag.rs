@@ -1,5 +1,7 @@
 use alloc::format;
-use deku::prelude::*;
+use deku::{
+    bitvec::{BitSlice, BitVec, Msb0}, prelude::*
+};
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 #[repr(u8)]

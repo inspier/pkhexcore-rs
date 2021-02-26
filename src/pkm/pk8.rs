@@ -1,4 +1,5 @@
 #![allow(non_snake_case)]
+#![allow(clippy::upper_case_acronyms)]
 use crate::pkm::PKM;
 use alloc::{format, string::String, vec::Vec};
 use core::convert::TryFrom;

@@ -1,8 +1,12 @@
 use crate::game::enums::game_version::GameVersion;
 use alloc::{string::String, vec::Vec};
-use deku::{ctx::Limit, prelude::*};
+use deku::{
+    bitvec::{BitSlice, BitVec, Msb0}, ctx::Limit, prelude::*
+};
 
 pub(crate) mod read {
+    use deku::bitvec::Msb0;
+
     use super::*;
 
     pub(crate) fn read_string_custom(
