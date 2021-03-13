@@ -1,4 +1,5 @@
-use alloc::format;
+use alloc::{format, vec::Vec};
+use conquer_once::spin::Lazy;
 use deku::prelude::*;
 use enumn::N;
 
@@ -47,7 +48,7 @@ pub enum GameVersion {
     P = 11,
 
     /// Pokémon Platinum (NDS)
-    Pt = 12,
+    PT = 12,
 
     /// Pokémon Heart Gold (NDS)
     HG = 7,
@@ -179,7 +180,7 @@ pub enum GameVersion {
 
     /// Pokémon Diamond/Pearl/Platinum version group.
     // Used to lump data from the associated games as data assets are shared
-    DPPt,
+    DPPT,
 
     /// Pokémon Heart Gold & Soul Silver SAV4 identifier.
     HGSS,
@@ -270,4 +271,55 @@ pub enum GameVersion {
 
 impl Default for GameVersion {
     fn default() -> Self { GameVersion::Unknown }
+}
+
+use GameVersion::*;
+
+/// Most recent game ID utilized by official games.
+pub static HIGHEST_GAME_ID: Lazy<GameVersion> =
+    Lazy::new(|| GameVersion::n(RB as i32 - 1).unwrap());
+
+/// List of possible [`GameVersion`] values a [`PKM`](crate::pkm::PKM) can have.
+// Ordered roughly by most recent games first.
+pub static GAME_VERSIONS: Lazy<Vec<GameVersion>> =
+    Lazy::new(|| ((S as _)..(RB as _)).rev().map(GameVersion::n).into_iter().flatten().collect());
+
+/// Indicates if the [`GameVersion`] value is a value used by the games or is an
+/// aggregate indicator.
+pub fn is_valid_saved_version(game_version: GameVersion) -> bool {
+    (S..=*HIGHEST_GAME_ID).contains(&game_version)
+}
+
+/// Determines the Version Grouping of an input Version ID.
+pub fn met_location_version_group(game_version: GameVersion) -> GameVersion {
+    match game_version {
+        // Side games
+        CXD => CXD,
+        GO => GO,
+        // VC Transfers
+        RD | BU | YW | GN | GD | SV | C => USUM,
+        // Gen2 -- PK2
+        GS | GSC => GSC,
+        // Gen3
+        R | S => RS,
+        E => E,
+        FR | LG => FR,
+        // Gen4
+        D | P => DP,
+        PT => PT,
+        HG | SS => HGSS,
+        // Gen5
+        B | W => BW,
+        B2 | W2 => B2W2,
+        // Gen6
+        X | Y => XY,
+        OR | AS => ORAS,
+        // Gen7
+        SN | MN => SM,
+        US | UM => USUM,
+        GP | GE => GG,
+        // Gen8
+        SW | SH => SWSH,
+        _ => Invalid,
+    }
 }

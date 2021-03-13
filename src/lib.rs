@@ -1,3 +1,4 @@
+#![allow(clippy::upper_case_acronyms)]
 #![feature(non_ascii_idents)]
 #![no_std]
 

@@ -1,4 +1,3 @@
-#![allow(clippy::upper_case_acronyms)]
 use crate::{game::enums::game_version::GameVersion, legality::tables::location};
 use alloc::{string::String, vec::Vec};
 use deku::DekuUpdate;
@@ -14,7 +13,7 @@ pub trait PKM {
     fn is_frlg(version: GameVersion) -> bool {
         [GameVersion::FR, GameVersion::LG].contains(&version)
     }
-    fn is_pt(version: GameVersion) -> bool { version == GameVersion::Pt }
+    fn is_pt(version: GameVersion) -> bool { version == GameVersion::PT }
     fn is_hgss(version: GameVersion) -> bool {
         [GameVersion::HG, GameVersion::SS].contains(&version)
     }
