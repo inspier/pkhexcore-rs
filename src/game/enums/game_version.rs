@@ -277,7 +277,7 @@ use GameVersion::*;
 
 /// Most recent game ID utilized by official games.
 pub static HIGHEST_GAME_ID: Lazy<GameVersion> =
-    Lazy::new(|| GameVersion::n(RB as i32 - 1).unwrap());
+    Lazy::new(|| GAME_VERSIONS[0]);
 
 /// List of possible [`GameVersion`] values a [`PKM`](crate::pkm::PKM) can have.
 // Ordered roughly by most recent games first.
