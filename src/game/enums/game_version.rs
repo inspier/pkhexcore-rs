@@ -327,6 +327,7 @@ pub fn met_location_version_group(game_version: GameVersion) -> GameVersion {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use alloc::vec::Vec;
 
     #[test]
     fn check_highest_game_id() {
