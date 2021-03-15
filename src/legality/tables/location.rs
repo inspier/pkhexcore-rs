@@ -1,6 +1,6 @@
-pub const LINK_TRADE_4: i32 = 2002;
-pub const LINK_TRADE_5: i32 = 30003;
-pub const LINK_TRADE_6: i32 = 30002;
+pub const LINKTRADE_4: i32 = 2002;
+pub const LINKTRADE_5: i32 = 30003;
+pub const LINKTRADE_6: i32 = 30002;
 
 pub const DAYCARE_4: i32 = 2000;
 pub const DAYCARE_5: i32 = 60002;
@@ -28,7 +28,7 @@ pub const HATCH_LOCATION_RSE: i32 = 32;
 pub const HATCH_LOCATION_FRLG: i32 = 117;
 
 /// Solaceon Town in
-/// [GameVersion::DPPt][`crate::game::enums::game_version::GameVersion::DPPt`]
+/// [GameVersion::DPPT][`crate::game::enums::game_version::GameVersion::DPPT`]
 pub const HATCH_LOCATION_DPPT: i32 = 4;
 
 /// Route 34 in
@@ -69,31 +69,31 @@ pub const TRANSFER_4: i32 = 30001;
 
 /// Generation 4 -> Generation 5 Transfer Location (Crown Celebi - Event not
 /// activated in Gen 5)
-pub const TRANSFER4_CELEBI_UNUSED: i32 = 30010;
+pub const TRANSFER_4_CELEBI_UNUSED: i32 = 30010;
 
 /// Generation 4 -> Generation 5 Transfer Location (Crown Celebi - Event
 /// activated in Gen 5)
-pub const TRANSFER4_CELEBI_USED: i32 = 30011;
+pub const TRANSFER_4_CELEBI_USED: i32 = 30011;
 
 /// Generation 4 -> Generation 5 Transfer Location (Crown Beast - Event not
 /// activated in Gen 5)
-pub const TRANSFER4_CROWN_UNUSED: i32 = 30012;
+pub const TRANSFER_4_CROWN_UNUSED: i32 = 30012;
 
 /// Generation 4 -> Generation 5 Transfer Location (Crown Beast - Event
 /// activated in Gen 5)
-pub const TRANSFER4_CROWN_USED: i32 = 30013;
+pub const TRANSFER_4_CROWN_USED: i32 = 30013;
 
 /// Generation 6 Gift from Pokémon Link
 pub const LINKGIFT_6: i32 = 30011;
 
 /// Generation 7 Transfer from GO to Pokémon LGP/E's GO Park
-pub const GO7: i32 = 50;
+pub const GO_7: i32 = 50;
 
 /// Generation 8 Transfer from GO to Pokémon HOME
-pub const GO8: i32 = 30012;
+pub const GO_8: i32 = 30012;
 
 /// Generation 8 Gift from Pokémon HOME
-pub const HOME8: i32 = 30018;
+pub const HOME_8: i32 = 30018;
 
 pub const BUG_CATCHING_CONTEST_4: i32 = 207;
 
@@ -102,17 +102,17 @@ pub fn traded_egg_location_npc(generation: u32) -> i32 {
         1 => LINKTRADE_2_NPC,
         2 => LINKTRADE_2_NPC,
         3 => LINKTRADE_3_NPC,
-        4 => LINK_TRADE_4,
-        5 => LINK_TRADE_5,
+        4 => LINKTRADE_4,
+        5 => LINKTRADE_5,
         _ => LINKTRADE_6_NPC,
     }
 }
 
 pub fn traded_egg_location(generation: u32) -> i32 {
     match generation {
-        4 => LINK_TRADE_4,
-        5 => LINK_TRADE_5,
-        _ => LINK_TRADE_6,
+        4 => LINKTRADE_4,
+        5 => LINKTRADE_5,
+        _ => LINKTRADE_6,
     }
 }
 

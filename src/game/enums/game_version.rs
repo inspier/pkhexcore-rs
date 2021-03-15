@@ -1,5 +1,4 @@
-use alloc::{format, vec::Vec};
-use conquer_once::spin::Lazy;
+use alloc::format;
 use deku::prelude::*;
 use enumn::N;
 
@@ -276,18 +275,19 @@ impl Default for GameVersion {
 use GameVersion::*;
 
 /// Most recent game ID utilized by official games.
-pub static HIGHEST_GAME_ID: Lazy<GameVersion> =
-    Lazy::new(|| GAME_VERSIONS[0]);
+pub const HIGHEST_GAME_ID: GameVersion = SH;
 
 /// List of possible [`GameVersion`] values a [`PKM`](crate::pkm::PKM) can have.
 // Ordered roughly by most recent games first.
-pub static GAME_VERSIONS: Lazy<Vec<GameVersion>> =
-    Lazy::new(|| ((S as _)..(RB as _)).rev().map(GameVersion::n).into_iter().flatten().collect());
+pub static GAME_VERSIONS: [GameVersion; 35] = [
+    SH, SW, GE, GP, C, SV, GD, YW, BU, GN, RD, GO, UM, US, MN, SN, OR, AS, Y, X, B2, W2, B, W, CXD,
+    PT, P, D, SS, HG, LG, FR, E, R, S,
+];
 
 /// Indicates if the [`GameVersion`] value is a value used by the games or is an
 /// aggregate indicator.
 pub fn is_valid_saved_version(game_version: GameVersion) -> bool {
-    (S..=*HIGHEST_GAME_ID).contains(&game_version)
+    (S..=HIGHEST_GAME_ID).contains(&game_version)
 }
 
 /// Determines the Version Grouping of an input Version ID.
@@ -321,5 +321,28 @@ pub fn met_location_version_group(game_version: GameVersion) -> GameVersion {
         // Gen8
         SW | SH => SWSH,
         _ => Invalid,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn check_highest_game_id() {
+        assert_eq!(Some(HIGHEST_GAME_ID), GameVersion::n(RB as i32 - 1));
+    }
+
+    #[test]
+    fn check_game_versions() {
+        assert_eq!(
+            GAME_VERSIONS[..],
+            ((S as _)..(RB as _))
+                .rev()
+                .map(GameVersion::n)
+                .into_iter()
+                .flatten()
+                .collect::<Vec<_>>()[..]
+        );
     }
 }

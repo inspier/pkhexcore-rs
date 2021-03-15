@@ -43,10 +43,10 @@ pub trait PKM {
 
     fn is_pt_hgss(version: GameVersion) -> bool { Self::is_pt(version) || Self::is_hgss(version) }
     fn is_go_lgpe(version: GameVersion, met_location: u16) -> bool {
-        Self::is_go(version) && met_location == location::GO7 as u16
+        Self::is_go(version) && met_location == location::GO_7 as u16
     }
     fn is_go_home(version: GameVersion, met_location: u16) -> bool {
-        Self::is_go(version) && met_location == location::GO8 as u16
+        Self::is_go(version) && met_location == location::GO_8 as u16
     }
     fn is_vc(version: GameVersion) -> bool { Self::is_vc1(version) || Self::is_vc2(version) }
     fn is_gg(version: GameVersion, met_location: u16) -> bool {
